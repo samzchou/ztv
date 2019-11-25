@@ -1,0 +1,22 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc8a4c4ba9008099c465e55"),
+	"content" : {
+		"title" : "员工信息",
+		"formid" : NumberInt(11),
+		"showType" : NumberInt(1),
+		"filter" : true,
+		"filterFields" : [
+			"e_name",
+			"e_sex",
+			"e_cellphone_number",
+			"e_political_status",
+			"roles"
+		],
+		"id" : NumberInt(10)
+	},
+	"create_date" : 1573429953187,
+	"create_eid" : NumberInt(1),
+	"id" : NumberInt(10),
+	"page_name" : "员工信息"
+},

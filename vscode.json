@@ -1,0 +1,73 @@
+{
+    // tab 大小为2个空格
+    "editor.tabSize": 4,
+    // 100 列后换行
+    "editor.wordWrapColumn": 100,
+    // 保存时格式化
+    "editor.formatOnSave": true,
+    // 开启 vscode 文件路径导航
+    "breadcrumbs.enabled": true,
+    // prettier 设置语句末尾不加分号
+    "prettier.semi": false,
+    // prettier 设置强制单引号
+    "prettier.singleQuote": true,
+    // 选择 vue 文件中 template 的格式化工具
+    "vetur.format.defaultFormatter.html": "js-beautify-html",
+    "vetur.format.defaultFormatter.css": "prettier",
+    "vetur.format.defaultFormatter.scss": "prettier",
+    "vetur.format.options.tabSize": 4,
+    "beautify.config": {
+        "brace_style": "collapse,preserve-inline"
+    },
+    // 显示 markdown 中英文切换时产生的特殊字符
+    "editor.renderControlCharacters": true,
+    // 设置 eslint 保存时自动修复
+    "eslint.autoFixOnSave": true,
+    // eslint 检测文件类型
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        {
+            "language": "html",
+            "autoFix": true
+        },
+        {
+            "language": "vue",
+            "autoFix": true
+        }
+    ],
+    // vetur 的自定义设置
+    "vetur.format.defaultFormatterOptions": {
+        "prettier": {
+            "singleQuote": true,
+            "semi": false
+        },
+        "js-beautify-html": {
+            "wrap_attributes": "auto",
+            "end_with_newline": false
+        },
+        "prettyhtml": {
+            //"printWidth": 100,
+            "singleQuote": false,
+            "wrapAttributes": false,
+            "sortAttributes": false
+        }
+    },
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    "editor.fontSize": 12,
+    "html.format.endWithNewline": true,
+    "prettier.tabWidth": 4,
+    "explorer.confirmDelete": false,
+    "editor.wordWrap": "on",
+    "vetur.format.defaultFormatter.js": "vscode-typescript",
+    "files.exclude": {
+        "**/.eslintrc*": true,
+        "**/.git*": true,
+        "**/.nuxt": true,
+        "**/node_modules": true
+    },
+    "editor.quickSuggestions": {
+        "strings": true
+    }
+}

@@ -1,0 +1,281 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcbb6ecea94e99028944217"),
+	"content" : [
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(4)
+		}
+	],
+	"id" : NumberInt(3),
+	"name" : "总经理"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcbc5edea94e99028944218"),
+	"content" : [
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(5)
+		}
+	],
+	"id" : NumberInt(4),
+	"name" : "部门经理"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcbc855ea94e99028944219"),
+	"content" : [
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(4)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(2),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(4)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(1),
+			"id" : NumberInt(7),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(1)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(3)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(4)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(6),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(5)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(4)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(8),
+			"value" : NumberInt(4)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(2)
+		},
+		{
+			"pid" : NumberInt(3),
+			"id" : NumberInt(9),
+			"value" : NumberInt(3)
+		}
+	],
+	"id" : NumberInt(5),
+	"name" : "IT运维员"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcbc89bea94e9902894421a"),
+	"content" : [ ],
+	"id" : NumberInt(6),
+	"name" : "员工"
+},

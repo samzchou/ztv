@@ -1,0 +1,72 @@
+// element相关样式重置
+.el-button [class*="my-icon-"] {
+    &+span {
+        margin-left: 5px;
+    }
+}
+
+.el-form {
+    &.el-form--label-top {
+        .el-form-item {
+            &.half {
+                width: 50%;
+                float: left;
+            }
+
+            .el-form-item__label {
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+            }
+
+            .el-slider {
+                padding: 0 10px;
+            }
+        }
+
+    }
+}
+.el-textarea{
+	font-size: 12px;
+}
+.el-input-group__prepend,.el-input-group__append{
+	padding: 0 10px;
+}
+.el-tree{
+	background: transparent;
+}
+
+.el-dialog {
+    //max-height: 80vh;
+	//overflow: hidden;
+    .el-dialog__header {
+        padding: 10px 20px;
+        background-color: #EEE;
+
+        .el-dialog__headerbtn {
+            top: 10px;
+        }
+    }
+
+    .el-dialog__body {
+        padding: 10px 20px 20px;
+        box-sizing: border-box;
+        //max-height: calc(100% - 45px);
+    }
+}
+
+.el-drawer {
+    .el-drawer__header {
+        margin: 0;
+        padding: 0 15px;
+        background-color: #dcebf7;
+        height: 40px;
+        box-sizing: border-box;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    /* .el-drawer__body {
+        padding: 15px;
+    } */
+}

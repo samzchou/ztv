@@ -1,0 +1,81 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc00fd7aede3161a425cad4"),
+	"collInfo" : "",
+	"dept_name" : "总经办",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(1)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc013d0aede3161a425cad7"),
+	"collInfo" : "",
+	"dept_name" : "设计部",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(2)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc014cbaede3161a425cad9"),
+	"collInfo" : "",
+	"dept_name" : "市场部",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(3)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc1399faeb28f5e98e771f0"),
+	"collInfo" : "",
+	"dept_name" : "制图组一",
+	"dept_parentid" : NumberInt(2),
+	"id" : NumberInt(5)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb673bfd0e663e00effab5"),
+	"dept_name" : "办公室",
+	"dept_parentid" : NumberInt(1),
+	"id" : NumberInt(6)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb6780fd0e663e00effab6"),
+	"dept_name" : "销售部",
+	"dept_parentid" : NumberInt(3),
+	"id" : NumberInt(7)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb678dfd0e663e00effab7"),
+	"dept_name" : "宣传部",
+	"dept_parentid" : NumberInt(3),
+	"id" : NumberInt(8)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb67a3fd0e663e00effab8"),
+	"dept_name" : "工程部",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(9)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb67bdfd0e663e00effab9"),
+	"dept_name" : "车间",
+	"dept_parentid" : NumberInt(9),
+	"id" : NumberInt(10)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb67c9fd0e663e00effaba"),
+	"dept_name" : "IT运维",
+	"dept_parentid" : NumberInt(0),
+	"id" : NumberInt(11)
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dcb67fefd0e663e00effabb"),
+	"dept_name" : "信息管理",
+	"dept_parentid" : NumberInt(11),
+	"id" : NumberInt(12)
+},

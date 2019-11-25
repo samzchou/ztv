@@ -1,0 +1,133 @@
+.times-container {
+    height: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    padding: 10px 20px;
+
+    .header {
+        display: flex;
+        background-color: #fff;
+        border: 1px solid #DDD;
+        box-sizing: border-box;
+        box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, .08);
+
+        .left {
+            width: 200px;
+        }
+
+        .mid {
+            width: calc(100% - 200px);
+            box-sizing: border-box;
+            padding: 10px 20px;
+
+            .title {
+                border-bottom: 1px solid #d2d1d1;
+
+                >p {
+                    font-size: 20px;
+                    margin: 0;
+                    color: #888;
+                    line-height: 40px;
+
+                    &:first-child {
+                        font-size: 24px;
+                        color: #050842;
+                    }
+                }
+            }
+
+            .desc {
+                font-size: 16px;
+
+                >div {
+                    padding-top: 15px;
+
+                    /* display: flex;
+                    align-items: center; */
+                    &.plans {
+                        padding: 10px 0 20px 0;
+
+                        fieldset {
+                            border: 1px solid #c2dcf7;
+                        }
+                    }
+                }
+            }
+
+            .wheel-list {
+                padding: 15px 0;
+
+                .contents {
+                    display: flex;
+
+                    .calendar {
+                        width: 350px;
+                        position: relative;
+                    }
+                }
+
+                .time-util {
+                    padding: 40px 20px;
+                    box-sizing: border-box;
+                }
+            }
+        }
+    }
+
+
+    .content {
+        display: flex;
+        padding: 20px 0;
+
+        .left {
+            width: 450px;
+            min-height: 500px;
+            position: relative;
+        }
+
+        .mid {
+            width: calc(100% - 450px);
+            box-sizing: border-box;
+            padding-left: 15px;
+
+            .title {
+                border-bottom: 1px solid #DDD;
+                height: 40px;
+                display: flex;
+                box-sizing: border-box;
+                padding: 0 15px;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 16px;
+                color: #3675e4;
+                font-weight: bold;
+
+                /deep/ .el-form-item {
+                    margin-bottom: 0;
+                }
+            }
+
+            .charts {
+                /deep/ .echarts {
+                    width: 100%;
+                    background-color: #fff;
+                    padding: 15px;
+                    border: 1px solid #DDD;
+                    box-sizing: border-box;
+                }
+
+                .empty {
+                    min-height: 300px;
+                    background-color: #FFF;
+                    padding: 30px;
+                    box-sizing: border-box;
+                    font-size: 16px;
+                    color: #bdb7b7;
+                }
+            }
+        }
+
+    }
+}
+
+.plan-container {}

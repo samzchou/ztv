@@ -1,0 +1,64 @@
+.sam-page {
+    .header {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        box-sizing: border-box;
+        border-bottom: 1px solid #ddd;
+        background-color: #f5f5f5;
+
+        .title {
+            font-size: 14px;
+            font-weight: bold;
+            color: $c-main;
+
+            >i {
+                margin-right: 5px;
+            }
+        }
+    }
+
+    .forms {
+        background-color: #fff;
+        padding: 10px 0 20px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        .btns {
+            padding: 0 20px;
+        }
+    }
+
+    .table-container {
+        /* .collapse {
+            padding: 0 20px 30px 20px;
+            background-color: #FFF;
+        } */
+
+        .filter {
+            background-color: #f4fdff;
+            padding: 10px 0 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+            .btns {
+                padding: 0 20px;
+            }
+
+            .empty {
+                padding: 0 20px;
+                box-sizing: border-box;
+            }
+        }
+
+        .tables {
+            background-color: #fff;
+
+            .pages {
+                padding: 15px;
+                display: flex;
+                justify-content: flex-end;
+            }
+        }
+    }
+}

@@ -1,0 +1,14 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dce4401f96ceb344ca34f13"),
+	"content" : "时间钟补填申请,日期：2019-11-15",
+	"createDate" : 1573793360356,
+	"fid" : NumberInt(11),
+	"fromuserId" : NumberInt(5),
+	"id" : NumberInt(1),
+	"isRead" : false,
+	"touserId" : [
+		NumberInt(6)
+	],
+	"wfType" : NumberInt(1)
+},

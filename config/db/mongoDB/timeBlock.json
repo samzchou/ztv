@@ -1,0 +1,48 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dce4401f96ceb344ca34f11"),
+	"apply" : [
+		{
+			"date" : 1573401600000,
+			"touserId" : [
+				NumberInt(6)
+			],
+			"reson" : "忘记填写了",
+			"state" : NumberInt(1)
+		}
+	],
+	"content" : [
+		{
+			"date" : 1573401600000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1573488000000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1573574400000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1573660800000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1573747200000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1573833600000,
+			"list" : [ ]
+		},
+		{
+			"date" : 1573920000000,
+			"list" : [ ]
+		}
+	],
+	"enddate" : 1574006399999,
+	"id" : NumberInt(11),
+	"startdate" : 1573401600000,
+	"userId" : NumberInt(5)
+},

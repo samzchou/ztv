@@ -1,0 +1,73 @@
+.index-container {
+    padding: 20px;
+    .panel-group {
+        padding: 0;
+        /deep/ .el-col {
+            padding: 0;
+            .card-panel {
+                background-color: #FFF;
+                border: 1px solid #DDD;
+                padding: 15px;
+                box-sizing: border-box;
+                display: flex;
+                justify-content: space-around;
+                cursor: pointer;
+                >i {
+                    flex: 0 0 60px;
+                    font-size: 48px;
+                    color: #5eaf7b;
+                    text-align: center;
+                    padding: 5px 0;
+                    border-radius: 8px;
+                    &.orange {
+                        color: #ffb16d;
+                    }
+                    &.blue {
+                        color: #6dc8ff;
+                    }
+                    &.red {
+                        color: #ff9393;
+                    }
+                }
+                &:hover {
+                    >i {
+                        background-color: #5eaf7b;
+                        color: #FFF;
+                        &.orange {
+                            background-color: #ffb16d;
+                        }
+                        &.blue {
+                            background-color: #6dc8ff;
+                        }
+                        &.red {
+                            background-color: #5eaf7b;
+                        }
+                    }
+                }
+                >div {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-end;
+                    font-size: 20px;
+                    >button {
+                        margin-bottom: 10px;
+                        font-size: 18px;
+                    }
+                    >h3 {
+                        margin: 0 0 10px;
+                        font-size: 18px;
+                        font-weight: normal;
+                        color: #888;
+                    }
+                }
+            }
+        }
+    }
+    .chart-times {
+        background-color: #FFF;
+        padding: 20px 0;
+        border: 1px solid #DDD;
+        margin: 25px 0;
+    }
+}

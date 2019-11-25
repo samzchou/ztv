@@ -1,0 +1,305 @@
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc4d8fe64edfa362c3b4778"),
+	"content" : {
+		"title" : "员工信息录入",
+		"gutter" : NumberInt(20),
+		"size" : "small",
+		"itemList" : [
+			{
+				"name" : "username",
+				"label" : "系统账号",
+				"type" : "String",
+				"required" : true,
+				"component" : "sam-input",
+				"cptype" : "text",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-username",
+				"key" : "9314b22c-f5af-4a64-a8af-60e3d6211457-emploaee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					},
+					{
+						"sql" : "same"
+					}
+				]
+			},
+			{
+				"name" : "password",
+				"label" : "登陆密码",
+				"type" : "String",
+				"required" : true,
+				"component" : "sam-input",
+				"cptype" : "text",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-password",
+				"key" : "06e9658a-489d-41a6-94df-82a2bc01adf7-emploaee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					}
+				],
+				"tableHide" : true,
+				"colspan" : NumberInt(0)
+			},
+			{
+				"name" : "roles",
+				"label" : "角色权限",
+				"component" : "sam-select",
+				"optionsUrl" : {
+					"table" : "roles",
+					"label" : "name",
+					"value" : "id"
+				},
+				"default" : NumberInt(0),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-roles",
+				"key" : "490fcb2c-ebb4-461b-9ca0-173335e9120e-emplo8ee",
+				"colspan" : NumberInt(4)
+			},
+			{
+				"name" : "e_name",
+				"label" : "员工姓名",
+				"type" : "String",
+				"required" : true,
+				"component" : "sam-input",
+				"cptype" : "text",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_name",
+				"key" : "bf32a664-8f7c-4cbf-badf-e4594c673c9f-emplo8ee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					}
+				]
+			},
+			{
+				"name" : "e_sex",
+				"label" : "性别",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"options" : [
+					{
+						"label" : "男",
+						"value" : NumberInt(1)
+					},
+					{
+						"label" : "女",
+						"value" : NumberInt(2)
+					}
+				],
+				"default" : NumberInt(1),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_sex",
+				"key" : "f5e111d7-9a2f-4b45-bb31-7c98da097775-emplo8ee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_birth",
+				"label" : "出生日期",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-date",
+				"cptype" : "date",
+				"valueFormat" : "timestamp",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_birth",
+				"key" : "5ea8629c-bd4f-413e-a60b-27c58b77f370-emploaee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_cellphone_number",
+				"label" : "手机",
+				"type" : "String",
+				"required" : true,
+				"component" : "sam-input",
+				"cptype" : "text",
+				"default" : "",
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_cellphone_number",
+				"key" : "1796daba-9c8a-49ee-aa97-1e2e659817b1-emplobee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "blur"
+					},
+					{
+						"sql" : "same"
+					}
+				]
+			},
+			{
+				"name" : "e_political_status",
+				"label" : "政治面貌",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"options" : [
+					{
+						"label" : "群众",
+						"value" : NumberInt(1)
+					},
+					{
+						"label" : "中共团员",
+						"value" : NumberInt(2)
+					},
+					{
+						"label" : "中共党员",
+						"value" : NumberInt(3)
+					},
+					{
+						"label" : "其他党派成员",
+						"value" : NumberInt(4)
+					}
+				],
+				"default" : NumberInt(0),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_political_status",
+				"key" : "fc0c7e4d-b531-46f5-97d2-1c95d2941984-emplo8ee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_domicile",
+				"label" : "户籍所在地",
+				"type" : "Array",
+				"required" : true,
+				"component" : "sam-cascader",
+				"optionsConst" : "citys",
+				"default" : [ ],
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_domicile",
+				"key" : "c4b3abfd-a700-4077-95a7-e360e6f8cdee-emplobee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change",
+						"type" : "array"
+					}
+				]
+			},
+			{
+				"name" : "e_superior_department",
+				"label" : "上级部门",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"optionsUrl" : {
+					"table" : "department",
+					"params" : {
+						"dept_parentid" : NumberInt(0)
+					},
+					"label" : "dept_name",
+					"value" : "id"
+				},
+				"level" : NumberInt(0),
+				"emit" : [
+					"e_department"
+				],
+				"default" : NumberInt(0),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_superior_department",
+				"key" : "afa08d84-f30a-4a01-864c-6f9633c6f488-emplobee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "e_department",
+				"label" : "所属部门",
+				"type" : "Number",
+				"required" : true,
+				"component" : "sam-select",
+				"optionsUrl" : {
+					"table" : "department",
+					"params" : {
+						"dept_parentid" : NumberInt(0)
+					},
+					"label" : "dept_name",
+					"value" : "id"
+				},
+				"level" : NumberInt(1),
+				"on" : [
+					"e_department"
+				],
+				"default" : NumberInt(0),
+				"table" : "employee",
+				"value" : "",
+				"tableName" : "employee-e_department",
+				"key" : "a995e703-13f3-4833-880b-ac20ce5de7eb-emplobee",
+				"rules" : [
+					{
+						"required" : true,
+						"message" : "必填项",
+						"trigger" : "change"
+					}
+				]
+			},
+			{
+				"name" : "is_leader",
+				"label" : "是否主管领导",
+				"type" : "Boolean",
+				"component" : "sam-switch",
+				"value" : false,
+				"default" : false,
+				"table" : "employee",
+				"tableName" : "employee-is_leader",
+				"key" : "17676280-6ced-4f98-b302-7f06a689a89e-emplo8ee"
+			}
+		],
+		"inline" : true,
+		"colspan" : NumberInt(4),
+		"position" : "top",
+		"hideTitle" : true,
+		"id" : NumberInt(11)
+	},
+	"create_date" : 1573180999371,
+	"create_eid" : NumberInt(7),
+	"form_name" : "员工信息录入",
+	"id" : NumberInt(11)
+},

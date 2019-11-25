@@ -1,0 +1,62 @@
+{
+	"_id" : ObjectId("5da947dd2060d71c080f8b52"),
+	"count" : NumberInt(6),
+	"model" : "user"
+},
+{
+	"_id" : ObjectId("5da947dd2060d71c080f8b53"),
+	"count" : NumberInt(11),
+	"model" : "timeBlock"
+},
+{
+	"_id" : ObjectId("5db682221b7714155c589521"),
+	"count" : 5,
+	"model" : "colls"
+},
+{
+	"_id" : ObjectId("5db77b9f1b7714155c589526"),
+	"count" : 0,
+	"model" : "forms"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dbcea1188b77d3864731454"),
+	"count" : NumberInt(14),
+	"model" : "formList"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc00fd7aede3161a425cad3"),
+	"count" : NumberInt(12),
+	"model" : "department"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc05162a4dd3839d4987d76"),
+	"count" : NumberInt(7),
+	"model" : "employee"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc0d45d82d3bb6814836699"),
+	"count" : NumberInt(10),
+	"model" : "pageList"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dc3dd42d548000b44e8043d"),
+	"count" : NumberInt(9),
+	"model" : "service"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dca51d78bca2e0de4fdf6b7"),
+	"count" : NumberInt(6),
+	"model" : "roles"
+},
+{
+	"__v" : NumberInt(0),
+	"_id" : ObjectId("5dce4401f96ceb344ca34f12"),
+	"count" : NumberInt(1),
+	"model" : "inbox"
+},
