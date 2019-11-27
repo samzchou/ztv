@@ -152,6 +152,8 @@ export default {
             lineNumbers: true,
             line: true,
             lineWrapping: true,
+            foldGutter: true,
+            gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
             mode: { name: 'javascript', json: true },
             theme: 'eclipse',
             styleActiveLine: true,
@@ -179,13 +181,14 @@ export default {
                 }
             };
             if (currForms.id) {
+                condition.data.id = currForms.id;
                 condition.type = "updateData";
             }
             // console.log('saveMyForm', condition);
             this.$axios.$post('mock/db', { data: condition }).then(result => {
-                //console.log('result', result);
+                console.log('result', result);
                 this.$message.success(currForms.id ? "编辑成功" : "新增成功");
-                currForms.id = result.id;
+                if(!currForms.id && result.id) currForms.id = result.id;
                 this.saveLoading = false;
                 this.UPDATE_FORMS({ ...currForms })
             });

@@ -156,6 +156,7 @@ export default {
                 collectionName: 'formList',
                 data: match,
                 aggregate: [
+                    { "$match": match },
                     {
                         $lookup: {
                             from: "employee",

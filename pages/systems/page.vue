@@ -41,7 +41,7 @@ export default {
             let result = await this.$axios.$post('mock/db', { data: condition })
             if (!result) {
                 this.$alert("无法定位到具体页面！请核查问题");
-                this.notFound = true
+                this.notFound = true;
             } else {
                 let pageForm = Object.assign({}, result.content);
                 //this.pageForm = Object.assign({}, result.content)
@@ -52,11 +52,16 @@ export default {
                         id: result.content.formid
                     }
                 }
-                //console.log('route', JSON.stringify(cn))
+
                 let form_content = await this.$axios.$post('mock/db', {
                     data: cn
-                })
-
+                });
+                console.log('form_content', form_content)
+                if (!form_content) {
+                    this.$alert("无法获取表单数据，请联系管理员！");
+                    this.notFound = true;
+                    return;
+                }
                 //debugger
                 //this.pageForm.content = form_content.content
                 pageForm.content = form_content.content;

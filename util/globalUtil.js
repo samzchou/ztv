@@ -61,11 +61,11 @@ export default {
     },
     getAllTimes(list) {
         let allTimes = 0;
-        list.forEach(item => {
-            //let startMin = this.changeMyTimeToMin(item.startTime);
-            //let endMin = this.changeMyTimeToMin(item.endTime);
-            allTimes += item.allTimes; //(item.endTime - item.startTime);
-        });
+		if(list && list.length){
+			list.forEach(item => {
+				allTimes += item.allTimes; //(item.endTime - item.startTime);
+			});
+		}
         return allTimes;
     },
     // 判断是否为JSON字符串

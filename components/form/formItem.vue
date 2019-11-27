@@ -4,7 +4,9 @@
         <el-input v-if="item.component==='sam-input'||item.component==='sam-richtext'" v-bind="$attrs" v-on="$listeners" :type="item.cptype||'text'" :placeholder="item.placeholder||''" :prop="item.value||''" :readonly="item.readonly" :disabled="disabled||item.disabled" :show-password="item.cptype=='password'" clearable @change="setValue" />
         <!-- 日期 -->
         <el-date-picker v-else-if="item.component==='sam-date'" v-bind="$attrs" v-on="$listeners" :type="item.cptype" value-format="timestamp" editable range-separator="至" start-placeholder="开始时间" end-placeholder="结束时间" :disabled="disabled||item.disabled" @change="setValue" />
-        <!-- 数字 -->
+        <!-- 时间选择 -->
+        <el-time-select v-else-if="item.component==='sam-timeselect'" v-bind="$attrs" v-on="$listeners" :picker-options="item.pickeroptions" :disabled="disabled||item.disabled" @change="setValue" />
+		<!-- 数字 -->
         <input-number v-else-if="item.component==='sam-number'" v-bind="$attrs" v-on="$listeners" :prepend="item.prepend" :append="item.append" :min="item.min" :max="item.max" :decimal1="item.decimal1" :disabled="disabled||item.disabled" :placeholder="item.placeholder||''" @change="setValue" />
         <!-- 单选 有BUG-->
         <el-radio-group v-else-if="item.component==='sam-radio'" v-bind="$attrs" v-on="$listeners" :disabled="disabled||item.disabled">
@@ -62,18 +64,20 @@ export default {
     watch: {
         item: {
             handler(obj) {
-                //console.log('watch form-item', obj);
                 this.setOpts();
                 this.setListener();
             },
             immediate: true
         },
-        /* itemValue: {
-            handler(obj) {
-                console.log('watch form-item itemValue', obj);
+        itemValue: {
+            handler(val) {
+                //console.log('watch form-item itemValue', val);
+				if(val){
+					this.setEmit();
+				}
             },
             immediate: true
-        } */
+        }
     },
     computed: {
         ...mapState('forms', ['formValue']),
@@ -143,23 +147,15 @@ export default {
 
         async setOpts(flag) {
             this.ajaxOptions = [];
-
-            /* if (this.itemValue.val && this.item.level) {
-                this.item.level = 0;
-            }
-            console.log('setOpts', this.item, this.itemValue.val); */
-
             if (this.item.options && this.item.options.length) {
                 this.ajaxOptions = _.clone(this.item.options);
             } else if (this.item.optionsUrl && !this.item.level) {
-
                 let conditon = {
                     type: 'listData',
                     collectionName: this.item.optionsUrl.table,
                     data: this.item.optionsUrl.params || {}
                 }
                 let res = await this.$axios.$post('mock/db', { data: conditon });
-
                 if (res && res.list.length) {
                     // 如果是级联的
                     if (this.item.component == 'sam-cascader') {
@@ -179,7 +175,6 @@ export default {
                                 label: item[this.item.optionsUrl.label]
                             }
                         });
-
                         if (this.item.emit && this.itemValue.val) {
                             this.setEmit();
                         }
@@ -191,13 +186,15 @@ export default {
                     this.ajaxOptions = opts[this.item.optionsConst];
                 }
             }
-            //console.log('this.ajaxOptions', this.ajaxOptions);
         },
         setEmit() {
-            let emit = this.item.emit;
-            for (let i = 0; i < emit.length; i++) {
-                $bus.$emit(emit[i], this.itemValue.val);
-            }
+			if(this.item.emit){
+				let emit = this.item.emit;
+				for (let i = 0; i < emit.length; i++) {
+					console.log('setEmit', emit[i], this.itemValue.va);
+					$bus.$emit(emit[i], this.itemValue.val);
+				}
+			}
         },
         setListener() {
             if (this.item.on) {
@@ -205,16 +202,22 @@ export default {
                 for (let i = 0; i < this.listenerOn.length; i++) {
                     $bus.$on(this.listenerOn[i], (value) => {
                         console.log('listenerOn', this.listenerOn[i], value);
+						this.item.optionsUrl.params[this.listenerOn[i]] = value;
+						/*
                         let keys = Object.keys(this.item.optionsUrl.params);
                         keys.forEach(key => {
                             this.item.optionsUrl.params[key] = value;
                         });
+						*/
                         this.item.level = 0;
                         this.setOpts();
                     })
                 }
             }
         },
-    }
+    },
+	beforeDestroy(){
+		$bus.$off();
+	}
 }
 </script>

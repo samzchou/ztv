@@ -28,7 +28,7 @@
                 </div>
                 <div :class="['mc-body', {'mc-range-mode': range, 'week-switch': weekSwitch && !isMonthRange, 'month-range-mode': isMonthRange}]" v-for="(days, index) in monthRangeDays" :key='index'>
                     <div class="month-rang-head" v-if="isMonthRange">{{rangeOfMonths[index][2]}}</div>
-                    <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar}">
+                    <tr v-for="(day,k1) in days" :key="k1" :class="{'gregorianStyle': !lunar, 'active':isCurrWeek(day)}">
                         <td v-for="(child,k2) in day" :key="k2" :class="[{'selected': child.selected, 'mc-today-element': child.isToday, 'disabled': child.disabled,
              'mc-range-select-one': rangeBgHide && child.selected, 'lunarStyle': lunar, 'mc-range-row-first': k2 === 0 && child.selected,
               'month-last-date': child.lastDay, 'month-first-date': 1 === child.day, 'mc-range-row-last': k2 === 6 && child.selected,
@@ -41,7 +41,7 @@
                             <div class="mc-text" :class="{'isLunarFestival': child.isAlmanac || child.isLunarFestival, 'isGregorianFestival': child.isGregorianFestival, 'isTerm': child.isTerm}" v-if="lunar && (!child.eventName || clean)">
                                 {{child.almanac || child.lunar}}
                             </div>
-                            <div class="mc-rest" :class="checkRest(1, child.day)" />
+                            <div class="mc-rest" :class="checkRest(1, child)" />
                             <div class="mc-range-bg" v-if="range && child.selected" />
                         </td>
                     </tr>
@@ -64,11 +64,12 @@
 
 <script>
 import calendar, { defaultLunar, defaultGregorian, todayString, isBrowser } from './calendarinit.js';
-import holidays from '~/config/opts/holiday.json';
 import './icon.css';
 export default {
     name: "calendar",
     props: {
+		holidays:Array,
+		currWeek:Number,
         multi: {
             type: Boolean,
             default: false
@@ -237,7 +238,9 @@ export default {
         }
     },
     watch: {
-
+		currWeek(date){
+			this.init(date);
+		},
         events() {
             if (this.isRendeRangeMode()) return;
             this.render(this.year, this.month, '_WATCHRENDER_', 'events');
@@ -319,20 +322,37 @@ export default {
         }
     },
     methods: {
-        checkRest(type, day) {
-            let hl = _.find(holidays, { 'year': String(this.year) });
-            if (hl) {
-                day = day < 10 ? '0' + day : String(day);
-                //console.log('holidays', day, this.year, this.month, hl['lists'][this.month][day])
-                if (hl['lists'] && hl['lists'][this.month][day]) {
-                    return 't' + hl['lists'][this.month][day]
-                }
-            }
-            return '';
-
+		// 是否为当前周
+		isCurrWeek(day){
+			//console.log('isCurrWeek', day[0]['date']);
+			if(!this.currWeek) return false;
+			let cday = moment(this.currWeek).format('YYYY-MM-DD');
+			let mday = moment(new Date(day[0]['date'])).format('YYYY-MM-DD');
+			
+			return cday == mday;
+		},
+		// 判断是否为休假日
+        checkRest(type, item) {
+			if(!this.holidays) return "";
+			//console.log('checkRest',item);
+			let year = new Date(item.date).getFullYear();
+			let month = new Date(item.date).getMonth();
+			let day = new Date(item.date).getDate();
+			let hl = _.find(this.holidays, { 'year': String(year) });
+			if (hl) {
+				day = day < 10 ? '0' + day : String(day);
+				if (hl['lists'] && hl['lists'][month][day]) {
+					//console.log('holidays', year, month, day, hl['lists'][month][day]);
+					return 't' + hl['lists'][month][day];
+				}
+			}
+			return "";
         },
-        init() {
-            const now = new Date();
+        init(dd=0) {
+            let now = new Date();
+			if(dd){
+				now = new Date(dd);
+			}
             this.year = now.getFullYear();
             this.month = now.getMonth();
             this.day = now.getDate();

@@ -87,6 +87,7 @@
 
         .mid {
             width: calc(100% - 450px);
+            height: 100%;
             box-sizing: border-box;
             padding-left: 15px;
 
@@ -108,8 +109,11 @@
             }
 
             .charts {
+                height: calc(100% - 40px);
+
                 /deep/ .echarts {
                     width: 100%;
+                    height: 437px;
                     background-color: #fff;
                     padding: 15px;
                     border: 1px solid #DDD;

@@ -117,14 +117,25 @@ export default {
             window.location.href = '/admin/pages/addNew';
         },
         async editItem(item) {
-
             item.content.id = item.id;
             let condition = {
                 type: 'getData',
                 collectionName: 'formList',
+                notNotice: true,
                 data: { id: item.content.formid }
             };
             let res = await this.$axios.$post('mock/db', { data: condition });
+            if (!res) {
+                this.$confirm('无法获取表单数据，可能数据被损坏?', '提示', {
+                    confirmButtonText: '重新编辑',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.UPDATE_PAGES(item.content);
+                    window.location.href = '/admin/pages/addNew';
+                }).catch(() => { });
+                return;
+            }
             item.content.content = res.content;
 
             this.UPDATE_PAGES(item.content);
@@ -166,6 +177,7 @@ export default {
                 collectionName: 'pageList',
                 data: match,
                 aggregate: [
+                    { "$match": match },
                     {
                         $lookup: {
                             from: "employee",

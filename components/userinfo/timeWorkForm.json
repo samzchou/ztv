@@ -1,0 +1,108 @@
+{
+    "gutter": 20,
+    "colspan": 2,
+    "size": "small",
+    "itemList": [{
+            "name": "type",
+            "label": "工作分类",
+            "type": "Number",
+            "required": true,
+            "component": "sam-select",
+            "filterable": true,
+            "optionsUrl": {
+                "level": 1,
+                "table": "workType",
+                "value": "id",
+                "self": true,
+                "label": "name",
+                "params": {
+                    "disabled": 0
+                },
+                "column": {
+                    "id": 1,
+                    "name": 1
+                }
+            },
+            "emit": ["typeid"],
+            "rules": [{
+                "required": true,
+                "message": "请选择工作分类",
+                "trigger": "change"
+            }],
+            "value": "",
+            "key": "type"
+        },
+        {
+            "name": "project",
+            "label": "工作项目",
+            "type": "Number",
+            "required": true,
+            "component": "sam-select",
+            "filterable": true,
+            "optionsUrl": {
+                "level": 1,
+                "table": "workProject",
+                "value": "id",
+                "self": true,
+                "label": "name",
+                "params": {
+                    "disabled": 0,
+                    "typeid": ""
+                },
+                "column": {
+                    "id": 1,
+                    "name": 1
+                }
+            },
+            "on": ["typeid"],
+            "rules": [{
+                "required": true,
+                "message": "请选择工作项目",
+                "trigger": "change"
+            }],
+            "value": "",
+            "key": "project"
+        },
+        {
+            "name": "startTime",
+            "label": "开始时间",
+            "type": "Number",
+            "required": true,
+            "component": "sam-timeselect",
+            "pickeroptions": { "start": "00:00", "step": "00:15", "end": "24:00" },
+            "rules": [{
+                "required": true,
+                "message": "请选择开始时间",
+                "trigger": "change"
+            }],
+            "value": "",
+            "key": "startTime"
+        },
+        {
+            "name": "endTime",
+            "label": "开始时间",
+            "type": "Number",
+            "required": true,
+            "component": "sam-timeselect",
+            "pickeroptions": { "start": "00:00", "step": "00:15", "end": "24:00" },
+            "rules": [{
+                "required": true,
+                "message": "请选择结束时间",
+                "trigger": "change"
+            }],
+            "value": "",
+            "key": "endTime"
+        },
+        {
+            "name": "desc",
+            "label": "工作描述",
+            "type": "String",
+            "required": true,
+            "component": "sam-input",
+            "cptype": "textarea",
+            "value": "",
+            "key": "desc",
+            "colspan": 1
+        }
+    ]
+}

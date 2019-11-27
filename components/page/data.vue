@@ -3,7 +3,7 @@
         <div class="header">
             <div class="title"><i class="el-icon-price-tag" />{{formData.title}}</div>
             <div v-show="!isAdd">
-                <el-button class="icon-link" icon="el-icon-plus" @click="addNewList">新增</el-button>
+                <el-button class="icon-link" icon="el-icon-plus" @click="addNewList">新增数据</el-button>
                 <el-button class="icon-link" icon="el-icon-finished" @click="filterVisible=!filterVisible" v-if="formData.filter">筛选</el-button>
             </div>
             <div v-show="isAdd">
@@ -33,7 +33,7 @@
                 <div>暂无数据</div>
             </div>
             <div class="tables" v-else>
-                <el-table size="mini" :data="tableData" border max-height="500" :row-key="isTree?'id':''" :tree-props="treeProps" style="width:100%">
+                <el-table size="mini" :data="tableData" border stripe fit max-height="500" :row-key="isTree?'id':''" :tree-props="treeProps" style="width:100%">
                     <el-table-column type="index" label="序号" fixed="left" align="center" width="50">
                         <template slot-scope="scope">
                             <span>{{scope.$index+(query.page - 1) * query.size + 1}}</span>
@@ -50,11 +50,11 @@
                     <!--如果是tree结构的表格-->
                     <el-table-column v-if="isTree" label="下属单元合计">
                         <template slot-scope="scope">
+                            <span>sdsdsd</span>
                             <span>{{scope.row.children && scope.row.children.length}}</span>
                         </template>
                     </el-table-column>
-
-                    <el-table-column label="操作" fixed="right" width="140">
+                    <el-table-column label="操作" width="140">
                         <template slot-scope="scope">
                             <el-button type="text" size="mini" icon="el-icon-edit" @click="addNewList(scope.row)">编辑</el-button>
                             <el-button type="text" size="mini" icon="el-icon-delete" @click="removeItem(scope.row)">删除</el-button>
@@ -108,6 +108,7 @@ export default {
                 //console.log('watch data handler=>', obj.content);
                 if (obj.content && obj.content.itemList) {
                     this.filedsArr = obj.content.itemList.filter(o => { return !o.tableHide });
+                    //console.log('this.filedsArr', this.filedsArr)
                     this.tableData = [];
                     this.formData = _.cloneDeep(obj);
                     this.setData();
@@ -166,10 +167,8 @@ export default {
         backList(flag) {
             this.isAdd = false;
             this.editRow = null;
-            if (flag) {
-                this.query.page = 1;
-                this.searchSubmit(flag);
-            }
+            this.query.page = 1;
+            this.searchSubmit(flag);
         },
         submitForms(flag) {
             let isValidate = true;
@@ -204,9 +203,7 @@ export default {
                 "type": submitType,
                 "data": dff
             };
-            //console.log('condition', condition);
             this.$axios.$post('mock/db', { data: condition }).then(result => {
-                //console.log('result', result);
                 this.$message("数据已提交保存");
                 if (submitType == 'updateData') {
                     this.backList(true);
@@ -218,9 +215,9 @@ export default {
         setData() {
             this.tableData = [];
             this.fieldItemData = {};
-			this.collectionName = undefined;
+            this.collectionName = undefined;
             let valueObj = {}, filterObj = {}, itemList = [];
-            console.log('this.formData.content', this.formData.content)
+            //console.log('this.formData.content', this.formData.content)
             //debugger
             if (this.formData.content && this.formData.content.itemList && this.formData.content.itemList.length) {
                 this.formData.content.itemList.forEach(item => {
@@ -239,32 +236,30 @@ export default {
                     }
                 });
                 this.formValue = { ...valueObj };
-                //console.log('this.formValue', this.formValue)
                 // 如果有筛选条件则创建form表单
                 this.filterForm.itemList = [...itemList];
                 this.filterValue = { ...filterObj };
-                /* console.log('this.filterForm', this.filterForm);
-                debugger */
                 this.getList();
             }
         },
-
+        // 搜索
         searchSubmit(flag) {
-			this.filterParams = {};
-			if(!flag){
-				this.filterForm.itemList.forEach(item => {
-					let key = item.name;
-					let value = dataUtil.checkValue(item.type, this.filterValue[item.key]);
-					if (value) {
-						value = dataUtil.getSearchParams(item, value);
-						if (value) {
-							this.filterParams[key] = value;
-						}
-					}
-				});
-			}
+            this.filterParams = {};
+            if (!flag) {
+                this.filterForm.itemList.forEach(item => {
+                    let key = item.name;
+                    let value = dataUtil.checkValue(item.type, this.filterValue[item.key]);
+                    if (value) {
+                        value = dataUtil.getSearchParams(item, value);
+                        if (value) {
+                            this.filterParams[key] = value;
+                        }
+                    }
+                });
+            }
             this.getList();
         },
+        // 重置搜索表单
         searchReset() {
             this.$refs.filterform.resetForm();
         },
@@ -301,9 +296,8 @@ export default {
                     }
                     this.fieldItemData[key] = lists;
                 }
-                console.log('this.fieldItemData', this.fieldItemData);
+                //console.log('this.fieldItemData', this.fieldItemData);
             });
-
         },
 
         // 设置显示值

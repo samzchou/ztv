@@ -11,13 +11,23 @@
                     <p>Help China's High-Speed Rail, Speed of China</p>
                 </div>
                 <div class="desc">
-                    <div>本周：11月21日至11月31日；法定假日：3天</div>
+                    <div>本周：11月21日至11月31日；法定节假日：{{getMyHday}}天；本周工作计划如下</div>
                     <div v-if="weekTimeData && weekTimeData.plan" class="plans">
-                        <fieldset>
-                            <legend>本周工作计划</legend>
-                            <div>工作分类：{{parseWorkPlan('workType')}}；工作项目：{{parseWorkPlan('workProject')}}<br />计划描述：{{parseWorkPlan('desc')}}</div>
-                        </fieldset>
+                        <el-table :data="weekTimeData.plan" size="small" border stripe fit style="width:100%">
+                            <el-table-column type="index" label="序号" align="center" width="50" />
+                            <el-table-column label="工作分类" prop="workType" width="100">
+                                <template slot-scope="scope">
+                                    {{parseWorkPlan('workType', scope.row)}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="工作项目" prop="workProject" width="100">
+                                <template slot-scope="scope">
+                                    {{parseWorkPlan('workProject', scope.row)}}
+                                </template>
+                            </el-table-column>
+                            <el-table-column label="计划内容描述" prop="desc" />
 
+                        </el-table>
                     </div>
                     <div v-else>
                         <div>暂无本周计划，请点击下方按钮制定计划</div>
@@ -31,24 +41,29 @@
         <div class="content">
             <div class="left">
                 <client-only>
-                    <my-calendar lunar clean monFirst responsive @select="calendarChange" />
+                    <my-calendar lunar clean monFirst responsive :holidays="myHolidays" :currWeek="!useMonth?weekList[0]['date']:null" :value="calendarValue" @select="calendarChange" />
                 </client-only>
             </div>
             <div class="mid">
                 <div class="title">
-                    <div>时间钟图表：{{setWeek}}</div>
-                    <div>
-                        <el-button-group>
+                    <div class="canlan">
+                        <el-date-picker v-model="currDate" size="mini" type="week" :clearable="false" :picker-options="{ firstDayOfWeek: 1 }" format="yyyy年 第 WW 周" placeholder="选择周" @change="handlerChangeWeek" style="width:150px" />
+                        <el-button size="mini" icon="el-icon-pie-chart" title="本周" @click="setCurrWeek(0)">本周</el-button>
+                        <el-date-picker v-model="currDate" size="mini" type="month" :clearable="false" placeholder="选择月" @change="handlerChangeMonth" style="width:140px;margin-left:20px" />
+                        <el-button size="mini" icon="el-icon-pie-chart" title="本周" @click="setCurrMonth(0)">本月</el-button>
+                    </div>
+                    <!-- <div>
+                        <el-button-group style="margin-right:15px;">
                             <el-button size="mini" icon="el-icon-back" :type="isCurrWeek === -1 ? 'primary' : ''" title="上周" @click="setCurrWeek(-7)" />
-                            <el-button v-if="isCurrWeek==-1" size="mini" icon="el-icon-right" :type="isCurrWeek === 1 ? 'primary' : ''" title="下周" @click="setCurrWeek(7)" />
+                            <el-button size="mini" icon="el-icon-pie-chart" :type="isCurrWeek === 0 ? 'primary' : ''" title="本周" @click="setCurrWeek(0)">本周</el-button>
+                            <el-button size="mini" icon="el-icon-right" :type="isCurrWeek === 1 ? 'primary' : ''" title="下周" @click="setCurrWeek(7)" />
                         </el-button-group>
-                        <el-button size="mini" :type="isCurrWeek === 0 ? 'primary' : ''" icon="el-icon-pie-chart" title="本周" style="margin-left:10px" @click="setCurrWeek(0, true)">本周</el-button>
                         <el-button-group>
                             <el-button size="mini" icon="el-icon-back" :type="isCurrMonth === -1 ? 'primary' : ''" title="上月" @click="setCurrMonth(-1)" />
-                            <el-button size="mini" v-if="isCurrMonth==-1" icon="el-icon-right" :type="isCurrMonth === 1 ? 'primary' : ''" title="下月" @click="setCurrMonth(1)" />
+                            <el-button size="mini" :type="isCurrMonth === 0 ? 'primary' : ''" icon="el-icon-pie-chart" title="本周" @click="setCurrMonth(0)">本月</el-button>
+                            <el-button size="mini" icon="el-icon-right" :type="isCurrMonth === 1 ? 'primary' : ''" title="下月" @click="setCurrMonth(1)" />
                         </el-button-group>
-                        <el-button size="mini" :type="isCurrMonth === 0 ? 'primary' : ''" icon="el-icon-pie-chart" title="本周" style="margin-left:10px" @click="setCurrMonth(0, true)">本月</el-button>
-                    </div>
+                    </div> -->
                     <div>
                         <el-form ref="myForm" :inline="true" status-icon label-position="left" size="mini" :model="filterValue">
                             <form-item :item="filterItem" v-model="filterValue.department" :itemValue="{'val':filterValue.department}" />
@@ -72,18 +87,21 @@
 
 <script>
 import myClock from '~/components/clock';
+import holidays from '~/config/opts/holiday.json';
 import myCalendar from '~/components/calendar/calendar';
 import timeWheel from '~/components/timeWheel';
 import { mapState, mapMutations, mapActions } from "vuex";
 import samForm from '~/components/form';
 import formItem from '~/components/form/formItem';
 import dataUtil from '~/util/data_util';
+import chartOptions from './chartOptions.json';
 export default {
     components: {
         myClock, myCalendar, timeWheel, samForm, formItem
     },
     data: () => ({
         isInit: false,
+        myHolidays: holidays,
         loadingMask: null,
         loadedChart: false,
         weekTime: 0,
@@ -91,8 +109,11 @@ export default {
         isCurrWeek: 0,
         isCurrMonth: 0,
         currDate: '',
+        weekByDate: '',
         timeData: null,
         weekList: [],
+        useMonth: false,
+        calendarValue: [],
         filterForm: {
             department: []
         },
@@ -101,7 +122,7 @@ export default {
         },
         filterItem: {
             "name": "department",
-            "placeholder": "按部门查看",
+            "placeholder": "按部门查看，限主管或领导",
             "component": "sam-cascader",
             "props": {
                 "multiple": true,
@@ -118,80 +139,78 @@ export default {
                 }
             }
         },
-        chartItem: {
-            //color: ['#3398DB'],
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                }
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: [
-                {
-                    type: 'category',
-                    data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                    axisTick: {
-                        alignWithLabel: true
-                    }
-                }
-            ],
-            yAxis: [
-                {
-                    type: 'value',
-                    max: 24,
-                    axisLabel: {
-                        formatter: '{value}小时'
-                    }
-                },
-
-            ],
-            series: [
-                {
-                    name: '工作总时',
-                    type: 'bar',
-                    barWidth: '60%',
-                    data: [],
-                    markPoint: {
-                        data: [
-                            { type: 'max', name: '最大值' },
-                            { type: 'min', name: '最小值' }
-                        ]
-                    },
-                    markLine: {
-                        data: [
-                            { type: 'average', name: '平均值' }
-                        ]
-                    }
-                }
-            ]
-        }
+        chartItem: { ...chartOptions },
+        monthLast: '',
     }),
     computed: {
         ...mapState(["collectionData"]),
         ...mapState("timeWork", ["holiday", "weekArray"]),
-        setWeek() {
+        /* getweekByDate() {
+            return new Date(this.weekList[0]['date']);
+        }, */
+
+        // 获取当前周的总休假天数
+        getMyHday() {
+            //console.log('this.weekList', this.weekList);
+            let restDay = 0;
+            this.weekList.forEach(item => {
+                let year = new Date(item.date).getFullYear();
+                let month = new Date(item.date).getMonth();
+                let hd = _.find(this.myHolidays, { "year": String(year) });
+                hd = hd.lists[month];
+                let day = new Date(item.date).getDate();
+                day = day < 10 ? '0' + day : String(day);
+                if (hd[day]) {
+                    restDay++;
+                }
+                //console.log('day', month, hd, day)
+            })
+            return restDay;
+        }
+    },
+    methods: {
+        // 周范围日期
+        setWeekStr() {
             if (this.weekList.length) {
                 return moment(this.weekList[0]['date']).format('YYYY-MM-DD') + '至' + moment(this.weekList[6]['date']).format('YYYY-MM-DD')
             }
             return "";
-        }
-    },
-    methods: {
-        setCurrWeek() {
-
         },
-        setCurrMonth() {
-
+        // 周下拉选择
+        handlerChangeWeek(date) {
+            console.log('handlerChangeWeek', date);
+            this.currDate = date.getTime();
+            this.calendarValue = [date.getFullYear(), date.getMonth() + 1];
+            this.useMonth = false;
+            this.setWeekList();
+        },
+        // 年月下拉选择
+        handlerChangeMonth(date) {
+            console.log('handlerChangeMonth', date);
+            this.currDate = date.getTime();
+            this.monthLast = new Date(date.getFullYear(), date.getMonth() + 1, 0).getTime();
+            //console.log('monthLast', this.monthLast);
+            this.useMonth = true;
+            this.getMyWorkByMonth();
+        },
+        // 本月
+        setCurrWeek(val) {
+            //console.log('setCurrWeek', new Date(this.weekList[0]['date']), this.weekList[0]['date']);
+            const date = new Date(this.weekTime);
+            const dp = date.setDate(date.getDate() + val);
+            this.currDate = new Date(dp).getTime();
+            this.useMonth = false;
+            this.setWeekList();
+        },
+        // 本月
+        setCurrMonth(val) {
+            this.isCurrMonth = val;
+            this.useMonth = true;
         },
         // 通过部门等查询过滤
         async handleFilterSearch() {
-            //console.log('handleFilterSearch', this.filterValue.department);
+            this.$alert("对不起，因当前数据未完善，无法进行统计！")
+            return;
             const condition = {
                 type: "listData",
                 collectionName: "employee",
@@ -208,24 +227,29 @@ export default {
                 console.log('uids', uids);
             }
         },
-        parseWorkPlan(key) {
-            if (key == 'desc') {
-                return this.weekTimeData.plan[key];
-            } else {
-                //debugger
-                let obj = _.find(this.collectionData[key], { "id": this.weekTimeData.plan[key] });
-                return obj.name || "";
-            }
+        needAddPlan(item) {
+
         },
+        removePlan(item) {
+
+        },
+
+        // 解析周计划数据
+        parseWorkPlan(key, item) {
+            let obj = _.find(this.collectionData[key], { "id": item[key] });
+            return obj.name || "";
+        },
+        // 日历传参
         calendarChange(val) {
+            console.log('calendarChange', val);
             this.currDate = new Date(new Date(val).toLocaleDateString()).getTime();
-            //this.showCalendar = false;
-            console.log('calendarChange', this.currDate);
+            //
             this.setWeekList();
         },
         // 设置一周的起始和终止时间
         setWeekList() {
             this.loadedChart = false;
+            this.calendarValue = [];
             this.chartItem.xAxis[0].data = [];
             if (!this.loadingMask) {
                 this.loadingMask = this.$loading({ background: 'rgba(0, 0, 0, 0.5)' });
@@ -233,6 +257,9 @@ export default {
             this.weekList = [];
             const currenDay = new Date(this.currDate).getDay();
             const weekToDay = new Date(this.currDate).getTime();
+
+            this.calendarValue = [new Date(this.currDate).getFullYear(), new Date(this.currDate).getMonth() + 1];
+
             this.weekArray.forEach((w, i) => {
                 const day = weekToDay + 24 * 60 * 60 * 1000 * (i - ((currenDay + 6) % 7));
                 const st = new Date(day).getTime();
@@ -241,11 +268,66 @@ export default {
                     date: st
                 };
                 this.weekList.push(obj);
-                this.chartItem.xAxis[0].data.push(w + '(' + moment(st).format('MM-DD') + ')')
+                this.chartItem.xAxis[0].data.push(w + '(' + moment(st).format('MM-DD') + ')');
             });
-            console.log('this.weekList', this.weekList);
+            //this.weekByDate = this.currDate;
+            //console.log('this.weekList', this.weekList);
             this.getMyWorkByWeek()
         },
+        // 获取某月的工作时间钟数据
+        async getMyWorkByMonth(math = {}) {
+            this.timeData = null;
+            this.chartItem.series[0].data = [];
+            this.chartItem.xAxis[0].data = [];
+            const condition = {
+                type: "listData",
+                collectionName: "timeBlock",
+                notNotice: true,
+                data: {
+                    startdate: { $gte: this.currDate, $lte: this.monthLast },
+                    userId: this.$store.state.user.id
+                }
+            };
+            const result = await this.$axios.$post("mock/db", { data: condition });
+            console.log('getMyWorkByMonth', result);
+            this.timeData = result;
+            if (result && result.list) {
+                const lastDay = new Date(this.monthLast).getDate();
+                // 日期天
+                let dayArr = [];
+                // 统计每天总时间
+                result.list.forEach(list => {
+                    list.content.forEach(item => {
+                        if (item.list && item.list.length) {
+                            dayArr.push(item);
+                        }
+                    })
+                });
+                //console.log('dayArr', dayArr)
+                this.chartItem.title.subtext = moment(this.currDate).format('YYYY年MM月');
+                for (let i = 0; i < lastDay; i++) {
+                    this.chartItem.xAxis[0].data.push((i + 1) + '日');
+                    let dd = this.currDate + i * 3600 * 24 * 1000;
+                    let tt = _.find(dayArr, { "date": dd });
+                    if (tt) {
+                        this.chartItem.series[0].data.push(this.parseDayData(tt.list));
+                    } else {
+                        this.chartItem.series[0].data.push(0);
+                    }
+                }
+                console.log('chartItem data', this.chartItem.series[0].data)
+            }
+        },
+        // 解析每天的时间总数
+        parseDayData(list) {
+            let allTimes = 0;
+            list.forEach(item => {
+                allTimes += item.allTimes / 1000 / 3600;
+            });
+            return allTimes;
+        },
+
+
         // 获取周工作时间钟数据
         async getMyWorkByWeek(math = {}) {
             this.timeData = null;
@@ -266,6 +348,7 @@ export default {
                     this.weekTimeData = { ...result };
                 }
                 this.timeData = result;
+                this.chartItem.title.subtext = this.setWeekStr();
                 this.chartItem.series[0].data = this.parseBarData(result.content);
             }
             setTimeout(() => {
@@ -276,36 +359,7 @@ export default {
                 console.log(this.chartItem.series)
             }, 500);
         },
-        // 获取月工作时间钟数据（按组织部门树查询）
-        async getMyWorkByMonth(math = {}) {
-            this.timeData = null;
-            this.chartItem.series[0].data = [];
-            const condition = {
-                type: "getData",
-                collectionName: "timeBlock",
-                notNotice: true,
-                data: {
-                    startdate: this.weekList[0].date,
-                    userId: this.$store.state.user.id
-                }
-            };
-            const result = await this.$axios.$post("mock/db", { data: condition }, { nothold: true });
-            console.log('getMyWorkByWeek', result);
-            if (result) {
-                if (!this.weekTimeData) {
-                    this.weekTimeData = { ...result };
-                }
-                this.timeData = result;
-                this.chartItem.series[0].data = this.parseBarData(result.content);
-            }
-            setTimeout(() => {
-                this.loadingMask && this.loadingMask.close();
-                this.loadingMask = null;
-                this.isInit = true;
-                this.loadedChart = true;
-                console.log(this.chartItem.series)
-            }, 500);
-        },
+
         parseBarData(lists) {
             let arr = [];
             lists.forEach(item => {

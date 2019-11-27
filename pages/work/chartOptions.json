@@ -1,0 +1,61 @@
+{
+    "title": {
+        "text": "我的时间钟分析统计图表",
+        "left": "center",
+        "subtext": ""
+    },
+    "tooltip": {
+        "trigger": "axis",
+        "axisPointer": {
+            "type": "shadow"
+        }
+    },
+    "grid": {
+        "left": "3%",
+        "right": "4%",
+        "bottom": "3%",
+        "containLabel": true
+    },
+    "xAxis": [{
+        "type": "category",
+        "data": [],
+        "axisTick": {
+            "alignWithLabel": true
+        }
+    }],
+    "yAxis": [{
+        "type": "value",
+        "max": 24,
+        "axisLabel": {
+            "formatter": "{value}小时"
+        }
+    }],
+    "series": [{
+        "name": "工作总时",
+        "type": "bar",
+        "barWidth": "50%",
+        "label": {
+            "normal": {
+                "show": true,
+                "position": "inside"
+            }
+        },
+        "markPoint": {
+            "data": [{
+                    "type": "max",
+                    "name": "最大值"
+                },
+                {
+                    "type": "min",
+                    "name": "最小值"
+                }
+            ]
+        },
+        "markLine": {
+            "data": [{
+                "type": "average",
+                "name": "平均值"
+            }]
+        }
+    }]
+}

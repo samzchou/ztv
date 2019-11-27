@@ -1,0 +1,83 @@
+{
+    "gutter": 20,
+    "colspan": 2,
+    "size": "small",
+    "itemList": [{
+            "name": "workType",
+            "label": "工作分类",
+            "type": "Number",
+            "required": true,
+            "component": "sam-select",
+            "filterable": true,
+            "optionsUrl": {
+                "level": 1,
+                "table": "workType",
+                "value": "id",
+                "self": true,
+                "label": "name",
+                "params": {
+                    "disabled": 0
+                },
+                "column": {
+                    "id": 1,
+                    "name": 1
+                }
+            },
+            "emit": ["typeid"],
+            "rules": [{
+                "required": true,
+                "message": "请选择工作分类",
+                "trigger": "change"
+            }],
+            "value": "",
+            "key": "workType"
+        },
+        {
+            "name": "workProject",
+            "label": "工作项目",
+            "type": "Number",
+            "required": true,
+            "component": "sam-select",
+            "filterable": true,
+            "optionsUrl": {
+                "level": 1,
+                "table": "workProject",
+                "value": "id",
+                "self": true,
+                "label": "name",
+                "params": {
+                    "disabled": 0,
+                    "typeid": ""
+                },
+                "column": {
+                    "id": 1,
+                    "name": 1
+                }
+            },
+            "on": ["typeid"],
+            "rules": [{
+                "required": true,
+                "message": "请选择工作项目",
+                "trigger": "change"
+            }],
+            "value": "",
+            "key": "workProject"
+        },
+        {
+            "name": "desc",
+            "label": "计划说明",
+            "type": "String",
+            "required": true,
+            "component": "sam-input",
+            "cptype": "textarea",
+            "value": "",
+            "rules": [{
+                "required": true,
+                "message": "请输入计划说明",
+                "blue": "blur"
+            }],
+            "key": "desc",
+            "colspan": 1
+        }
+    ]
+}

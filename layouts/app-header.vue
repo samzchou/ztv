@@ -27,7 +27,7 @@
                 <ul v-if="msgList.length">
                     <li v-for="item in msgList" :key="item.id">
                         <h3>{{getWfType(item.wfType)}}</h3>
-                        <div>申请人：{{item.fromName}}；申请日期：{{formatDate(item.createDate, 'YYYY-MM-DD hh:mm')}}</div>
+                        <div>申请人：{{item.fromName}}；申请日期：{{formatDate(item.content.date, 'YYYY-MM-DD')}}</div>
                         <div class="btns">
                             <el-button size="mini" type="primary" icon="el-icon-document" @click="showMsgInfo(item)">详细信息</el-button>
                         </div>
@@ -42,7 +42,8 @@
             </div>
         </div>
         <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" append-to-body :close-on-click-modal="false" width="600px">
-            <my-msg :data="msgBox" :showList="false" />
+            <div>{{msgBox}}</div>
+			<my-msg :data="msgBox" :showList="false" />
         </el-dialog>
     </section>
 </template>
@@ -152,7 +153,7 @@ export default {
             const condition = {
                 type: id ? "getData" : "listData",
                 collectionName: "inbox",
-                data: id ? { id: id } : { "isRead": false, "touserId": { $in: [this.$store.state.user.id] } }
+                data: id ? { id: id } : {  isRead:false, "touserId": { $in: [this.$store.state.user.id] } }
             };
             let res = await this.$axios.$post("mock/db", { data: condition });
             if (id) {
@@ -160,7 +161,7 @@ export default {
             } else {
                 this.msgList = res.list;
             }
-            //console.log('getMsgList', res);
+            console.log('getMsgList', res);
         }
     },
     mounted() {

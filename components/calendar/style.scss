@@ -191,6 +191,9 @@
 .mpvue-calendar .calendar-container {
     padding: 10px;
     box-sizing: border-box;
+	.active{
+		background-color:rgba(251, 237, 170, 0.3);
+	}
 }
 
 .mpvue-calendar thead td {

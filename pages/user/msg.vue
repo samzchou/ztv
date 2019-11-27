@@ -41,8 +41,8 @@
             <el-tab-pane label="消息通知" name="second">暂无消息通知</el-tab-pane>
         </el-tabs>
         <!--消息内容-->
-        <el-dialog title="事项详情" :visible.sync="dialogVisible" append-to-body :close-on-click-modal="false" width="600px">
-            <my-msg :data="msgBox" :showList="false" />
+        <el-dialog :title="getType" :visible.sync="dialogVisible" append-to-body :close-on-click-modal="false" width="600px">
+			<my-msg :data="msgBox" :showList="false" />
         </el-dialog>
     </section>
 </template>
@@ -54,6 +54,15 @@ export default {
     components: {
         myMsg
     },
+	computed:{
+		getType(){
+			if(this.msgBox){
+				let type = _.find(this.$store.state.wfType, {"value":this.msgBox.wfType});
+				return type?type.label:"事项详情";
+			}
+			return "事项详情";
+		}
+	},
     data: () => ({
         socketIO: null,
         activeName: 'first',

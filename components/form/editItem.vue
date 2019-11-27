@@ -16,6 +16,7 @@ export default {
     name: "edit-itme",
     components: {
         "sam-date": resolve => require(["./edit/sam-date.vue"], resolve),
+		"sam-timeselect": resolve => require(["./edit/sam-timeselect.vue"], resolve),
         "sam-input": resolve => require(["./edit/sam-input.vue"], resolve),
         "sam-number": resolve => require(["./edit/sam-number.vue"], resolve),
         "sam-radio": resolve => require(["./edit/sam-radio.vue"], resolve),

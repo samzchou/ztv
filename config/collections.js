@@ -274,6 +274,11 @@ module.exports = {
             "type": Number,
             "default": 0
         },
+		"typeid": {
+			"label": "项目名称",
+            "type": Number,
+            "default": 0
+        },
         "name": {
             "label": "项目名称",
             "type": String,
@@ -489,7 +494,7 @@ module.exports = {
             "label": "当前周日时间"
         },
 		"plan":{
-            "type": Object,
+            "type": Array,
             "default": "",
             "label": "计划内容"
         },
@@ -499,9 +504,9 @@ module.exports = {
             "label": "补卡申请"
         },
         "content": {
-            "type": Object,
+            "type": Array,
             "default": "",
-            "label": "数据内容JSON"
+            "label": "数据内容"
         }
     },
     /*----------消息日志表-----------*/

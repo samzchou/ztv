@@ -7,20 +7,6 @@ export const state = () => ({
 	rangeTime:null,
 	holiday:[],
     weekArray: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-    workType: [{
-        label: "工作分类一",
-        id: 1
-    }, {
-        label: "工作分类二",
-        id: 2
-    }],
-    workProject: [{
-        label: "项目一",
-        id: 1
-    }, {
-        label: "项目二",
-        id: 2
-    }],
     timeutilHeight: 20,
     locakMinutes: 15,
     isEditTime: false,

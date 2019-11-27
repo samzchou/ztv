@@ -1,8 +1,8 @@
 <template>
     <section class="msg-container">
         <div class="title">
-            <div>申请人：{{data.fromName}}</div>
-            <div>申请时间：{{formatDate(data.createDate)}}</div>
+			<div>申请人：{{data.fromName}}</div>
+            <div>申请时间：{{formatDate(data.content.date)}}</div>
             <div>当前状态：<span>已申请</span></div>
         </div>
         <div class="content" v-if="msgItem">
@@ -20,7 +20,7 @@
                     <el-radio v-model="ruleForm.agree" label="1">同意</el-radio>
                     <el-radio v-model="ruleForm.agree" label="2">拒绝</el-radio>
                 </el-form-item>
-                <el-form-item v-if="ruleForm.agree=='2'" label="拒绝理由：" prop="feedBack" :rules="Rules">
+                <el-form-item label="备注说明：" prop="feedBack" :rules="Rules">
                     <div style="padding:10px 0">
                         <el-input type="textarea" v-model="ruleForm.feedBack"></el-input>
                     </div>
@@ -109,7 +109,7 @@ export default {
                 }
             });
         },
-        formatDate(datetime, dis = 'YYYY-MM-DD hh:mm:ss') {
+        formatDate(datetime, dis = 'YYYY-MM-DD') {
             if (datetime) {
                 return moment(datetime).format(dis);
             }

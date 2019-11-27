@@ -2,6 +2,7 @@ $li-height: 20;
 
 .home-container {
     height: 100%;
+    position: relative;
 
     .tools {
         height: 45px;
@@ -32,6 +33,45 @@ $li-height: 20;
                 /deep/ .el-date-editor {
                     width: 170px;
                 }
+            }
+        }
+    }
+
+    .my-plan {
+        position: absolute;
+        top: 45px;
+        width: 100%;
+        background-color: #FFF;
+        z-index: 1;
+        box-shadow: 0 5px 10px 0 rgba(0, 0, 0, .1);
+
+        .title {
+            font-size: 16px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .btns {
+            padding: 15px;
+        }
+
+        fieldset {
+            border: 1px solid #DDD;
+
+            legend {
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                padding: 0 10px;
+
+                button {
+                    margin-left: 10px;
+                }
+            }
+
+            >div {
+                line-height: 25px;
+                padding: 0 15px;
             }
         }
     }

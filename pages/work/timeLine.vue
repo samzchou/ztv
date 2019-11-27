@@ -2,7 +2,6 @@
 <template>
     <section class="home-container">
         <!--顶部工具条-->
-        <div size="mini" icon="el-icon-back" :type="isCurrWeek === -1 ? 'primary' : ''" />
         <div class="tools">
             <div>
                 <el-button-group>
@@ -11,19 +10,48 @@
                 </el-button-group>
                 <el-button size="mini" :type="isCurrWeek === 0 ? 'primary' : ''" icon="el-icon-news" title="本周" style="margin-left:10px" @click="setWeek(0, true)">本周</el-button>
                 <div class="canlan">
-                    <el-date-picker v-model="weekToDay" size="mini" type="week" :picker-options="{ firstDayOfWeek: 1 }" format="yyyy年 第 WW 周" placeholder="选择周" @change="setDay" />
+                    <el-date-picker v-model="weekToDay" size="mini" type="week" :clearable="false" :picker-options="{ firstDayOfWeek: 1 }" format="yyyy年 第 WW 周" placeholder="选择周" @change="setDay" />
                 </div>
                 <div v-if="weekList.length" class="text">{{ setWeekTitle }}</div>
                 <div class="all-times">allTimes</div>
             </div>
             <div>
-                <el-button size="mini" icon="el-icon-box" type="info" @click="needAddPlan(true, $event)" v-if="checkOutPaln">{{checkIsPaln?'编辑我的周计划':'查看我的周计划'}}</el-button>
+                <!-- <el-button size="mini" icon="el-icon-box" type="info" @click="needAddPlan(true, $event)" v-if="checkOutPaln">{{checkIsPaln?'编辑我的周计划':'查看我的周计划'}}</el-button> -->
+                <el-button size="mini" icon="el-icon-box" type="info" @click="showPlan=!showPlan">编辑我的周计划</el-button>
                 <el-button size="mini" icon="el-icon-time" type="primary" style="margin-right:20px;" @click="saveData(null)">保存我的时间钟</el-button>
                 <!-- <el-button-group>
                     <el-button size="mini" icon="el-icon-time" :type="viewType === 0 ? 'primary' : ''" title="时钟模式" @click="setType(1)" />
                     <el-button size="mini" icon="el-icon-date" :type="viewType == 1 ? 'primary' : ''" title="列表模式" @click="setType(0)" />
                     <el-button size="mini" icon="el-icon-box" title="数据统计" @click="showStatistical" />
                 </el-button-group> -->
+            </div>
+        </div>
+        <!--周工作计划-->
+        <div class="my-plan" v-show="showPlan">
+            <div class="title">本周工作计划</div>
+            <el-table v-if="planData.length" :data="planData" size="small" border stripe fit style="width:100%">
+                <el-table-column type="index" label="序号" align="center" width="50" />
+                <el-table-column label="工作分类" prop="workType" width="100">
+                    <template slot-scope="scope">
+                        {{parseWorkPlan('workType', scope.row)}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="工作项目" prop="workProject" width="100">
+                    <template slot-scope="scope">
+                        {{parseWorkPlan('workProject', scope.row)}}
+                    </template>
+                </el-table-column>
+                <el-table-column label="计划内容描述" prop="desc" />
+                <el-table-column label="操作" width="150">
+                    <template slot-scope="scope">
+                        <el-button type="text" size="mini" icon="el-icon-edit" @click="needAddPlan(scope.row)">编辑</el-button>
+                        <el-button type="text" size="mini" icon="el-icon-delete" @click="removePlan(scope.row)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+            <div class="btns">
+                <el-button size="small" type="primary" @click="needAddPlan(null)">添加周工作计划</el-button>
+                <el-button size="small" @click="showPlan=false">隐藏/关闭</el-button>
             </div>
         </div>
         <!--内容区-->
@@ -61,7 +89,7 @@
                     <el-scrollbar ref="myScrollbar" class="scrollbar">
                         <ul id="week-list" class="week-list">
                             <li v-for="n in 7" :key="n" :class="{ active: checkAtive(n - 1) }">
-                                <time-col :col-index="n - 1" :ref="`cols-${n - 1}`" :time="weekList[n - 1]" :data-list="timeBlockList[n - 1]? timeBlockList[n - 1]['list']: []" @addBlock="addBlock" @removeBlock="removeBlock" @updateList="updateList" />
+                                <time-col :col-index="n - 1" :ref="`cols-${n - 1}`" :time="weekList[n - 1]" :dataList="timeBlockList[n - 1]? timeBlockList[n - 1]['list']: []" @addBlock="addBlock" @removeBlock="removeBlock" @updateList="updateList" />
                                 <!--如果今天之前就冻结，加上遮罩，除非申请了补填并审核同意-->
                                 <div v-if="disabledWork(n - 1)" class="mask"></div>
                             </li>
@@ -79,7 +107,7 @@
             </div>
         </div>
         <!--申请补填弹窗-->
-        <el-dialog class="apply-dialog" :title="isAddPlan?'制定本周工作计划':'申请补填'" :visible.sync="showApply" append-to-body :close-on-click-modal="false" width="500px">
+        <el-dialog class="apply-dialog" :title="isAddPlan?'制定本周工作计划':'申请补填'" :visible.sync="showDialog" append-to-body :close-on-click-modal="false" width="500px">
             <div v-if="!isAddPlan">
                 <div class="apply-title">
                     申请日期：{{ formatDate(ruleForm.date) }}
@@ -100,11 +128,12 @@
                     </el-form-item>
                 </el-form>
             </div>
+            <!--制定本周计划-->
             <div v-else class="add-plan">
                 <sam-form ref="editform" :data="formData" :disabled="!checkIsPaln" v-model="formValue" />
                 <div style="padding: 10px 20px">
                     <el-button size="small" type="primary" @click="submitPlan">提交保存</el-button>
-                    <el-button size="small" @click="showApply=false">取消关闭</el-button>
+                    <el-button size="small" @click="showDialog=false">取消关闭</el-button>
                 </div>
             </div>
         </el-dialog>
@@ -118,6 +147,10 @@ import timeWork from "~/components/userinfo/timeWork";
 import WebSocket from '~/util/webSocket';
 import dataUtil from '~/util/data_util';
 import samForm from '~/components/form';
+
+import timeLineForm from './timeLineForm.json';
+//const timeLineForm = require('./timeLineForm.json');
+
 export default {
     components: {
         timeCol, timeWork, samForm
@@ -141,85 +174,12 @@ export default {
             left: 300,
             top: 200
         },
-        showApply: false,
+        showDialog: false,
         isAddPlan: false, // 是否制定周计划
-        formData: {
-            "gutter": 20,
-            "colspan": 2,
-            "size": "small",
-            "itemList": [
-                {
-                    "name": "workType",
-                    "label": "工作分类",
-                    "type": "Number",
-                    "required": true,
-                    "component": "sam-select",
-                    "filterable": true,
-                    "optionsUrl": {
-                        "level": 1,
-                        "table": "workType",
-                        "value": "id",
-                        "self": true,
-                        "label": "name",
-                        "params": { "disabled": 0 },
-                        "column": { "id": 1, "name": 1 }
-                    },
-                    "rules": [
-                        {
-                            "required": true,
-                            "message": "请选择工作分类",
-                            "trigger": "change"
-                        }
-                    ],
-                    "value": "",
-                    "key": "workType"
-                },
-                {
-                    "name": "workProject",
-                    "label": "工作项目",
-                    "type": "Number",
-                    "required": true,
-                    "component": "sam-select",
-                    "filterable": true,
-                    "optionsUrl": {
-                        "level": 1,
-                        "table": "workProject",
-                        "value": "id",
-                        "self": true,
-                        "label": "name",
-                        "params": { "disabled": 0 },
-                        "column": { "id": 1, "name": 1 }
-                    },
-                    "rules": [
-                        {
-                            "required": true,
-                            "message": "请选择工作项目",
-                            "trigger": "change"
-                        }
-                    ],
-                    "value": "",
-                    "key": "workProject"
-                },
-                {
-                    "name": "desc",
-                    "label": "计划说明",
-                    "type": "String",
-                    "required": true,
-                    "component": "sam-input",
-                    "cptype": "textarea",
-                    "value": "",
-                    "rules": [
-                        {
-                            "required": true,
-                            "message": "请输入计划说明",
-                            "blue": "blur"
-                        }
-                    ],
-                    "key": "desc",
-                    "colspan": 1
-                }
-            ]
-        },
+        planData: [], // 计划列表
+        showPlan: true,
+        eidtPlan: null,
+        formData: timeLineForm,
         formValue: {
             workType: "",
             workProject: "",
@@ -239,6 +199,7 @@ export default {
 
     }),
     computed: {
+        ...mapState(["collectionData"]),
         ...mapState("timeWork", ["holiday", "weekArray", "timeutilHeight", "locakMinutes", "editIndex", "editBlock", "isEditTime", "rangeTime"]),
         setWindowPos() {
             return {
@@ -289,21 +250,57 @@ export default {
     methods: {
         ...mapMutations("timeWork", ["UPDATE_EDITINGTIME"]),
         ...mapActions("timeWork", ["ASYNC_GTETIME_RANGE", "ASYNC_GTE_HOLIDAY"]),
+
         closeDialog() {
             this.isAddPlan = false;
         },
+        parseWorkPlan(key, row) {
+            if (key == 'desc') {
+                return row[key];
+            } else {
+                let obj = _.find(this.collectionData[key], { "id": row[key] });
+                return obj.name || "";
+            }
+        },
+        removePlan(item) {
+            this.eidtPlan = item;
+            this.$confirm('确定要移除该计划吗?', '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let planList = [...this.planData];
+                let index = _.findIndex(planList, { key: item.key });
+                planList.splice(index, 1);
+                let condition = {
+                    type: 'updateData',
+                    collectionName: "timeBlock",
+                    data: {
+                        "id": this.timeData.id,
+                        "plan": planList
+                    }
+                };
+                this.$axios.$post('mock/db', { data: condition }).then(res => {
+                    if (res) {
+                        this.planData = [...planList];
+                    }
+                });
+            }).catch(() => { });
+        },
         // 添加或编辑周工作计划
-        needAddPlan(flag) {
+        needAddPlan(item) {
             this.formValue = {
                 workType: "",
                 workProject: "",
                 desc: ""
             };
-            if (this.timeData && this.timeData.plan && flag) {
-                this.formValue = { ...this.timeData.plan };
+            //debugger
+            if (this.timeData && this.timeData.plan && item) {
+                this.eidtPlan = item;
+                this.formValue = { ...item };
             }
             this.isAddPlan = true;
-            this.showApply = true;
+            this.showDialog = true;
         },
         // 提交本周工作计划
         submitPlan() {
@@ -314,35 +311,43 @@ export default {
                 this.$message.error('表单数据的验证有误，请核查！');
                 return;
             }
-            //console.log('submitPlan', data);
+            if (this.eidtPlan) {
+                let index = _.findIndex(this.planData, { key: this.eidtPlan.key });
+                this.$set(this.planData, index, data);
+            } else {
+                data.key = new Date().getTime();
+                this.planData.push(data);
+            }
             let condition = {
                 type: 'addData',
                 collectionName: "timeBlock",
                 data: {
                     "userId": this.$store.state.user.id,
                     startdate: this.weekList[0].date,
-                    enddate: this.weekList[6].date + 24 * 60 * 60 * 1000 - 1,
-                    "plan": data
+                    enddate: this.weekList[6].date + 24 * 3600 * 1000 - 1,
+                    "plan": this.planData
                 }
             };
             if (this.timeData) {
                 condition.type = "updateData";
                 condition.data.id = this.timeData.id;
             }
-            console.log('condition', condition);
+            //console.log('condition', condition);
+
             this.$axios.$post('mock/db', { data: condition }).then(res => {
                 console.log('res', res);
                 if (res) {
                     if (!this.timeData) {
                         this.timeData = { ...res };
                     } else {
-                        //this.timeData = Object.assign({}, this.timeData, data)
                         this.$set(this.timeData, 'plan', data);
                     }
                     console.log('this.timeData', this.timeData);
                 }
+                this.eidtPlan = null;
+                this.showPlan = true;
                 this.isAddPlan = false;
-                this.showApply = false;
+                this.showDialog = false;
             });
         },
         getHoliday(week) {
@@ -365,6 +370,7 @@ export default {
         updateList(list, colIndex) {
             this.$set(this.timeBlockList, colIndex, list);
         },
+        // 提交补填申请
         submitApply() {
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
@@ -383,14 +389,14 @@ export default {
                     this.ruleForm.isover = false; // 未完成补填
                     timeData.apply.push({ ...this.ruleForm });
                     this.saveData(timeData);
-                    this.showApply = false;
+                    this.showDialog = false;
                 }
             });
         },
         // 请求补填
         applyTime(i) {
             this.isAddPlan = false;
-            this.showApply = true;
+            this.showDialog = true;
             this.ruleForm = {
                 date: this.weekList[i].date,
                 touserId: [],
@@ -495,9 +501,18 @@ export default {
             this.timeBlockList[colIndex].list.push(blockObj);
         },
         removeBlock(colIndex, rowIndex) {
-            if (this.timeBlockList[colIndex]) {
+            let blockList = [...this.timeBlockList][colIndex];
+            debugger
+            if (blockList.list && blockList.list.length) {
+
+                let list = blockList.list;
+                debugger
+                list.splice(rowIndex, 1);
+                this.$set(blockList, 'list', list);
+
+                this.$set(this.timeBlockList, colIndex, blockList);
                 this.isSaved = false;
-                this.timeBlockList[colIndex].list.splice(rowIndex, 1);
+                //this.timeBlockList[colIndex].list.splice(rowIndex, 1);
             }
         },
         // 编辑时间块信息
@@ -507,7 +522,7 @@ export default {
             const colLi = document.getElementById("week-list").childNodes[colIndex];
             if (colLi) {
                 this.windowPostion.left = colLi.offsetLeft + colLi.offsetWidth;
-                this.windowPostion.top = this.editBlock.rowIndex * this.timeutilHeight;
+                this.windowPostion.top = (this.editBlock.startTime / 1000 / 60 / this.locakMinutes) * this.timeutilHeight; //this.editBlock.rowIndex * this.timeutilHeight;
                 const containerWidth = document.getElementById("table-lists").offsetWidth;
                 if (this.windowPostion.left + 350 > containerWidth) {
                     this.windowPostion.left = colLi.offsetLeft - 350;
@@ -548,7 +563,7 @@ export default {
             let data = {
                 userId: this.$store.state.user.id,
                 startdate: this.weekList[0].date,
-                enddate: this.weekList[6].date + 24 * 60 * 60 * 1000 - 1,
+                enddate: this.weekList[6].date + 24 * 3600 * 1000 - 1,
                 content: dataArr
             };
             let condition = {
@@ -560,10 +575,9 @@ export default {
                 data.id = this.timeData.id;
             }
             data = Object.assign({}, data, { ...timeObj });
-
             // 处理申请补填的数据，如果已做了补填则置为已经完成
             //debugger
-            if (this.timeData && this.timeData.apply) {
+            /* if (this.timeData && this.timeData.apply && this.timeData.apply.length) {
                 data.content.forEach(item => {
                     let index = _.findIndex(this.timeData.apply, { "date": item.date });
                     if (!!~index && item.list.length) {
@@ -573,7 +587,7 @@ export default {
                     }
                 })
                 data.apply = this.timeData.apply;
-            }
+            } */
             condition.data = data;
             /* console.log('saveData', this.timeData, data)
             return; */
@@ -631,6 +645,7 @@ export default {
                         this.$refs.myScrollbar.update();
                     };
                     setTimeout(() => {
+                        this.$refs.myScrollbar.update();
                         this.startRect = this.$refs.myScrollbar.wrap.getBoundingClientRect();
                         const hours = new Date().getHours();
                         this.$refs.myScrollbar.wrap.scrollTop =
@@ -686,11 +701,17 @@ export default {
             let ndPlan = false; //是否需要制定周工作计划
             if (result) {
                 this.timeData = result;
-                this.timeBlockList = result.content;
+                this.timeBlockList = result.content || [];
                 this.calcAllTimes(this.timeBlockList);
                 ndPlan = !result.plan;
+                //planData
+                if (result.plan) {
+                    this.planData = result.plan;
+                } else {
+                    ndPlan = false;
+                }
             } else {
-                ndPlan = true
+                ndPlan = true;
             }
             // 判断是否需要制定周工作计划
             //let st = this.weekList[0].date, et = this.weekList[6].date + 24 * 60 * 60 * 1000 - 1;
@@ -704,6 +725,7 @@ export default {
         // 获取我的上级主管
         async getMyLeader() {
             const department = this.$store.state.user.department;
+
             let ss = dataUtil.arrConversion(department);
             let did = ss[ss.length - 1];
 
@@ -717,7 +739,9 @@ export default {
                     column: { "leaderId": 1 }
                 }
             });
+            if (!dept) return;
             const uids = !_.isArray(dept.leaderId) ? [dept.leaderId] : dept.leaderId;
+
             let result = await this.$axios.$post('mock/db', {
                 data: {
                     type: 'listData',

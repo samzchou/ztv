@@ -20,8 +20,8 @@
             <div class="desc">
                 <div>工作分类：{{getWorkStr('workType', block.type)}}</div>
                 <div>项目：{{getWorkStr('workProject', block.project)}}</div>
-                <div>备注描述：<br />{{ block.desc}}</div>
-                <div>完成情况：待完成</div>
+                <div>备注描述：{{ block.desc}}</div>
+                <!-- <div>完成情况：待完成</div> -->
             </div>
             <div class="resize" @mousedown="handlerMouserDown(idx, $event)" />
         </div>
@@ -42,7 +42,8 @@ export default {
         dataList: Array
     },
     computed: {
-        ...mapState('timeWork', ['holiday', 'workType', 'workProject', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'rangeTime', 'isEditTime']),
+        ...mapState(["collectionData"]),
+        ...mapState('timeWork', ['holiday', 'timeutilHeight', 'locakMinutes', 'editIndex', 'editBlock', 'rangeTime', 'isEditTime']),
     },
     watch: {
         editBlock: {
@@ -65,6 +66,8 @@ export default {
         },
         dataList: {
             handler(data) {
+                //console.log('watch dataList=>', data)
+                this.blockList = [];
                 if (data && _.isArray(data)) {
                     this.blockList = data.map(item => {
                         return item;
@@ -92,19 +95,17 @@ export default {
             milliseconds = !milliseconds ? 0 : milliseconds;
             return this.$global.ChangeHourMinutestr(milliseconds);
         },
-        getWorkStr(ca, val) {
-            //debugger
-            if (val) {
-                let cat = _.find(this[ca], { "id": val });
-                return cat.label;
-            }
-            return "";
+        // 解析工作分类及工作项目
+        getWorkStr(key, val) {
+            if (!val) return "";
+            let obj = _.find(this.collectionData[key], { "id": val });
+            return obj.name || "";
         },
         removeBlock(index) {
             console.log('removeBlock', this.blockList);
             //debugger
-            this.$emit('removeBlock', this.colIndex, index);
-            //this.blockList.splice(index, 1);
+            //this.$emit('removeBlock', this.colIndex, index);
+            this.blockList.splice(index, 1);
             this.UPDATE_EDITBLOCK(null);
         },
         remove(index) {

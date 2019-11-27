@@ -47,6 +47,19 @@ export default {
             "label": "工作项目",
             "hide": true
         },
+		"typeid": {
+            "name": "typeid",
+            "label": "工作分类",
+            "width": 100,
+            "component": "sam-select",
+            "required": true,
+            "optionsUrl": {
+                "table": "workType",
+                "label": "name",
+                "value": "id"
+            },
+            "default": 0
+        },
         "name": {
             "name": "name",
             "label": "项目名称",

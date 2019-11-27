@@ -171,15 +171,16 @@ export default {
                 }
             };
             if (pageForm.id) {
+                condition.data.id = pageForm.id;
                 condition.type = "updateData";
             }
             delete condition.data.content.content;
             //console.log('saveMyPage', condition);
             //return;
             this.$axios.$post('mock/db', { data: condition }).then(result => {
-                //console.log('result', result);
+                console.log('result', result);
                 this.$message.success(pageForm.id ? "编辑成功" : "新增成功");
-                pageForm.id = result.id;
+                if(!pageForm.id && result.id) pageForm.id = result.id;
                 this.saveLoading = false;
                 this.UPDATE_PAGES({ ...pageForm })
             });
