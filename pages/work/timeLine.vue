@@ -16,9 +16,8 @@
                 <div class="all-times">allTimes</div>
             </div>
             <div>
-                <!-- <el-button size="mini" icon="el-icon-box" type="info" @click="needAddPlan(true, $event)" v-if="checkOutPaln">{{checkIsPaln?'编辑我的周计划':'查看我的周计划'}}</el-button> -->
-                <el-button size="mini" icon="el-icon-box" type="info" @click="showPlan=!showPlan">编辑我的周计划</el-button>
-                <el-button size="mini" icon="el-icon-time" type="primary" style="margin-right:20px;" @click="saveData(null)">保存我的时间钟</el-button>
+                <el-button size="mini" icon="el-icon-box" type="primary" @click="showPlan=!showPlan">编辑我的周计划</el-button>
+                <el-button size="mini" icon="el-icon-time" type="success" @click="saveData(null)">保存我的时间钟</el-button>
                 <!-- <el-button-group>
                     <el-button size="mini" icon="el-icon-time" :type="viewType === 0 ? 'primary' : ''" title="时钟模式" @click="setType(1)" />
                     <el-button size="mini" icon="el-icon-date" :type="viewType == 1 ? 'primary' : ''" title="列表模式" @click="setType(0)" />
@@ -26,7 +25,7 @@
                 </el-button-group> -->
             </div>
         </div>
-        <!--周工作计划-->
+        <!--周工作计划;浮动层-->
         <div class="my-plan" v-show="showPlan">
             <div class="title">本周工作计划</div>
             <el-table v-if="planData.length" :data="planData" size="small" border stripe fit style="width:100%">
@@ -49,8 +48,9 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <div v-else style="padding:0 20px;font-size:16px;">{{checkIsPaln?'暂无本周工作计划，请添加！':'已过期，无法添加周工作计划'}}</div>
             <div class="btns">
-                <el-button size="small" type="primary" @click="needAddPlan(null)">添加周工作计划</el-button>
+                <el-button size="small" type="primary" @click="needAddPlan(null)" :disabled="!checkIsPaln">添加周工作计划</el-button>
                 <el-button size="small" @click="showPlan=false">隐藏/关闭</el-button>
             </div>
         </div>
@@ -76,7 +76,19 @@
                                 <div class="total-times">
                                     <!--判断是否已经申请补填-->
                                     <el-link v-if="checkApply(idx)" type="danger" @click="applyTime(idx)">申请补填</el-link>
-                                    <span v-else v-html="checkNeedApply(idx)"></span>
+                                    <!--是否未开始-->
+                                    <span v-else-if="notUse(idx)">未开始</span>
+                                    <!--是否有补填-->
+                                    <span v-else-if="checkNeedApply(idx)">
+                                        <el-link type="primary">补填{{checkNeedApply(idx).stateStr}}</el-link>
+                                        <div class="view-apply">
+                                            <div class="title"><span>申请原因：</span><br>{{checkNeedApply(idx)['reson']}}</div>
+                                            <div class="content"><span>审批回复：</span><br>{{checkNeedApply(idx)['feedBack']}}</div>
+                                            <div v-if="!checkNeedApply(idx)['agree']">
+                                                <el-button size="mini" type="primary" @click="applyTime(idx)">再次申请补填</el-button>
+                                            </div>
+                                        </div>
+                                    </span>
                                     <span>{{ changeHourMinutestr(week.allTimes) }}</span>
                                 </div>
                             </div>
@@ -164,7 +176,8 @@ export default {
         viewType: 0,
         firstDay: 0,
         weekToDay: undefined, // 本周第一天
-        startDate: "",
+        startDate: 0, //当前周第一天
+        endDate: 0,      // 当前周最后一天
         timeData: null,
         timeBlockList: [],
         currBlock: {},
@@ -250,17 +263,13 @@ export default {
     methods: {
         ...mapMutations("timeWork", ["UPDATE_EDITINGTIME"]),
         ...mapActions("timeWork", ["ASYNC_GTETIME_RANGE", "ASYNC_GTE_HOLIDAY"]),
-
         closeDialog() {
             this.isAddPlan = false;
         },
         parseWorkPlan(key, row) {
-            if (key == 'desc') {
-                return row[key];
-            } else {
-                let obj = _.find(this.collectionData[key], { "id": row[key] });
-                return obj.name || "";
-            }
+            if (!row) return "";
+            let obj = _.find(this.collectionData[key], { "id": row[key] });
+            return obj.name || "";
         },
         removePlan(item) {
             this.eidtPlan = item;
@@ -335,14 +344,14 @@ export default {
             //console.log('condition', condition);
 
             this.$axios.$post('mock/db', { data: condition }).then(res => {
-                console.log('res', res);
+                //console.log('res', res);
                 if (res) {
                     if (!this.timeData) {
                         this.timeData = { ...res };
                     } else {
                         this.$set(this.timeData, 'plan', data);
                     }
-                    console.log('this.timeData', this.timeData);
+                    //console.log('this.timeData', this.timeData);
                 }
                 this.eidtPlan = null;
                 this.showPlan = true;
@@ -403,62 +412,78 @@ export default {
                 reson: ""
             };
         },
+        // 判断是否未开始
+        notUse(i) {
+            return this.weekList[i].date > this.endDate;
+        },
         // 判断是否已申请补填，且日期须小于今天
         checkNeedApply(i) {
             //日期须小于今天
             if (this.weekList[i].date >= this.rangeTime.startTime) {
-                return "";
+                return null;
             }
-
-            if (this.timeData) {
+            if (this.timeData && this.timeData.apply) {
                 let apply = _.find(this.timeData.apply, { 'date': this.weekList[i].date });
                 if (apply) {
-                    if (apply.agree) {
-                        return "补填";
-                    }
                     let stateType = _.find(this.$store.state.stateType, { 'value': apply.state });
-                    return `<em class="state-${apply.state}}">${stateType.label}</em>`;
+                    apply.stateStr = stateType.label || "";
                 }
+                return apply;
             }
-            return "";
+            return null;
         },
+        /**
+         * 校验是否可以申请补填
+         * 1、根据本月第一天, 小于的不能再申请补填
+         * 2、大于等于今天的，不做申请补填
+         */
         checkApply(i) {
             let flag = false;
-            // 本月第一天, 上月的则不能再做补填申请
             const md = new Date(this.rangeTime.startTime).setDate(1);
-            if (this.weekList[i].date >= md && this.weekList[i].date < this.rangeTime.startTime) {
-                flag = true;
-            }
-            // 检查本周的数据是否有申请补填记录并获得主管领导同意
-            if (this.timeData && this.timeData.apply) {
-                const applyIndex = _.findIndex(this.timeData.apply, {
-                    date: this.weekList[i].date
-                });
-                flag = !~applyIndex;
+            if (this.weekList[i].date < md) { // 小于本月
+                flag = false;
+            } else {
+                if (this.weekList[i].date < this.rangeTime.startTime) { // 小于今天的
+                    flag = true;
+                    if (this.timeData && this.timeData.apply) {
+                        const applyIndex = _.findIndex(this.timeData.apply, {
+                            date: this.weekList[i].date
+                        });
+                        flag = !~applyIndex;
+                    }
+                }
             }
             return flag;
         },
-        // 过时后检查是否可以补填
+        /**
+         * 过时后检查是否可以补填； 加遮罩禁用
+         * 1、小于今天:false
+         * 2、除非有申请补填并同意
+         */
         disabledWork(i) {
-            const md = new Date(this.rangeTime.startTime).setDate(1);
-            if (this.weekList[i].date < md) { // 距离本月为上个月
-                return true;
-            }
-
             if (this.timeData && this.timeData.apply) {
-                // 匹配数据是否主管批复了补填请求,如果存在则不加遮罩
+                //const item = _.find(this.timeData.content, { date: this.weekList[i].date });
                 const index = _.findIndex(this.timeData.apply, {
                     date: this.weekList[i].date,
                     agree: true,
                     isover: false
                 });
-                if (~index) {
+                if (!!~index) {
                     return false;
+                } else {
+                    if (this.weekList[i].date < this.rangeTime.startTime) {
+                        return true;
+                    }
                 }
+                /* if (!item.list.length && ~index) {
+                    return false;
+                } else if (this.weekList[i].date < this.rangeTime.startTime) {
+                    return true;
+                } */
+            } else if (this.weekList[i].date < this.rangeTime.startTime || this.weekList[i].date > this.endDate) { //小于当前时间或大于当前周最后一天
+                return true;
             }
-            // 小于本周或超出本周最后一天
-            const ss = new Date(this.rangeTime.startTime).setDate(new Date(this.rangeTime.startTime).getDate() + 6);
-            return this.weekList[i].date < this.rangeTime.startTime || this.weekList[i].date > ss;
+            return false;
         },
         /**
          * 设置一周（从周一开始）
@@ -544,7 +569,7 @@ export default {
                     block.list
                 );
             });
-            console.log("calcAllTimes", this.weekList);
+            //console.log("calcAllTimes", this.weekList);
         },
         getAlltimeBlockList() {
             const dataArr = [];
@@ -577,7 +602,7 @@ export default {
             data = Object.assign({}, data, { ...timeObj });
             // 处理申请补填的数据，如果已做了补填则置为已经完成
             //debugger
-            /* if (this.timeData && this.timeData.apply && this.timeData.apply.length) {
+            if (this.timeData && this.timeData.apply && this.timeData.apply.length) {
                 data.content.forEach(item => {
                     let index = _.findIndex(this.timeData.apply, { "date": item.date });
                     if (!!~index && item.list.length) {
@@ -587,12 +612,12 @@ export default {
                     }
                 })
                 data.apply = this.timeData.apply;
-            } */
+            }
             condition.data = data;
             /* console.log('saveData', this.timeData, data)
             return; */
             this.$axios.$post("mock/db", { data: condition }).then(result => {
-                console.log("result", result);
+                //console.log("result", result);
                 if (!this.timeData) {
                     this.timeData = result;
                 }
@@ -682,11 +707,16 @@ export default {
                 };
                 this.weekList.push(obj);
             });
+            if (!this.startDate && !this.endDate) {
+                this.startDate = this.weekList[0]['date'];
+                this.endDate = this.weekList[6]['date'];
+            }
             // 获取数据
             this.getList();
         },
         // 获取已有的数据
         async getList() {
+            this.planData = [];
             this.timeData = null;
             const condition = {
                 type: "getData",
@@ -706,6 +736,7 @@ export default {
                 ndPlan = !result.plan;
                 //planData
                 if (result.plan) {
+                    //console.log('result.plan', result.plan)
                     this.planData = result.plan;
                 } else {
                     ndPlan = false;

@@ -42,7 +42,6 @@
             </div>
         </div>
         <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" append-to-body :close-on-click-modal="false" width="600px">
-            <div>{{msgBox}}</div>
 			<my-msg :data="msgBox" :showList="false" />
         </el-dialog>
     </section>

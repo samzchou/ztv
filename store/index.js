@@ -24,7 +24,7 @@ export const state = () => ({
 		{ label: '时间钟补填审批', value: 1, table:'timeBlock' }, { label: '站内消息', value: 2, table:'message' }, { label: '其他', value: 3 }
 	],
 	stateType:[
-		{ label: '已申请', value: 1 }, { label: '已退回', value: 2 }, { label: '处理中', value: 3 }, { label: '已完成', value: 4 }, { label: '已撤回', value: 5 }
+		{ label: '申请中', value: 1 }, { label: '已拒绝', value: 2 }, { label: '处理中', value: 3 }, { label: '已同意', value: 4 }, { label: '已完成', value: 5 }, { label: '已撤回', value: 6 }
 	],
 })
 
