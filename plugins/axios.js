@@ -1,3 +1,4 @@
+/* eslint-disable */
 import VueCookies from 'vue-cookies'
 import { Notification } from 'element-ui';
 

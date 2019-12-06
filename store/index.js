@@ -14,6 +14,7 @@ export const state = () => ({
     menuAcitve: "",
     //navMenu: navMenu.menuList,
     pageTitle: '主页',
+    currpage:{},
 	serviceList:[],
 	collectionData:{},
 	holidayType:[{label:'工作日',value:'0'},{label:'休息日',value:'1'},{label:'节假日',value:'2'}], 
@@ -37,6 +38,9 @@ export const mutations = {
         if (!process.server) {
             this.app.$storage.set('user', state.user);
         }
+    },
+    SET_CURRPAGE(state, data){
+        state.currpage = data;
     },
     TOGGLE_SIDEBAR: state => {
         VueCookies.set('sidebarStatus', state.sidebar.opened ? 1 : 0);

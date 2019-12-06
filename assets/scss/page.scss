@@ -1,0 +1,14 @@
+.sampage-container {
+    height: 100%;
+    overflow: hidden;
+    .scrollbar {
+        height: calc(100% - 20px);
+        /deep/ .el-scrollbar__wrap {
+            overflow-x: hidden;
+            //margin-right:0 !important;
+            .el-menu--collapse {
+                width: auto;
+            }
+        }
+    }
+}

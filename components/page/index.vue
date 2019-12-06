@@ -1,99 +1,102 @@
 <template>
-    <section>
-        <page-data :data="data" :listParam="listParam" />
+    <section class="sampage-container">
+        <el-scrollbar class="scrollbar">
+            <div v-loading="!isInit">
+                <template v-if="isInit">
+                    <page-data v-if="!notFound" :data="pageForm" :listParam="listParam" :viewAll="viewAll" />
+                    <div v-else class="page-error">
+                        对不起，系统无法定位到具体页面，请核查参数！
+                    </div>
+                </template>
+            </div>
+        </el-scrollbar>
     </section>
 </template>
 
 <script>
-// 已废弃
-import { mapState, mapMutations, mapActions } from 'vuex';
-import samForm from '~/components/form';
-import dataOptions from '~/config/options';
-import dataUtil from '~/util/data_util';
 import pageData from '~/components/page/data';
 export default {
-    name: "sam-page",
+    name: 'common-page',
     components: {
-        samForm, pageData
+        pageData
     },
     props: {
-        data: {
-            type: Object,
-            default: {}
+        pageId: Number,
+        viewAll: false,
+        uinq: {
+            type: Array,
+            default: []
         },
-        listParam: {
-            type: Object,
-            default: {}
-        },
-        isRelease: {
-            type: Boolean,
-            default: false
-        },
+        listParam: {}
     },
     watch: {
-        data: {
-            handler(obj) {
-                if (!this.isInit) {
-                    /* this.resetConst();
-                    this.isInit = true; */
-                }
-            },
-            immediate: true
-        },
-        collectionData: {
-            handler(obj) {
-                if (!_.isEmpty(obj)) {
-                    this.resetConst();
-                    this.isInit = true;
-                }
-            },
-            immediate: true
+        pageId(id) {
+            this.getPage(id);
         }
     },
+    data: () => ({
+        isInit: false,
+        pageForm: null,
+        notFound: false
+    }),
+    methods: {
+        async getPage(pageId) {
+            pageId = pageId ? pageId : this.$route.query.id;
+            if (!pageId) {
+                this.$alert("页面参数出错！");
+                this.isInit = true;
+                this.notFound = true;
+                return;
+            }
+            let condition = {
+                type: 'getData',
+                collectionName: 'pageList',
+                data: {
+                    id: pageId
+                }
+            }
+            let result = await this.$axios.$post('mock/db', { data: condition })
+            if (!result) {
+                this.$alert("无法定位到具体页面！请核查问题");
+                this.notFound = true;
+            } else {
+                let pageForm = Object.assign({}, result.content);
+                //this.pageForm = Object.assign({}, result.content)
+                let cn = {
+                    type: 'getData',
+                    collectionName: 'formList',
+                    data: {
+                        id: result.content.formid
+                    }
+                }
+                let form_content = await this.$axios.$post('mock/db', {
+                    data: cn
+                });
+                // 过滤掉字段
+                if (this.uinq.length && !this.viewAll) {
+                    //debugger
+                    form_content.content.itemList.forEach(item => {
+                        if (!this.uinq.includes(item.name)) {
+                            //delete item.key;
+                            item.formHide = true;
+                        }
+                    })
+                }
+                console.log('form_content', form_content)
+                if (!form_content) {
+                    this.$alert("无法获取表单数据，请联系管理员！");
+                    this.notFound = true;
+                    return;
+                }
+                pageForm.content = form_content.content;
+                this.pageForm = _.cloneDeep(pageForm);
+                //console.log('this.pageForm', JSON.stringify(this.pageForm))
+            }
+            this.isInit = true;
+        }
+    }
 }
 </script>
-
 <style lang="scss" scoped>
-.page-enginer {
-    margin: 20px;
-    border: 1px solid #eee;
-    box-shadow: 3px 3px 5px 0 rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    .title {
-        padding: 15px 20px;
-        border-bottom: 1px solid #eee;
-        background-color: #f5f5f5;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        > div {
-            &:first {
-                font-size: 14px;
-                font-weight: bold;
-            }
-        }
-    }
-    .form-container {
-        .btns {
-            padding: 0 20px 40px;
-        }
-    }
-    .table-container {
-        .filter {
-            padding: 10px 0;
-            background-color: #f1f5ff;
-            border-bottom: 1px solid #dde6f3;
-            .btns {
-                padding: 0 0 10px 20px;
-            }
-        }
-        .tables {
-            .pages {
-                padding: 10px;
-                display: flex;
-                justify-content: flex-end;
-            }
-        }
-    }
-}
+@import '~assets/scss/page';
 </style>

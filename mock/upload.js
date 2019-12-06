@@ -19,7 +19,7 @@ const dbFun = {
             success: true,
             response: true
         }
-    },
+    }
 
 }
 

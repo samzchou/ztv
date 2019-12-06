@@ -8,11 +8,11 @@
             <div><i class="disabled" />部门已禁用</div>
         </div>
         <div class="content">
-            <el-scrollbar class="scrollbar">
-                <client-only>
-                    <tree-chart :json="treeData" :userList="userList" :isDetail="false" />
-                </client-only>
-            </el-scrollbar>
+            <!-- <el-scrollbar class="scrollbar"> -->
+            <client-only>
+                <tree-chart :json="treeData" :userList="userList" :isDetail="false" />
+            </client-only>
+            <!-- </el-scrollbar> -->
         </div>
     </section>
 </template>
@@ -26,7 +26,7 @@ export default {
     data: () => ({
         userList: [],
         treeData: {
-            dept_name: '中浙高铁总公司',
+            dept_name: '中浙高铁有限公司管委会',
             pid: 0,
             id: 0,
             children: []
@@ -49,32 +49,14 @@ export default {
         async getList() {
             let result = await this.$axios.$post('mock/db', {
                 data: {
-                    type: 'aggregate',
+                    type: 'listData',
                     collectionName: 'department',
-                    data: {},
-                    aggregate: [
-                        {
-                            $lookup: {
-                                from: "employee",
-                                localField: "leaderId",
-                                foreignField: "id",
-                                as: "leader"
-                            }
-                        },
-                        {
-                            $unwind: { // 拆分子数组
-                                path: "$leader",
-                                preserveNullAndEmptyArrays: true // 空的数组也拆分
-                            }
-                        }/* ,
-                        {
-                            $addFields: { leaderName: "$leader.e_name" }
-                        } */
-                    ]
+                    data: {}
                 }
             });
 
             if (result) {
+                // 更新下部门领导的数据
                 this.treeData.children = this.$global.toTree(result.list, { parentKey: 'dept_parentid' });
             }
         }
@@ -126,8 +108,8 @@ export default {
     }
     .content {
         height: calc(100% - 70px);
-        overflow: hidden;
-        .scrollbar {
+        overflow: auto;
+        /* .scrollbar {
             height: 100%;
             /deep/ .el-scrollbar__wrap {
                 overflow-x: hidden;
@@ -138,7 +120,7 @@ export default {
             /deep/ .el-scrollbar__bar {
                 z-index: 2;
             }
-        }
+        } */
     }
 }
 </style>

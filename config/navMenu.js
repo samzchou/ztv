@@ -15,7 +15,7 @@ module.exports = {
             "icon": "el-icon-time",
 			"name":"work",
             "children": [
-				{ "label": "时间钟管理", "icon": "el-icon-document-copy", "path": "/work/time", "name":"time", },
+				{ "label": "时间钟管理", "icon": "el-icon-document-copy", "path": "/work", "name":"time", },
                 { "label": "待办事项", "icon": "el-icon-document-copy", "path": "/work/todo" },
                 { "label": "工作统计", "icon": "el-icon-document-copy", "path": "/work/calc" }
             ]

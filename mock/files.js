@@ -12,6 +12,7 @@ const dbFun = {
     getDirPath(fielpath) {
         return path.resolve(__dirname, "../files/" + fielpath);
     },
+	// 创建目录
     async mkdir(params) {
         let fileFullPath = this.getDirPath(params.path);
         try {
@@ -28,7 +29,7 @@ const dbFun = {
             }
         }
     },
-
+	// 写入文件
     async writeFile(params) {
         let opts = {
             cwd: __dirname,
@@ -51,6 +52,7 @@ const dbFun = {
             }
         }
     },
+	// 打开文件
     async openFile(params) {
         let fileFullName = this.getFullPath(params.path);
         try {
@@ -66,8 +68,18 @@ const dbFun = {
                 response: false
             }
         }
-
-    }
+    },
+	// 删除文件
+	async removeFile(params){
+		params.filepath.forEach(path=>{
+			fs.unlink(path, (err)=>{
+				if(err){
+					throw err;
+				}
+				console.log('文件:'+path+'删除成功！');
+			})
+		})
+	}
 }
 
 module.exports = ({ data }) => {

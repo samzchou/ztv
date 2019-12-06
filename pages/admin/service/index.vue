@@ -19,7 +19,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="page_url" label="页面URL地址" />
-                    <el-table-column label="操作" width="200">
+                    <el-table-column label="操作" width="250">
                         <template slot-scope="scope">
                             <el-button v-if="scope.row.pid==0" type="text" size="mini" icon="el-icon-plus" @click="addNew(scope.row)">新增</el-button>
                             <el-button type="text" size="mini" class="icon-link" icon="el-icon-edit" @click="editItem(scope.row)">编辑</el-button>
@@ -29,7 +29,7 @@
                 </el-table>
             </div>
         </div>
-        <el-drawer title="服务编辑" size="300px" :visible.sync="optsVisible" append-to-body :wrapperClosable="false" direction="rtl">
+        <el-drawer title="服务编辑" size="400px" :visible.sync="optsVisible" append-to-body :wrapperClosable="false" direction="rtl">
             <div class="edit-content">
                 <el-form size="mini" :model="ruleForm" :rules="rules" ref="ruleForm" status-icon label-position="top">
                     <el-form-item label="上级服务" prop="pid">

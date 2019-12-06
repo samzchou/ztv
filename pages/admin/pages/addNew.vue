@@ -180,7 +180,7 @@ export default {
             this.$axios.$post('mock/db', { data: condition }).then(result => {
                 console.log('result', result);
                 this.$message.success(pageForm.id ? "编辑成功" : "新增成功");
-                if(!pageForm.id && result.id) pageForm.id = result.id;
+                if (!pageForm.id && result.id) pageForm.id = result.id;
                 this.saveLoading = false;
                 this.UPDATE_PAGES({ ...pageForm })
             });
@@ -396,14 +396,14 @@ export default {
                             &.form-container {
                                 .filter {
                                     padding: 15px;
-									box-sizing:border-box;
-									height:60px;
+                                    box-sizing: border-box;
+                                    height: 60px;
                                 }
-								.content{
-									height:calc(100% - 60px);
-									overflow:hidden;
-								}
-								
+                                .content {
+                                    height: calc(100% - 60px);
+                                    overflow: hidden;
+                                }
+
                                 .el-table {
                                     background-color: transparent;
                                     tr {

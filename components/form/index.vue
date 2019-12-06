@@ -1,14 +1,14 @@
 
 <template>
     <section class="form-container">
-        <div class="title" v-if="formData.title">
+        <div class="title" v-if="formData.title && isEdit">
             <span>{{formData.title}}</span>
         </div>
         <el-form ref="myForm" status-icon :label-position="formData.position" :size="formData.size" :model="value">
             <el-row :gutter="formData.gutter">
                 <draggable v-model="formData.itemList" @start="startDrag" @end="updateDragForm" :disabled="!isEdit">
                     <transition-group name="list-complete">
-                        <el-col value-key="id" class="draggable list-complete-item" :class="{'frozen':isEdit,'active':currComponent&&currComponent.name==item.name &&isEdit}" v-for="item in formData.itemList" :key="item.key" :span="setColspan(item.colspan||formData.colspan)" @click.native="selectItem(item)">
+                        <el-col value-key="id" class="draggable list-complete-item" :class="{'frozen':isEdit,'active':currComponent&&currComponent.name==item.name &&isEdit}" v-for="item in formData.itemList.filter(o=>{return !o.formHide})" :key="item.key" :span="setColspan(item.colspan||formData.colspan)" @click.native="selectItem(item)">
                             <form-item v-if="value[item.key]!==undefined" :key="item.key" :item="item" :value="value[item.key]" :itemValue="{'val':value[item.key]}" :isFilter="isFilter" :disabled="disabled" @input="handleInput($event, item)" @selected="handleInput($event, item)" />
                             <!-- <i class="remove el-icon-delete" title="移除" @click.stop.prevent="REMOVE_ITEM(item)" /> -->
                         </el-col>
@@ -48,6 +48,10 @@ export default {
             type: Boolean,
             default: false
         },
+        inline: {
+            type: Boolean,
+            default: false
+        },
         isEdit: {
             type: Boolean,
             default: false
@@ -63,9 +67,11 @@ export default {
     },
     watch: {
         data: {
-            handler(list) {
+            handler(obj) {
+                //console.log('watch formdata', obj)
                 this.setFormData();
             },
+            deep: true,
             immediate: true
         }
     },
@@ -141,6 +147,7 @@ export default {
         // 设置表单数据
         setFormData() {
             this.formData = _.cloneDeep(this.data);
+            //console.log('this.formData', this.formData, this.value)
             this.UPDATE_FORM_VALUE(this.value);
         },
         // 选中组件进行编辑
@@ -173,7 +180,7 @@ export default {
             }
         }; */
         $bus.$on("submitForm", (obj) => {
-            console.log('submitForm', obj, this.formRules);
+            //console.log('submitForm', obj, this.formRules);
         })
     },
     beforeDestroy() {
@@ -185,7 +192,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 .form-container {
-    padding: 5px 20px;
+    padding: 20px;
     .title {
         line-height: 40px;
         border-bottom: 1px solid #ddd;
@@ -231,15 +238,15 @@ export default {
                 width: 100%;
                 //overflow: hidden;
                 .el-form-item__label {
-                    line-height: 22px;
-                    height: 22px;
+                    /* line-height: 22px;
+                    height: 22px; */
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                 }
                 .el-form-item__content {
                     vertical-align: middle;
-                    line-height: 30px;
+                    //line-height: 30px;
                 }
                 .el-input,
                 .el-cascader,

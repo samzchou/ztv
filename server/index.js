@@ -50,6 +50,13 @@ async function start() {
         next();
     });
     app.use('/upload', require('./apiUpload'));
+    // 文件下载
+    app.all('/download', (req, res, next) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header('Access-Control-Allow-Headers', 'Content-Type');
+        next();
+    });
+    app.use('/download', require('./apiDownload'));
 
     // Build only in dev mode
     if (isDev) {
@@ -66,13 +73,9 @@ async function start() {
 
     // websokcet服务
     const server = require('http').createServer(app);
-    let io = require('socket.io')(server);
+    let io = require('socket.io').listen(server);
 
     io.on('connection', (socket) => { // socket相关监听都要放在这个回调里
-        //console.log('一个用户连接到websokcet');
-        /* socket.on("disconnect", function() {
-            console.log("一个用户websokcet连接断开");
-        }); */
         socket.on("msg", (obj) => {
             setTimeout(() => {
                 console.log('websokcet发送的消息=>' + obj);
@@ -81,7 +84,7 @@ async function start() {
         });
     });
     //开启websokcet端口监听socket
-    server.listen(8989);
+    server.listen(8989, '0.0.0.0');
 
 }
 start();

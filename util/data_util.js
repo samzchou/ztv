@@ -144,6 +144,17 @@ export default {
         let arrList = getArr(arr, value);
         return arrList.join(ext || "-");
     },
+	getParamsByValue(value){
+		let params;
+		if (_.isNumber(value)) {
+            params = Number(value);
+        } else if (_.isArray(value) && value.length) {
+			params = { $in: value };
+		} else if (_.isString(value)) {
+            params = { $regex: value };
+        }
+		return params;
+	},
     getSearchParams(item, value) {
         let params;
         if (_.isNumber(value)) {
@@ -154,6 +165,8 @@ export default {
                     $gte: value[0],
                     $lt: value[1] + 24 * 3600 * 1000 - 1
                 }
+			} else if(item.component == 'sam-cascader'){
+                params = value;
             } else {
                 params = { $in: value };
             }
@@ -166,6 +179,10 @@ export default {
         switch (type) {
             case "Number":
                 return Number(value);
+				/*
+			case "Array":
+                return Number(value);
+				*/
             default:
                 return value;
         }

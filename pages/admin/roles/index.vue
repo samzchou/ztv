@@ -14,15 +14,22 @@
                 <div v-if="isAdd" class="edit-forms">
                     <el-form size="small" :model="ruleForm" :rules="rules" ref="ruleForm" label-position="top">
                         <el-form-item label="角色名称" prop="name">
-                            <el-input v-model="ruleForm.name"></el-input>
+                            <el-input v-model="ruleForm.name" />
+                        </el-form-item>
+                        <el-form-item>
+                            <el-checkbox v-model="ruleForm.isLeader">是否为主管级领导</el-checkbox>
+                        </el-form-item>
+                        <el-form-item label="排序" prop="sort">
+                            <el-input-number v-model="ruleForm.sort" :min="1" />
                         </el-form-item>
                         <el-form-item>
                             <el-button type="primary" @click="addForm">保存</el-button>
+                            <el-button @click="isAdd=false">取消</el-button>
                         </el-form-item>
                     </el-form>
                 </div>
-                <div v-else class="lists">
-                    <ul v-if="tableData.length">
+                <div v-else class="lists" v-loading="loadingRole">
+                    <ul v-if="tableData.length||loadingRole">
                         <li v-for="item in tableData" :key="item.id">
                             <div>{{item.name}}</div>
                             <div>
@@ -40,7 +47,7 @@
             </div>
             <div class="right">
                 <div class="collapse" v-if="isSet">
-                    <div class="title">权限设置</div>
+                    <div class="title">【{{editRow.name}}】的权限设置</div>
                     <el-collapse v-model="activeNames">
                         <el-collapse-item v-for="(item,idx) in serviceData.filter(o=>{return o.pid==0})" :key="item.id" :title="item.title" :name="String(idx+1)">
                             <template slot="title">
@@ -80,10 +87,13 @@ export default {
     },
     data: () => ({
         loading: true,
+        loadingRole: true,
         isAdd: false,
         isSet: false,
         ruleForm: {
-            name: ""
+            name: "",
+            isLeader: false,
+            sort: 1
         },
         rules: {
             name: [
@@ -104,7 +114,7 @@ export default {
                     let condition = {
                         type: 'addData',
                         collectionName: 'roles',
-                        data: { name: this.ruleForm.name }
+                        data: { ...this.ruleForm }
                     };
 
                     if (this.editRow) {
@@ -112,6 +122,7 @@ export default {
                         condition.data.id = this.editRow.id;
                     }
                     //console.log('condition', condition.data);
+                    //return;
                     this.$axios.$post('mock/db', { data: condition }).then(res => {
                         this.isAdd = false;
                         this.getList();
@@ -129,6 +140,8 @@ export default {
         editItem(item) {
             this.editRow = item;
             this.ruleForm.name = item ? item.name : '';
+            this.ruleForm.sort = item ? item.sort : 1;
+            this.ruleForm.isLeader = item ? item.isLeader : false;
             this.isAdd = true;
             if (!item) {
                 this.isSet = false;
@@ -159,9 +172,13 @@ export default {
                 collectionName: 'roles',
                 data: { ...this.editRow }
             };
-            console.log('saveSubmit', condition.data)
+            console.log('saveSubmit', condition.data);
+            return
             this.$axios.$post('mock/db', { data: condition }).then(res => {
-                this.editRow = null;
+                if (res) {
+                    this.$message.success("保存成功");
+                }
+                //this.editRow = null;
             });
         },
         checkRoles(value, pid, id) {
@@ -185,10 +202,12 @@ export default {
                 "id": id,
                 "value": item.value
             }
+            let index = -1;
             if (checked) {
+                //index = _.findIndex(this.editRow.content, {"id":id});
                 this.editRow.content.push(obj);
             } else {
-                let index = _.findIndex(this.editRow.content, obj);
+                index = _.findIndex(this.editRow.content, obj);
                 this.editRow.content.splice(index, 1);
             }
             console.log('this.checkList', this.editRow.content);
@@ -211,17 +230,18 @@ export default {
             console.log('serviceData', this.serviceData);
         },
         async getList(match = {}) {
+            this.loadingRole = true;
             let condition = {
                 type: 'listData',
                 collectionName: 'roles',
+                sortby: 'sort',
+                ascby: 1,
                 data: {}
             };
             let result = await this.$axios.$post('mock/db', { data: condition });
             console.log('getList', result);
             this.tableData = result.list;
-
-            //this.getService();
-
+            this.loadingRole = false;
         }
     },
     beforeMount() {

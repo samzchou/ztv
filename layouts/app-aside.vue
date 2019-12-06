@@ -11,7 +11,7 @@
                             <i :class="'my-icon-'+menu.icon" v-if="menu.icon" />
                             <span slot="title">{{menu.title}}</span>
                         </template>
-                        <el-menu-item v-for="(subMenu,sidx) in menu.children" :key="idx+'-'+sidx" :index="idx+'-'+sidx" @click="goPath(subMenu.page_url, idx+'-'+sidx)">
+                        <el-menu-item v-for="(subMenu,sidx) in menu.children" :key="idx+'-'+sidx" :index="idx+'-'+sidx" @click="goPath(subMenu, idx+'-'+sidx)">
                             <i :class="'my-icon-'+subMenu.icon" v-if="subMenu.icon" />
                             <span>{{subMenu.title}}</span>
                         </el-menu-item>
@@ -26,7 +26,7 @@
 import { mapState, mapMutations, mapActions } from 'vuex';
 export default {
     computed: {
-        ...mapState(['sidebar', 'serviceList', 'user']),
+        ...mapState(['sidebar', 'serviceList', 'user', 'collectionData']),
     },
     watch: {
         '$route': 'setRouter',
@@ -45,12 +45,18 @@ export default {
     }),
     methods: {
         ...mapActions(['ASYNC_GET_SERVICE']),
+        ...mapMutations(['SET_CURRPAGE']),
         setRouter() {
             this.activeIndex = '';
             let pathArr = this.$route.path.split('/');
             if (!pathArr[0]) {
                 pathArr.splice(0, 1);
             }
+            //console.log('setRouter', this.$route.path, this.collectionData['service']);
+            let pageItem = _.find(this.collectionData['service'], {"page_url":this.$route.path});
+            //console.log('pageItem', pageItem);
+            this.SET_CURRPAGE(pageItem);
+
             let pIndex = _.findIndex(this.menuList, { "name": pathArr[0] });
             if (!!~pIndex) {
                 this.activeIndex += pIndex;
@@ -64,8 +70,10 @@ export default {
             }
             //console.log('this.activeIndex', this.activeIndex)
         },
-        goPath(path, index) {
-            this.$router.push(path);
+        goPath(subMenu, index) {
+            //console.log('goPath', subMenu, index);
+            this.SET_CURRPAGE(subMenu);
+            this.$router.push(subMenu.page_url);
         }
     },
     beforeMount() {

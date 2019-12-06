@@ -1,33 +1,59 @@
 <template>
-    <section class="sam-page">
-        <div class="header">
-            <div class="title"><i class="el-icon-price-tag" />用户个人信息</div>
-
-        </div>
+    <section>
+        <commonPage :pageId="pageId" :listParam="listParam" :viewAll="viewAll" :uinq="uinq" />
     </section>
 </template>
 
 <script>
-import samForm from '~/components/form';
-import pageData from '~/components/page/data';
+import commonPage from '~/components/page';
 export default {
     components: {
-        samForm, pageData
+        commonPage
     },
     data: () => ({
-
-        listParam: {
-            username: { "$ne": "admin" }
-        }
+        loadingPage: true,
+        pageId: 0,
+        viewAll: false,
+        listParam: {},
+        uinq: ["username", "password"],
     }),
     methods: {
-
+        async getData() {
+            this.listParam = {
+                department: this.$store.state.user.department
+            }
+            let dept = this.$storage.session.get("dept");
+            if (dept) {
+                this.viewAll = true;
+                let deptIds = dept.map(item => {
+                    return item.id;
+                })
+                this.listParam.department = { $in: deptIds };
+            } else {
+                this.listParam.id = this.$store.state.user.id;
+            }
+            let condition = {
+                type: 'getData',
+                collectionName: 'service',
+                data: {
+                    page_url: this.$route.path
+                },
+                column: { page_id: 1, title: 1 }
+            }
+            let res = await this.$axios.$post('mock/db', { data: condition });
+            if (res) {
+                this.pageId = res.page_id;
+            }
+        }
     },
     mounted() {
-        //this.setData();
+        this.getData();
     }
 }
 </script>
 <style lang="scss" scoped>
 @import '~assets/scss/admin-form';
+.mypage-content {
+    min-height: 400px;
+}
 </style>

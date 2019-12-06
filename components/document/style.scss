@@ -1,0 +1,430 @@
+.file-container {
+    height: 100%;
+
+    >div.box {
+        height: 100%;
+        display: flex;
+        background-color: #FFF;
+        box-sizing: border-box;
+        border: 1px solid #DDD;
+
+        .left {
+            height: 100%;
+
+            .root {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                height: 40px;
+                padding: 0 15px;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .tree-content {
+                height: calc(100% - 40px);
+                overflow: hidden;
+                box-sizing: border-box;
+                padding: 10px;
+
+                .scrollbar {
+                    height: 100%;
+
+                    /deep/ .el-scrollbar__wrap {
+                        overflow-x: hidden;
+                    }
+                }
+
+                /deep/ .el-tree-node__content {
+                    border-bottom: 1px dashed #DDD;
+
+                    &:hover {
+                        background-color: transparent;
+                        color: $c-main;
+                    }
+                }
+
+                /deep/ .custom-tree-node {
+                    display: flex;
+                    flex: 1;
+                    align-items: center;
+                    justify-content: space-between;
+
+                    .node-folder {
+                        background-image: url('~assets/images/note.png');
+                        background-position: left center;
+                        background-repeat: no-repeat;
+                        padding-left: 20px;
+
+                        &.active {
+                            color: $c-main;
+                            font-weight: bold;
+                        }
+                    }
+
+                    .edits {
+                        display: flex;
+                        align-items: center;
+
+                        input {
+                            width: 100px;
+                            box-sizing: border-box;
+                            padding: 2px 5px;
+                            border: 1px solid rgba(0, 0, 0, 0.1);
+                            margin-right: 5px;
+                        }
+                    }
+
+                    .btns {
+                        display: flex;
+                        margin-right: 10px;
+
+                        >button {
+                            >i {
+                                background-color: #d1d8e2;
+                                color: #333;
+                                border-radius: 3px;
+                                padding: 3px;
+                            }
+
+                            &:hover {
+                                >i {
+                                    background-color: #8ca4c5;
+                                    color: #FFF;
+                                }
+                            }
+                        }
+
+                        >i {
+                            margin-right: 5px;
+                            height: 16px;
+                            width: 20px;
+                            border: 1px solid #b4c7da;
+                            border-radius: 2px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            background-color: #9fc0e9;
+                            color: #fff;
+                        }
+                    }
+                }
+            }
+        }
+
+        .resize {
+            width: 2px;
+            height: 100%;
+            background-color: #ccc;
+            cursor: w-resize;
+        }
+
+        .mid {
+            flex: 1;
+            height: 100%;
+            background: #f3f3f3;
+
+            .forms {
+                .title {
+                    display: flex;
+                    height: 40px;
+                    padding: 0 20px;
+                    border-bottom: 1px solid #ddd;
+                    align-items: center;
+                    justify-content: space-between;
+                }
+
+                /deep/ .form-container {
+                    padding: 15px 20px 10px;
+                }
+
+                .submit {
+                    padding: 0 20px;
+                }
+            }
+
+            .files-list {
+                padding: 20px;
+                box-sizing: border-box;
+                height: 100%;
+
+                .lists {
+                    height: 100%;
+
+                    .title {
+                        line-height: 40px;
+                        box-sizing: border-box;
+                        //padding: 0 15px;
+                        border-bottom: 1px solid #ddd;
+                        font-size: 16px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .left {
+                            display: flex;
+                            align-items: center;
+                            flex: 1;
+
+                            .form {
+
+
+                                /deep/ .el-form {
+                                    display: flex;
+                                    align-items: center;
+
+                                    .el-form-item {
+                                        margin-bottom: 0;
+                                    }
+                                }
+                            }
+
+
+
+                            >div {
+                                margin-right: 20px;
+                            }
+                        }
+                    }
+                }
+
+                .uploads {
+                    height: 100%;
+
+                    .title {
+                        //display: flex;
+                        //height: 40px;
+                        padding-bottom: 15px;
+                        border-bottom: 1px solid #ddd;
+                        //align-items: center;
+
+                        //justify-content: space-between;
+                        /deep/ .form-container {
+                            padding: 0;
+                            flex: 1;
+                        }
+                    }
+
+                    .upload-comp {
+                        padding: 20px 0;
+
+                        /deep/ .el-upload {
+                            width: 100%;
+
+                            .el-upload-dragger {
+                                width: 100%;
+                                height: 350px;
+                                display: flex;
+                                flex-direction: column;
+                                align-items: center;
+                                justify-content: center;
+
+                                .el-upload__text,
+                                button {
+                                    font-size: 16px;
+                                }
+                            }
+
+                        }
+
+                        /deep/ .el-upload__tip {
+                            font-size: 16px;
+                        }
+                    }
+                }
+
+                .file-content {
+                    height: calc(100% - 40px);
+                    overflow: auto;
+                    box-sizing: border-box;
+                    padding: 15px 0;
+
+                    .scrollbar {
+                        height: 100%;
+
+                        /deep/ .el-scrollbar__wrap {
+                            overflow-x: hidden;
+                        }
+
+                        /deep/ .is-horizontal {
+                            display: none;
+                        }
+                    }
+
+                    .float-btns {
+                        position: fixed;
+                        top: 200px;
+                    }
+
+                    ul.lists {
+                        padding-top: 10px;
+                        overflow: hidden;
+                        box-sizing: border-box;
+
+                        >li {
+                            float: left;
+                            width: 12.5%;
+                            height: 200px;
+                            position: relative;
+                            margin-bottom: 20px;
+
+                            .content {
+                                padding: 10px;
+                                margin: 0 10px 10px;
+                                border: 1px solid #DDD;
+                                background-color: #FFF;
+                                box-sizing: border-box;
+                                cursor: pointer;
+                                user-select: none;
+
+                                &:hover,
+                                &.active {
+                                    background-color: #f0fbff;
+                                }
+
+                                .icon {
+                                    height: 100px;
+                                    background-repeat: no-repeat;
+                                    background-position: center;
+                                    background-size: contain;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 2em;
+                                    color: #999;
+                                    pointer-events: none;
+                                }
+
+                                .desc {
+                                    padding-top: 10px;
+                                    text-align: center;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    white-space: nowrap;
+                                    pointer-events: none;
+                                }
+                            }
+
+                            .btns {
+                                padding: 0 15px;
+                                text-align: center;
+                                pointer-events: none;
+
+                                >button {
+                                    margin: 0 0 5px 0;
+                                    pointer-events: auto;
+                                }
+                            }
+
+                            .checkbox {
+                                position: absolute;
+                                top: 5px;
+                                left: 15px;
+                                padding: 3px 4px;
+                                background-color: #ffdd8f;
+                            }
+
+                            .grade {
+                                position: absolute;
+                                top: -5px;
+                                right: -5px;
+                                width: 30px;
+                                height: 30px;
+                                background-image: url('~assets/images/sec1.png');
+                                background-position: center;
+                                background-repeat: no-repeat;
+                                background-size: cover;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 20px;
+                                color: #ff4633;
+                                font-weight: bold;
+                            }
+
+                            .remove {
+                                position: absolute;
+                                top: -5px;
+                                right: 0px;
+                                background-color: rgba(0, 0, 0, .6);
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 50%;
+                                color: #FFF;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                cursor: pointer;
+
+                                &:hover {
+                                    background-color: $c-main;
+                                }
+                            }
+
+
+                        }
+                    }
+
+
+                }
+            }
+        }
+    }
+}
+
+.doc-btns {
+    position: fixed;
+    z-index: 1000;
+    //min-width: 150px;
+    background-color: #FFF;
+    border: 1px solid #DDD;
+    box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 3px;
+
+    &:before {
+        position: absolute;
+        left: calc(50% - 13px);
+        ;
+        bottom: -14px;
+        border: 7px solid transparent;
+        border-top-color: #ddd;
+        content: "";
+    }
+
+    &:after {
+        position: absolute;
+        left: calc(50% - 14px);
+        bottom: -10px;
+        border: 5px solid transparent;
+        border-top-color: #fff;
+        content: "";
+    }
+}
+
+.view-doc {
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, .7) !important;
+    border: 0 !important;
+    z-index: 100;
+
+
+    /deep/ .mypdf-container {
+        width: 80%;
+        margin: 0 auto;
+    }
+}
+
+/deep/ .el-dialog {
+    .doc-info {
+        max-height: 500px;
+        //overflow: auto;
+    }
+
+    .form-container {
+        padding: 10px 0;
+    }
+}

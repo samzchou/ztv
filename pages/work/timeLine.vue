@@ -696,9 +696,7 @@ export default {
             this.weekList = [];
             const currenDay = new Date(this.weekToDay).getDay();
             this.weekArray.forEach((w, i) => {
-                const day =
-                    this.weekToDay +
-                    24 * 60 * 60 * 1000 * (i - ((currenDay + 6) % 7));
+                const day = this.weekToDay + 24 * 60 * 60 * 1000 * (i - ((currenDay + 6) % 7));
                 const st = new Date(day).getTime();
                 const obj = {
                     wday: w,
@@ -707,6 +705,7 @@ export default {
                 };
                 this.weekList.push(obj);
             });
+            debugger
             if (!this.startDate && !this.endDate) {
                 this.startDate = this.weekList[0]['date'];
                 this.endDate = this.weekList[6]['date'];
@@ -830,7 +829,6 @@ export default {
             }).catch(() => { });
         }
     },
-
 };
 </script>
 

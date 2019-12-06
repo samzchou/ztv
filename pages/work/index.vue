@@ -29,7 +29,7 @@
 
                         </el-table>
                     </div>
-                    <div v-else>
+                    <div v-else style="padding:20px 0">
                         <div>暂无本周计划，请进入我的时间制定工作计划</div>
                     </div>
                     <div style="padding:0 0 15px 0">
@@ -372,7 +372,9 @@ export default {
                     this.weekTimeData = { ...result };
                 }
                 this.timeData = result;
-                sdata[0]['data'] = this.parseBarData(result.content);
+                if (result.content && result.content.length) {
+                    sdata[0]['data'] = this.parseBarData(result.content);
+                }
             }
             this.$set(this.chartItem, 'series', sdata);
             setTimeout(() => {
@@ -386,9 +388,11 @@ export default {
             let arr = [];
             lists.forEach(item => {
                 let allTimes = 0;
-                item.list.forEach(w => {
-                    allTimes += w.allTimes;
-                })
+                if (item && item.list.length) {
+                    item.list.forEach(w => {
+                        allTimes += w.allTimes;
+                    })
+                }
                 arr.push(allTimes / 1000 / 3600);
             });
             return arr;

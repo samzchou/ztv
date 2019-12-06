@@ -133,7 +133,7 @@ export default {
                 height: 36px;
                 line-height: 36px;
                 min-width: auto;
-                font-size: 12px;
+                //font-size: 12px;
                 i {
                     font-size: 14px;
                 }

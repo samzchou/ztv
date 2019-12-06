@@ -24,13 +24,13 @@
                         <el-button type="text" @click="showCode(scope.row.content)">查看</el-button>
                     </template>
                 </el-table-column>
-                <el-table-column prop="userName" label="更新者" width="120" />
-                <el-table-column prop="create_date" label="最后更新" width="150">
+                <el-table-column prop="userName" label="更新者" width="150" />
+                <el-table-column prop="create_date" label="最后更新" width="180">
                     <template slot-scope="scope">
                         <span>{{getDate(scope.row.create_date)}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" fixed="right" align="center" width="130">
+                <el-table-column label="操作" fixed="right" align="center" width="160">
                     <template slot-scope="scope">
                         <el-button type="text" size="mini" icon="el-icon-edit" @click="editItem(scope.row)">编辑
                         </el-button>

@@ -11,6 +11,36 @@ export default {
             label: '其他'
 		}
 	],
+    rank:[
+        {
+            value: 1,
+            label: '董事长'
+        },
+        {
+            value: 2,
+            label: '总经理'
+        },
+        {
+            value: 3,
+            label: '副总经理'
+        },
+        {
+            value: 4,
+            label: '部门主管'
+        },
+        {
+            value: 5,
+            label: '部门助理'
+        },
+        {
+            value: 6,
+            label: '部门组长'
+        },
+        {
+            value: 7,
+            label: '职员职工'
+        }
+    ],
     nation: [
 		{
             value: 1,

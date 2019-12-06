@@ -24,7 +24,7 @@
             </div>
             <div class="draw-container" v-else>
                 <el-scrollbar class="scrollbar">
-                    <sam-form :data="currForms" :isEdit="true" @editItem="activeTab='attrComponent'" v-model="formValue" />
+                    <sam-form :data="currForms" :isEdit="true" @editItem="activeTab='attrComponent'" viewAll v-model="formValue" />
                 </el-scrollbar>
             </div>
         </div>
@@ -188,7 +188,7 @@ export default {
             this.$axios.$post('mock/db', { data: condition }).then(result => {
                 console.log('result', result);
                 this.$message.success(currForms.id ? "编辑成功" : "新增成功");
-                if(!currForms.id && result.id) currForms.id = result.id;
+                if (!currForms.id && result.id) currForms.id = result.id;
                 this.saveLoading = false;
                 this.UPDATE_FORMS({ ...currForms })
             });

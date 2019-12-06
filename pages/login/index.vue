@@ -9,9 +9,11 @@
                 <el-form-item label="用户名" prop="username">
                     <el-input v-model="ruleForm.username"></el-input>
                 </el-form-item>
-
                 <el-form-item label="密码" prop="password">
                     <el-input type="password" v-model="ruleForm.password"></el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-checkbox v-model="rem">记住账号</el-checkbox>
                 </el-form-item>
                 <el-form-item>
                     <div style="margin-top:10px">
@@ -35,9 +37,10 @@ export default {
     },
     data: () => ({
         isLogin: false,
+        rem: true,
         ruleForm: {
-            username: 'admin',
-            password: 'admin123456'
+            username: '',
+            password: ''
         },
         rules: {
             username: [
@@ -64,6 +67,33 @@ export default {
                     }).then(result => {
                         this.isLogin = false;
                         if (result) {
+                            this.$storage.session.remove('dept');
+                            //let deptId = result.department[result.department.length - 1];
+                            this.$axios.$post('mock/db', {
+                                data: {
+                                    type: 'listData',
+                                    collectionName: 'department',
+                                    notNotice: true,
+                                    data: {} //id: deptId,  leaderId: result.id 
+                                }
+                            }).then(res => {
+                                if (res && res.list.length) {
+                                    let deptArr = [];
+                                    res.list.forEach(item=>{
+                                        if(item.leaderId && item.leaderId.includes(result.id)){
+                                            deptArr.push(item)
+                                        }
+                                    });
+                                    if(deptArr.length){
+                                        this.$storage.session.set('dept', deptArr);
+                                    }
+                                    
+                                }
+                            })
+                            //return;
+                            if (this.rem) {
+                                this.$storage.set('myaccount', this.ruleForm.username);
+                            }
                             this.$store.commit('UPDATE_USER', result);
                             this.$cookies.set('token', result.token, '1m', '/');
                             if (this.prev_path && this.prev_path.indexOf('http') === 0) {
@@ -75,6 +105,12 @@ export default {
                     })
                 }
             });
+        }
+    },
+    beforeMount() {
+        let account = this.$storage.get('myaccount');
+        if (account) {
+            this.ruleForm.username = account;
         }
     },
     layout: "empty"

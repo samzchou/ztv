@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default {
     /*----------工作分类信息表-----------*/
     workType: {
@@ -411,10 +412,7 @@ export default {
             "type": "Array",
             "required": true,
             "component": "sam-cascader",
-            "props": {
-                "multiple": true,
-                "checkStrictly": true
-            },
+            "props": {},
             "optionsUrl": {
                 "level": 1,
                 "table": "department",
@@ -1349,44 +1347,27 @@ export default {
             "hide": true,
             "default": ""
         },
-        "d_operator": {
-            "name": "d_operator",
-            "label": "录入员姓名",
-            "type": "String",
-            "required": true,
-            "component": "sam-input",
-            "cptype": "text",
-            "default": ""
-        },
-        "d_operator_id": {
-            "name": "d_operator_id",
-            "label": "录入员工号",
-            "type": "String",
-            "required": true,
-            "component": "sam-input",
-            "cptype": "text",
-            "default": ""
-        },
-        "d_operator_t": {
-            "name": "d_operator_t",
-            "label": "录入员UID",
+		"filecata_id":{
+			"name": "d_uid",
+            "label": "文档目录ID",
             "type": "Number",
             "required": true,
             "component": "sam-select",
-            "filterable": true,
-            "optionsUrl": {
-                "level": 1,
-                "table": "employee",
-                "value": "id",
-                "self": true,
-                "label": "name",
-                "params": {},
-                "column": { "id": 1, "name": 1 }
-            },
+            "cptype": "text",
             "default": 0
+		},
+        "d_uid": {
+            "name": "d_uid",
+            "label": "录入员",
+			"hideForm": true,
+            "type": "Number",
+            "required": true,
+            "component": "sam-input",
+            "cptype": "text",
+            "default": ""
         },
-        "d_entry_date": {
-            "name": "d_entry_date",
+        "d_date": {
+            "name": "d_date",
             "label": "录入日期",
             "hideForm": true,
             "type": "Number",
@@ -1403,44 +1384,19 @@ export default {
             "required": true,
             "component": "sam-select",
             "options": [{
-                    "label": "a",
+                    "label": "部门内部文档",
                     "value": 1
                 },
                 {
-                    "label": "b",
+                    "label": "公司文档",
                     "value": 2
                 },
                 {
-                    "label": "c",
+                    "label": "个人私有文档",
                     "value": 3
                 }
             ],
-            "default": 1
-        },
-        "d_docform": {
-            "name": "d_docform",
-            "label": "文档格式",
-            "type": "Number",
-            "required": true,
-            "component": "sam-select",
-            "options": [{
-                    "label": "txt",
-                    "value": 1
-                },
-                {
-                    "label": "docx",
-                    "value": 2
-                },
-                {
-                    "label": "doc",
-                    "value": 3
-                },
-                {
-                    "label": "pdf",
-                    "value": 4
-                }
-            ],
-            "default": 1
+            "default": ""
         },
         "d_docname": {
             "name": "d_docname",
@@ -1449,6 +1405,14 @@ export default {
             "required": true,
             "component": "sam-input",
             "cptype": "text",
+            "default": ""
+        },
+		"d_size": {
+            "name": "d_size",
+            "label": "文档大小",
+            "type": "Number",
+            "required": true,
+            "component": "sam-input",
             "default": ""
         },
         "d_title": {
@@ -1469,8 +1433,8 @@ export default {
             "cptype": "text",
             "default": ""
         },
-        "d_safety_grade": {
-            "name": "d_safety_grade",
+        "d_grade": {
+            "name": "d_grade",
             "label": "文档密级",
             "type": "Number",
             "required": true,
@@ -1484,16 +1448,31 @@ export default {
             }, {
                 "label": "三级",
                 "value": 3
+            },{
+                "label": "四级",
+                "value": 4
+            },{
+                "label": "五级",
+                "value": 5
             }],
-            "default": 1
+            "default": ""
         },
-        "d_pic_name": {
-            "name": "d_pic_name",
-            "label": "文档负责人姓名",
-            "type": "String",
+        "d_muid": {
+            "name": "d_muid",
+            "label": "文档负责人",
+            "type": "Number",
             "required": true,
-            "component": "sam-input",
-            "cptype": "text",
+            "component": "sam-select",
+            "optionsUrl": {
+                "level": 1,
+                "table": "employee",
+                "value": "id",
+                "label": "name",
+                "params": {
+                    "department": "$self"
+                },
+                "column": { "id": 1, "name": 1 }
+            },
             "default": ""
         },
         "d_department": {
@@ -1518,24 +1497,6 @@ export default {
                 "column": { "id": 1, "dept_parentid": 1, "dept_name": 1 }
             },
             "default": []
-        },
-        "d_version": {
-            "name": "d_version",
-            "label": "文档版本号",
-            "type": "String",
-            "required": true,
-            "component": "sam-input",
-            "cptype": "text",
-            "default": ""
-        },
-        "d_remark": {
-            "name": "d_remark",
-            "label": "备注",
-            "type": "String",
-            "required": false,
-            "component": "sam-input",
-            "cptype": "text",
-            "default": ""
         }
     },
     /*----------生产任务信息-----------*/

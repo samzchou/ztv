@@ -2,7 +2,7 @@
     <section class="sam-page">
         <div class="header">
             <div class="title"><i class="el-icon-price-tag" />{{formData.title}}</div>
-            <div v-show="!isAdd">
+            <div v-show="!isAdd && viewAll">
                 <el-button class="icon-link" icon="el-icon-plus" @click="addNewList">新增数据</el-button>
                 <el-button class="icon-link" icon="el-icon-finished" @click="filterVisible=!filterVisible" v-if="formData.filter">筛选</el-button>
             </div>
@@ -22,19 +22,23 @@
         <div v-else class="table-container">
             <!--筛选-->
             <div class="filter" v-show="filterVisible">
-                <sam-form ref="filterform" :data="filterForm" :isEdit="false" v-model="filterValue" :isFilter="true" />
-                <div class="btns">
-                    <el-button size="mini" type="primary" @click="searchSubmit">搜索</el-button>
-                    <el-button size="mini" @click="searchReset">重置</el-button>
+                <!-- <div>{{filterForm}}</div> -->
+                <div v-if="filterForm && filterForm.itemList && filterForm.itemList.length">
+                    <sam-form ref="filterform" :data="filterForm" :isEdit="false" v-model="filterValue" :isFilter="true" />
+                    <!-- <div>{{filterValue}}</div> -->
+                    <div class="btns">
+                        <el-button size="mini" type="primary" @click="searchSubmit(false)">搜索</el-button>
+                        <el-button size="mini" @click="searchReset">重置</el-button>
+                    </div>
                 </div>
-                <!--  <div v-else class="empty">请选择过滤项目</div> -->
+                <div v-else style="padding: 0 20px; text-align:center"><i class="el-icon-warning-outline" /> 没有可检索的参数</div>
             </div>
             <div v-if="!formData.content" style="padding:30px">
                 <div>暂无数据</div>
             </div>
             <div class="tables" v-else>
-                <el-table size="mini" :data="tableData" border stripe fit max-height="500" :row-key="isTree?'id':''" :tree-props="treeProps" style="width:100%">
-                    <el-table-column type="index" label="序号" fixed="left" align="center" width="50">
+                <el-table size="small" :data="tableData" border stripe fit max-height="500" :row-key="isTree?'id':''" :tree-props="treeProps" style="width:100%">
+                    <el-table-column type="index" label="序号" fixed="left" align="center" width="70">
                         <template slot-scope="scope">
                             <span>{{scope.$index+(query.page - 1) * query.size + 1}}</span>
                         </template>
@@ -50,24 +54,22 @@
                     <!--如果是tree结构的表格-->
                     <el-table-column v-if="isTree" label="下属单元合计">
                         <template slot-scope="scope">
-                            <span>sdsdsd</span>
+                            <!-- <span>sdsdsd</span> -->
                             <span>{{scope.row.children && scope.row.children.length}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作" width="140">
+                    <el-table-column label="操作" width="160">
                         <template slot-scope="scope">
                             <el-button type="text" size="mini" icon="el-icon-edit" @click="addNewList(scope.row)">编辑</el-button>
-                            <el-button type="text" size="mini" icon="el-icon-delete" @click="removeItem(scope.row)">删除</el-button>
+                            <el-button v-if="viewAll" type="text" size="mini" icon="el-icon-delete" @click="removeItem(scope.row)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-
                 <div class="pages">
                     <el-pagination size="mini" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="this.query.page" :page-sizes="[20, 50, 100, 200]" :page-size="this.query.size" layout="total, sizes, prev, pager, next, jumper" :total="this.query.total" />
                 </div>
             </div>
         </div>
-
     </section>
 </template>
 
@@ -88,6 +90,11 @@ export default {
             type: Object,
             required: true
         },
+        viewAll: {
+            type: Boolean,
+            default: true
+        },
+        uinq: [],
         listParam: {
             type: Object,
             default: {}
@@ -105,7 +112,7 @@ export default {
         data: {
             // 数据发生更新
             handler(obj) {
-                //console.log('watch data handler=>', obj.content);
+                //console.log('watch data handler=>', obj);
                 if (obj.content && obj.content.itemList) {
                     this.filedsArr = obj.content.itemList.filter(o => { return !o.tableHide });
                     //console.log('this.filedsArr', this.filedsArr)
@@ -127,7 +134,7 @@ export default {
         filterForm: {
             "position": "top",
             "gutter": 20,
-            "colspan": 4,
+            "colspan": 6,
             "size": "small",
             "itemList": []
         },
@@ -160,6 +167,9 @@ export default {
                     this.formData.content.itemList.forEach(item => {
                         let key = item.key;
                         this.formValue[key] = row[item.name] || '';
+                        if (item.component == 'sam-cascader' && !this.formValue[key]) {
+                            this.formValue[key] = [];
+                        }
                     });
                 }
             }
@@ -203,6 +213,29 @@ export default {
                 "type": submitType,
                 "data": dff
             };
+            if (this.collectionName == 'employee') {
+                /* let roles = _.find(this.$store.state.collectionData.roles, { "id": data.roles });
+                console.log('submitData', data, roles);
+                if (roles.isLeader) { // 如果是主管
+                    debugger
+                    let dept = _.find(this.$store.state.collectionData.department, { "id": data.department[data.department.length - 1] });
+                    let leaderId = [...dept.leaderId];
+                    if (!leaderId.includes(this.editRow.id)) {
+                        leaderId.push(this.editRow.id);
+                        let cn = {
+                            "collectionName": "department",
+                            "type": "updateData",
+                            "notNotice": true,
+                            "data": {
+                                "id": dept.id,
+                                "leaderId": leaderId
+                            }
+                        };
+                        this.$axios.$post('mock/db', { data: cn });
+                    }
+                    console.log('dept', dept);
+                } */
+            }
             this.$axios.$post('mock/db', { data: condition }).then(result => {
                 this.$message("数据已提交保存");
                 if (submitType == 'updateData') {
@@ -215,6 +248,8 @@ export default {
         setData() {
             this.tableData = [];
             this.fieldItemData = {};
+            this.filterForm.itemList = [];
+            this.filterValue = {};
             this.collectionName = undefined;
             let valueObj = {}, filterObj = {}, itemList = [];
             //console.log('this.formData.content', this.formData.content)
@@ -249,14 +284,15 @@ export default {
                 this.filterForm.itemList.forEach(item => {
                     let key = item.name;
                     let value = dataUtil.checkValue(item.type, this.filterValue[item.key]);
+                    //console.log('this.filterParams value', value)
                     if (value) {
                         value = dataUtil.getSearchParams(item, value);
-                        if (value) {
-                            this.filterParams[key] = value;
-                        }
+                        this.filterParams[key] = value;
                     }
                 });
             }
+            console.log('this.filterParams', this.filterParams)
+
             this.getList();
         },
         // 重置搜索表单
@@ -266,6 +302,7 @@ export default {
         handleSizeChange(size) {
             this.query.size = size;
             this.query.page = 1;
+            this.searchSubmit();
         },
         handleCurrentChange(page) {
             this.query.page = page;
@@ -307,6 +344,7 @@ export default {
             //return str;
             let item = _.find(this.formData.content.itemList, { "name": field });
             if (item.options || item.optionsUrl) {
+
                 if (item.optionsUrl) { // 有后台接口数据
                     let collData = this.fieldItemData[field];
                     if (collData && collData.length) {
@@ -358,7 +396,7 @@ export default {
         },
         async getList(match = {}) {
             this.loading = true;
-            match = Object.assign({}, this.filterParams, match, this.listParam);
+            match = Object.assign({}, match, this.listParam, this.filterParams);
 
             // 通用列表查询
             let condition = {

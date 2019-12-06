@@ -24,11 +24,9 @@ router.all("*", (req, res, next) => {
         //设置文件存储路劲
         form.uploadDir = uploadedPath;
         //设置文件大小限制
-        form.maxFilesSize = 2 * 1024 * 1024;
+        //form.maxFilesSize = 2 * 1024 * 1024;
         // form.maxFields = 1000;   //设置所有文件的大小总和//上传后处理
         form.parse(req, (err, fields, files) => {
-            //console.log('fields', fields)
-            //console.log('files', files)
             if (err) {
                 //console.log('parse error:' + err);
                 res.end(
@@ -51,28 +49,16 @@ router.all("*", (req, res, next) => {
                     if (fields.path) {
                         dstPath = uploadedPath + '/' + fields.path[0] + '/' + fileName;
                     }
-
-                    //console.log('rename', targetPath, dstPath)
                     let err = fs.renameSync(targetPath, dstPath);
                     if (err) {
                         console.log('rename error:' + err);
                     } else {
                         console.log('rename ok');
-                        fileObj.filePath = fileName;
+                        fileObj.filePath = dstPath;
                         delete fileObj.fieldName, delete fileObj.path, delete fileObj.headers;
                         fileArr.push(fileObj);
                     }
-                    /* fs.rename(targetPath, dstPath, (err) => {
-                        if (err) {
-                            console.log('rename error:' + err);
-                        } else {
-                            console.log('rename ok');
-
-                        }
-                    }); */
                 }
-                //}
-
                 res.end(
                     JSON.stringify({
                         success: true,

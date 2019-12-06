@@ -16,20 +16,20 @@
                         <span>{{scope.$index+( query.page - 1) * query.size + 1}} </span>
                     </template>
                 </el-table-column>
-                <el-table-column prop="form_name" label="表单名称" />
-                <el-table-column prop="content" label="数据结构" width="450">
+                <el-table-column prop="form_name" label="表单名称" width="350" />
+                <el-table-column prop="content" label="数据结构">
                     <template slot-scope="scope">
                         <span>{{getCode(scope.row.content)}}</span>
                         <el-button type="text" @click="showCode(scope.row.content)">查看</el-button>
                     </template>
                 </el-table-column>
-                <el-table-column prop="userName" label="更新者" width="120" />
-                <el-table-column prop="create_date" label="最后更新" width="150">
+                <el-table-column prop="userName" label="更新者" width="150" />
+                <el-table-column prop="create_date" label="最后更新" width="180">
                     <template slot-scope="scope">
                         <span>{{getDate(scope.row.create_date)}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" fixed="right" align="center" width="130">
+                <el-table-column label="操作" fixed="right" align="center" width="150">
                     <template slot-scope="scope">
                         <el-button type="text" size="mini" icon="el-icon-edit" @click="editItem(scope.row)">编辑
                         </el-button>

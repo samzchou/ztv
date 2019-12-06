@@ -1,6 +1,5 @@
 /* eslint-disable */
 export default {
-
     formatDate(date, format = 'yyyy-MM-dd') {
         var o = {
             "M+": date.getMonth() + 1, //month
@@ -61,11 +60,11 @@ export default {
     },
     getAllTimes(list) {
         let allTimes = 0;
-		if(list && list.length){
-			list.forEach(item => {
-				allTimes += item.allTimes; //(item.endTime - item.startTime);
-			});
-		}
+        if (list && list.length) {
+            list.forEach(item => {
+                allTimes += item.allTimes; //(item.endTime - item.startTime);
+            });
+        }
         return allTimes;
     },
     // 判断是否为JSON字符串
@@ -87,15 +86,15 @@ export default {
     // 递归数据成tree结构
     toTree(data, opts = {}) {
         let parentKey = opts.parentKey || 'pid';
-        data.forEach(function(item) {
+        data.forEach(item => {
             delete item.children;
         });
         var map = {};
-        data.forEach(function(item) {
+        data.forEach(item => {
             map[item.id] = item;
         });
         var val = [];
-        data.forEach(function(item) {
+        data.forEach(item => {
             var parent = map[item[parentKey]];
             if (parent) {
                 (parent.children || (parent.children = [])).push(item);
@@ -309,8 +308,22 @@ export default {
         }
     },
     getExt(filename) {
-        let index = filename.lastIndexOf(".");
-        return filename.substr(index + 1);
+        //console.log('filename', filename)
+        if (filename) {
+            let index = filename.lastIndexOf(".");
+            return filename.substr(index + 1);
+        }
+        return "";
+
+    },
+    downloadFile(path, name) {
+        let iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = '/download?type=download&filepath=' + path + '&filename=' + name;
+        iframe.onload = () => {
+            document.body.removeChild(iframe);
+        }
+        document.body.appendChild(iframe);
     }
 
 }

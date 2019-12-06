@@ -1,0 +1,138 @@
+.setup-container {
+    height: 100%;
+
+    .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #DDD;
+        height: 50px;
+        box-sizing: border-box;
+    }
+
+    .content {
+        height: calc(100% - 40px);
+        display: flex;
+
+        /deep/ .slide-panel {
+            height: 100%;
+
+            .node-icon {
+                li {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 15px 0;
+                    user-select: none;
+
+                    i {
+                        font-size: 32px;
+                    }
+                }
+            }
+        }
+
+        .mid {
+            flex: 1;
+            height: 100%;
+            overflow: hidden;
+
+            .scrollbar {
+                height: 100%;
+                width: 100%;
+            }
+
+            .node-list {
+                >div {
+                    float: left;
+                    width: 150px;
+                    min-height: 500px;
+                    border: 1px solid #DDD;
+
+                    box-sizing: border-box;
+                    user-select: none;
+                    background-color: #FFF;
+
+                    &:first-child {
+                        border-right-width: 0;
+                    }
+
+                    &:last-child {
+                        border-left-width: 0;
+                    }
+
+                    .title {
+                        height: 30px;
+                        background-color: #a7d7f3;
+                        text-align: center;
+                        border-bottom: 1px solid #DDD;
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 0 15px;
+                        box-sizing: border-box;
+
+                        &.drag {
+                            cursor: move;
+                        }
+                    }
+
+                    .node {
+                        padding: 20px 0;
+                        display: flex;
+                        justify-content: center;
+                        height: 80px;
+                        box-sizing: border-box;
+
+                        >div {
+                            padding: 10px 15px;
+                            border: 1px solid rgba(0, 0, 0, .1);
+                            border-radius: 5px;
+                        }
+
+                        &.start {
+                            >div {
+                                background-color: #c5f1d4;
+                            }
+                        }
+
+                        &.work {
+                            >div {
+                                cursor: move;
+                                background-color: #aabde8;
+                            }
+                        }
+
+                        &.end {
+                            >div {
+                                background-color: #fdca6e;
+                            }
+                        }
+                    }
+
+                }
+
+                /deep/ .list-channel {
+                    width: auto;
+
+                    >span>div {
+                        float: left;
+                        width: 180px;
+                        border-right: 1px solid #DDD;
+
+                        &:last-child {
+                            border-right-width: 0;
+                        }
+
+                        .list-node {}
+                    }
+                }
+            }
+        }
+    }
+}
+
+.flip-list-move {
+    transition: transform 0.5s;
+}

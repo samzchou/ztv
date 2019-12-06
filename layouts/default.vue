@@ -65,6 +65,7 @@ export default {
 	.el-main {
 		padding: 0;
 		overflow: hidden;
+		height: calc(100% - 60px);
 		.main-content {
 			height: 100%;
 		}

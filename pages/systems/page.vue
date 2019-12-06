@@ -5,7 +5,7 @@
                 <template v-if="isInit">
                     <page-data v-if="!notFound" :data="pageForm" :listParam="listParam" />
                     <div v-else class="page-error">
-                        对不起，系统无法定位要具体页面，请核查参数！
+                        对不起，系统无法定位到具体页面，请核查参数！
                     </div>
                 </template>
             </div>
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import pageData from '~/components/page/data'
+import pageData from '~/components/page/data';
 export default {
     name: 'sys-page',
     components: {
@@ -30,12 +30,19 @@ export default {
         listParam: {}
     }),
     methods: {
-        async getPage() {
+        async getPage(pageId) {
+			pageId = pageId?pageId:this.$route.query.id;
+			if(!pageId){
+				this.$alert("页面参数出错！");
+				this.isInit = true;
+				this.notFound = true;
+				return;
+			}
             let condition = {
                 type: 'getData',
                 collectionName: 'pageList',
                 data: {
-                    id: this.$route.query.id
+                    id: pageId
                 }
             }
             let result = await this.$axios.$post('mock/db', { data: condition })
@@ -62,14 +69,11 @@ export default {
                     this.notFound = true;
                     return;
                 }
-                //debugger
-                //this.pageForm.content = form_content.content
                 pageForm.content = form_content.content;
-
                 this.pageForm = _.cloneDeep(pageForm);
-                console.log('this.pageForm', this.pageForm)
+                //console.log('this.pageForm', JSON.stringify(this.pageForm))
             }
-            this.isInit = true
+            this.isInit = true;
         }
     },
     mounted() {
@@ -78,18 +82,5 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.sampage-container {
-    height: 100%;
-    overflow: hidden;
-    .scrollbar {
-        height: calc(100% - 20px);
-        /deep/ .el-scrollbar__wrap {
-            overflow-x: hidden;
-            //margin-right:0 !important;
-            .el-menu--collapse {
-                width: auto;
-            }
-        }
-    }
-}
+@import '~assets/scss/page';
 </style>

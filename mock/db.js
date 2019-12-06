@@ -198,20 +198,20 @@ const dbFun = {
     async addPatch(params) {
         const tn = params.collectionName;
         const data = params.data;
-		let id = 0;
+        let id = 0;
 
-		let counter = await mongoDB.counters.findOne({ "model": tn });
-		if (!counter) {
-			await mongoDB.counters.create({ "model": tn, count: 0 });
-		}else{
-			id = counter.count;
-		}
-		let lists = [];
-		data.forEach((item)=>{
-			id++;
-			item.id = id;
-			lists.push(item);
-		})
+        let counter = await mongoDB.counters.findOne({ "model": tn });
+        if (!counter) {
+            await mongoDB.counters.create({ "model": tn, count: 0 });
+        } else {
+            id = counter.count;
+        }
+        let lists = [];
+        data.forEach((item) => {
+            id++;
+            item.id = id;
+            lists.push(item);
+        })
         let result = await mongoDB[tn].insertMany(lists);
         //console.log(params, result);
         await mongoDB.counters.findOneAndUpdate({ 'model': tn }, { $inc: { count: lists.length } });
@@ -348,7 +348,7 @@ const dbFun = {
                 result = await mongoDB[tn].updateOne(condition, update, {
                     upsert: true
                 });
-                console.log('updateData', result)
+                //console.log('updateData', result)
             }
         }
         let response = {
@@ -409,6 +409,7 @@ const dbFun = {
         //console.log(params, result)
         return {
             success: result['n'] == 0 ? false : true,
+            response: result['n'] == 0 ? false : true,
             msgDesc: result['n'] == 0 ? '删除数据失败' : null
         }
     },
@@ -445,17 +446,25 @@ const dbFun = {
         let data = params.data;
         let content = {
             'name': data.username
-        }; // 要生成token的主题信息
+        };
         let token = jwt.sign(content, tokenPrefix, {
             expiresIn: 60 * 60 * 1 // 1小时过期
         });
         data.password = this._setHash(data.password);
-        let myleader;
         let result = await mongoDB[tn].findOne(data);
         if (result) {
             result.token = token;
+            // 判断用户是否未主管领导
+            /* let deptId = result.department[result.department.length - 1];
+            let dept = await mongoDB['department'].findOne({ id: deptId, leaderId: result.id });
+            if (dept) {
+                result.dept = dept;
+                console.log('login', result)
+            } */
+
             this.updateData({
                 collectionName: tn,
+                updateDate: true,
                 data: {
                     "id": result.id,
                     "token": token
@@ -494,15 +503,18 @@ const dbFun = {
     async getServerTime() {
         return {
             success: true,
-            response: new Date().getTime()
+            response: Date.now()
         }
     },
     async serverTimeRange() {
+        let now = new Date();
+        let startTime = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+        let endTime = startTime + 24 * 60 * 60 * 1000 - 1;
         return {
             success: true,
             response: {
-                startTime: new Date(new Date().toLocaleDateString()).getTime(),
-                endTime: new Date(new Date().toLocaleDateString()).getTime() + 24 * 60 * 60 * 1000 - 1
+                startTime: startTime,
+                endTime: endTime
             }
         }
     }

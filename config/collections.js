@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
     /*----------数据表计数器-----------*/
     counters: {
@@ -37,10 +38,103 @@ module.exports = {
             "tableHide": true
         }
     },
+    workflow_type: {
+        "id": {
+            "type": Number,
+            "default": 0
+        },
+        "dept_id": {
+            "type": Array,
+            "label": "所属部门",
+            "default": []
+        },
+        "name": {
+            "type": String,
+            "label": "类别名称",
+            "default": ""
+        }
+    },
+    workflow_distance: {
+        "id": {
+            "type": Number,
+            "default": 0
+        },
+        "wt_id": {
+            "type": Number,
+            "label": "流程类型ID",
+            "default": 0
+        },
+        "name": {
+            "type": String,
+            "label": "流程实例名称",
+            "default": ""
+        },
+        "grade": {
+            "type": Number,
+            "label": "流程级别",
+            "default": 0
+        },
+        "limit": {
+            "type": Number,
+            "label": "操作限制",
+            "default": 0
+        },
+        "notice_type": {
+            "type": Number,
+            "label": "通知类型",
+            "default": 0
+        },
+        "file_id": {
+            "type": Number,
+            "label": "绑定文档ID",
+            "default": 0
+        }
+    },
+    workflow_history: {
+        "id": {
+            "type": Number,
+            "default": 0
+        },
+        "wd_id": {
+            "type": Number,
+            "label": "对应流程ID",
+            "default": 0
+        },
+        "from_uid": {
+            "type": Number,
+            "label": "上节点提交人ID",
+            "default": 0
+        },
+        "to_uid": {
+            "type": Number,
+            "label": "下节点处理人ID",
+            "default": 0
+        },
+        "state": {
+            "type": Number,
+            "label": "流程状态",
+            "default": 0
+        },
+        "feedback": {
+            "type": String,
+            "label": "反馈意见",
+            "default": ""
+        },
+        "create_date": {
+            "type": Number,
+            "label": "创建时间",
+            "default": new Date().getTime()
+        }
+    },
     /*----------文件系统目录数据-----------*/
     fileCatalog: {
         "id": {
             "type": Number,
+            "default": 0
+        },
+		"type": {
+            "type": Number,
+			"label": "分类(个人、部分、公司)",
             "default": 0
         },
         "pid": {
@@ -48,19 +142,19 @@ module.exports = {
             "label": "父级ID",
             "default": 0
         },
+		"uid": {
+            "type": Number,
+            "label": "用户UID",
+            "default": 0
+        },
+		"department": {
+            "type": Array,
+            "label": "部门ID",
+            "default": []
+        },
         "name": {
             "type": String,
-            "label": "名称",
-            "default": ""
-        },
-        "cata_name": {
-            "type": String,
-            "label": "系统目录命名",
-            "default": ""
-        },
-        "path": {
-            "type": String,
-            "label": "系统目录路径",
+            "label": "目录名称",
             "default": ""
         },
         "disabled": {
@@ -69,33 +163,7 @@ module.exports = {
             "default": 0
         }
     },
-    /*----------文件系统文件数据-----------*/
-    fileList: {
-        "id": {
-            "type": Number,
-            "default": 0
-        },
-        "cid": {
-            "type": Number,
-            "label": "系统目录ID",
-            "default": 0
-        },
-        "filename": {
-            "type": String,
-            "label": "文件名称",
-            "default": ""
-        },
-        "filepath": {
-            "type": String,
-            "label": "文件路径",
-            "default": ""
-        },
-        "filesize": {
-            "type": Number,
-            "label": "文件大小",
-            "default": 0
-        }
-    },
+    
     /*----------系统服务数据-----------*/
     service: {
         "id": {
@@ -148,6 +216,16 @@ module.exports = {
         "id": {
             "type": Number,
             "default": 0
+        },
+		"sort": {
+            "type": Number,
+            "default": 0,
+			"label": "排序"
+        },
+		"isLeader": {
+            "type": Boolean,
+            "default": false,
+			"label": "是否为部门主管级"
         },
         "name": {
             "type": String,
@@ -237,8 +315,8 @@ module.exports = {
         },
         "leaderId": {
             "label": "主管领导ID",
-            "type": Number,
-            "default": 0
+            "type": Array,
+            "default": []
         },
         "sort": {
             "label": "排序",
@@ -274,8 +352,8 @@ module.exports = {
             "type": Number,
             "default": 0
         },
-		"typeid": {
-			"label": "项目名称",
+        "typeid": {
+            "label": "项目名称",
             "type": Number,
             "default": 0
         },
@@ -399,12 +477,12 @@ module.exports = {
         "department": {
             "label": "所属部门",
             "type": Array,
-            "default": []
+            "default": ""
         },
         "position": {
             "label": "岗位",
             "type": String,
-            "default": 0
+            "default": ""
         },
         "e_title": {
             "label": "职称",
@@ -424,27 +502,27 @@ module.exports = {
         "work_age": {
             "label": "实际工龄",
             "type": Number,
-            "default": 0
+            "default": ""
         },
         "work_age_revise": {
             "label": "工龄修正",
             "type": Number,
-            "default": 0
+            "default": ""
         },
         "annual_age": {
             "label": "年假工龄",
             "type": Number,
-            "default": 0
+            "default": ""
         },
         "e_type": {
             "label": "员工类别",
             "type": Number,
-            "default": 2
+            "default": ""
         },
         "salary_type": {
             "label": "工资类别",
             "type": Number,
-            "default": 2
+            "default": ""
         },
         "security_office": {
             "label": "社保所属",
@@ -493,7 +571,7 @@ module.exports = {
             "default": new Date().getTime(),
             "label": "当前周日时间"
         },
-		"plan":{
+        "plan": {
             "type": Array,
             "default": "",
             "label": "计划内容"
@@ -881,22 +959,17 @@ module.exports = {
             "type": Number,
             "default": 0
         },
-        "d_operator": {
-            "label": "录入员姓名",
-            "type": String,
-            "default": ""
-        },
-        "d_operator_id": {
-            "label": "录入员工号",
-            "type": String,
-            "default": ""
-        },
-        "d_operator_t": {
-            "label": "录入员UID",
+		"filecata_id":{
+            "label": "文档目录ID",
             "type": Number,
             "default": 0
+		},
+        "d_uid": {
+            "label": "录入员UID",
+            "type": Number,
+            "default": ""
         },
-        "d_entry_date": {
+        "d_date": {
             "label": "录入日期",
             "type": Number,
             "default": new Date().getTime()
@@ -906,15 +979,15 @@ module.exports = {
             "type": Number,
             "default": 0
         },
-        "d_docform": {
-            "label": "文档格式",
-            "type": Number,
-            "default": 0
-        },
         "d_docname": {
-            "label": "文档名",
+            "label": "文档路径名",
             "type": String,
             "default": ""
+        },
+		"d_size": {
+            "label": "文档大小",
+            "type": Number,
+            "default": 0
         },
         "d_title": {
             "label": "文档标题",
@@ -926,12 +999,12 @@ module.exports = {
             "type": String,
             "default": ""
         },
-        "d_safety_grade": {
+        "d_grade": {
             "label": "文档密级",
             "type": Number,
             "default": 0
         },
-        "d_pic_name": {
+        "d_muid": {
             "label": "文档负责人姓名",
             "type": String,
             "default": ""
@@ -940,16 +1013,6 @@ module.exports = {
             "label": "文档所属科室",
             "type": Array,
             "default": []
-        },
-        "d_version": {
-            "label": "文档版本号",
-            "type": String,
-            "default": ""
-        },
-        "d_remark": {
-            "label": "备注",
-            "type": String,
-            "default": ""
         }
     },
     /*----------生产任务信息-----------*/

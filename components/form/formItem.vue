@@ -155,6 +155,9 @@ export default {
                     collectionName: this.item.optionsUrl.table,
                     data: this.item.optionsUrl.params || {}
                 }
+				if(this.item.optionsUrl.self){ // 与用户自己有关参数
+					conditon.data[this.item.optionsUrl.self] = this.$store.state.user[this.item.optionsUrl.self];
+				}
                 let res = await this.$axios.$post('mock/db', { data: conditon });
                 if (res && res.list.length) {
                     // 如果是级联的

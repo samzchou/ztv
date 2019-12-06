@@ -80,7 +80,7 @@
         },
         {
             "name": "endTime",
-            "label": "开始时间",
+            "label": "结束时间",
             "type": "Number",
             "required": true,
             "component": "sam-timeselect",

@@ -52,7 +52,7 @@ export default {
         },
         icon: {
             type: String,
-            default: "my-icon-filter"
+            default: "el-icon-right"
         }
     },
     watch: {

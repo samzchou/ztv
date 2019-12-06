@@ -1,0 +1,58 @@
+{
+    "title": "流程类别",
+    "showType": 1,
+    "formid": 31,
+    "content": {
+        "gutter": 20,
+        "colspan": 6,
+        "size": "small",
+        "itemList": [{
+                "name": "dept_id",
+                "label": "所属部门",
+                "type": "Array",
+                "required": true,
+                "component": "sam-cascader",
+                "colspan": 3,
+                "width": 400,
+                "optionsUrl": {
+                    "level": 1,
+                    "table": "department",
+                    "pid": "dept_parentid",
+                    "value": "id",
+                    "label": "dept_name",
+                    "params": {
+                        "disabled": false
+                    }
+                },
+                "rules": [{
+                    "required": true,
+                    "message": "请选择所属部门",
+                    "trigger": "change",
+                    "type": "array"
+                }],
+                "value": [],
+                "table": "workflow_type",
+                "tableName": "workflow_type-dept_id",
+                "key": "dept_id"
+            },
+            {
+                "name": "name",
+                "label": "类别名称",
+                "type": "String",
+                "width": 300,
+                "required": true,
+                "component": "sam-input",
+                "rules": [{
+                    "required": true,
+                    "message": "请输入类别名称",
+                    "trigger": "blue"
+                }],
+                "value": "",
+                "table": "workflow_type",
+                "tableName": "workflow_type-name",
+                "key": "name"
+            }
+        ]
+
+    }
+}

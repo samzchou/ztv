@@ -59,6 +59,28 @@ export default {
                 }
             ]
         },
+		/*
+        {
+            "label": "流程引擎",
+            "icon": "el-icon-refresh",
+            "children": [{
+                    "label": "流程类别",
+                    "icon": "el-icon-document-copy",
+                    "path": "/admin/workflow/wt"
+                },
+                {
+                    "label": "流程配置",
+                    "icon": "el-icon-document-copy",
+                    "path": "/admin/workflow/setup"
+                },
+                {
+                    "label": "流程实例监控",
+                    "icon": "el-icon-document-copy",
+                    "path": "/admin/workflow/view"
+                }
+            ]
+        },
+		*/
         {
             "label": "系统管理",
             "icon": "el-icon-set-up",
