@@ -62,7 +62,7 @@ const dbFun = {
                 response: filedata
             }
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             return {
                 success: true,
                 response: false
@@ -71,21 +71,38 @@ const dbFun = {
     },
 	// 删除文件
 	async removeFile(params){
+		try {
+			for(let i=0; i<params.filepath.length; i++){
+				fs.unlinkSync(params.filepath[i]);
+				//console.log('文件:'+params.filepath[i]+'删除！' + rs)
+			}
+			return {
+				success: true,
+				response: true
+			}
+		} catch (error) {
+			return {
+				success: false,
+				response: error
+			}
+		}
+		/*
 		params.filepath.forEach(path=>{
 			fs.unlink(path, (err)=>{
 				if(err){
+					let isErr = true;
 					throw err;
 				}
 				console.log('文件:'+path+'删除成功！');
 			})
-		})
+		})*/
+		
 	}
 }
 
 module.exports = ({ data }) => {
-    console.log('files', data)
+    //console.log('files', data)
     return new Promise((resolve, reject) => {
-
         dbFun[data.type](data).then(result => {
             resolve(result);
         });

@@ -67,7 +67,7 @@ export default {
                     }).then(result => {
                         this.isLogin = false;
                         if (result) {
-                            this.$storage.session.remove('dept');
+                            this.$storage.remove('dept');
                             //let deptId = result.department[result.department.length - 1];
                             this.$axios.$post('mock/db', {
                                 data: {
@@ -85,9 +85,8 @@ export default {
                                         }
                                     });
                                     if(deptArr.length){
-                                        this.$storage.session.set('dept', deptArr);
+                                        this.$storage.set('dept', deptArr);
                                     }
-                                    
                                 }
                             })
                             //return;

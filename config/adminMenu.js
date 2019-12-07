@@ -99,11 +99,13 @@ export default {
                     "icon": "el-icon-document-copy",
                     "path": "/admin/roles"
                 },
+				/*
                 {
                     "label": "文件管理系统",
                     "icon": "el-icon-document-copy",
                     "path": "/admin/files"
                 },
+				*/
             ]
         }
     ]

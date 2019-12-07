@@ -1,87 +1,88 @@
 <template>
     <section class="file-container">
         <div class="box">
-            <div class="left" id="box-left" :style="{'width':leftWidth+'px'}">
+            <slider-panel :visible.sync="catVisible" width="350px" position="left" slideButton>
                 <div class="root">
                     <div>文档目录</div>
-                    <div v-if="checkRoles(2)">
+                    <div v-if="checkCarRoles(2)">
                         <el-button class="icon-link" icon="el-icon-plus" @click="addDir(null)" />
                     </div>
                 </div>
                 <div class="tree-content">
-                    <el-scrollbar class="scrollbar">
-                        <client-only>
-                            <el-tree ref="tree" :data="treeData" node-key="id" default-expand-all highlight-current :expand-on-click-node="false" :props="defaultProps" @node-click="nodeClick" empty-text="暂无文档目录数据，请添加">
-                                <div class="custom-tree-node" slot-scope="{ node, data }">
-                                    <!--编辑名称-->
-                                    <div v-if="editNode && editNode.id == data.id" class="edits">
-                                        <input type="text" v-model="editNode.name" @click.stop="return false" />
-                                        <div class="btns">
-                                            <i class="el-icon-check" @click.stop.prevent="updateNode" />
-                                            <i class="el-icon-close" @click.stop.prevent="editNode=null" />
-                                        </div>
-                                    </div>
-                                    <div v-else class="node-folder" :class="{'active':currNode&&currNode.id==data.id}">{{ node.label }}</div>
-                                    <div class="btns" v-if="checkRoles(2)">
-                                        <el-button class="icon-link" title="编辑目录名称" size="mini" @click.stop.prevent="() => editTree(data)" icon="el-icon-edit" />
-                                        <el-button class="icon-link" title="添加下级目录" size="mini" @click.stop.prevent="() => addDir(data)" icon="el-icon-plus" />
-                                        <el-button class="icon-link" title="删除目录" size="mini" @click.stop.prevent="() => removeTree(node, data)" icon="el-icon-delete" />
-                                    </div>
+                    <client-only>
+                        <el-tree ref="tree" :data="treeData" node-key="id" default-expand-all highlight-current :expand-on-click-node="false" :props="defaultProps" @node-click="nodeClick" empty-text="暂无文档目录数据，请添加">
+                            <div class="custom-tree-node" slot-scope="{ node, data }">
+                                <div class="node-folder" :class="{'active':(currNode&&currNode.id==data.id),'in-edit':(editNode&&editNode.id==data.id)}">{{ node.label }}</div>
+                                <div class="btns" v-if="checkCarRoles(2)">
+                                    <el-button class="icon-link" title="编辑目录名称" size="mini" @click.stop.prevent="() => editTree(data)" icon="el-icon-edit" />
+                                    <el-button class="icon-link" title="添加下级目录" size="mini" @click.stop.prevent="() => addDir(data)" icon="el-icon-plus" />
+                                    <el-button class="icon-link" title="删除目录" size="mini" @click.stop.prevent="() => removeTree(node, data)" icon="el-icon-delete" />
                                 </div>
-                            </el-tree>
-                        </client-only>
-                    </el-scrollbar>
+                            </div>
+                        </el-tree>
+                    </client-only>
                 </div>
-            </div>
-            <div class="resize" @mousedown="handlerMouseDown"></div>
+            </slider-panel>
+
             <!--中间部分-->
             <div class="mid" id="box-mid">
                 <div class="forms" v-if="isAddForm">
                     <div class="title">{{formTitle}}</div>
-                    <sam-form ref="editform" :data="catForm" :isEdit="false" v-model="catValue" />
-                    <div class="submit">
+                    <!-- <sam-form ref="editform" :data="catForm" :isEdit="false" v-model="catValue" /> -->
+                    <el-form size="small" :model="catForm" :rules="catRules" status-icon ref="editform" label-position="top">
+                        <el-form-item label="目录名称" prop="name">
+                            <el-input v-model="catForm.name" clearable placeholder="请输入目录名车" style="width:200px" />
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button size="mini" type="primary" @click="submitForm">提交保存</el-button>
+                            <el-button size="mini" @click="submitCancel">取消返回</el-button>
+                        </el-form-item>
+                    </el-form>
+                    <!-- <div class="submit">
                         <el-button size="mini" type="primary" @click="submitForm(null)">提交保存</el-button>
-                        <el-button size="mini" @click="isAddForm=false">返回</el-button>
-                    </div>
+                        <el-button size="mini" @click="isAddForm=false">取消返回</el-button>
+                    </div> -->
                 </div>
                 <div v-else class="files-list">
                     <div class="lists" v-if="!isAddFile">
                         <div class="title">
                             <div class="left">
                                 <div>【{{currNode?currNode.name:'根目录'}}】文档列表</div>
-                                <div class="form">
-                                    <el-form size="small" :inline="true" :model="searchForm">
-                                        <el-form-item>
-                                            <el-input v-model="searchForm.d_title" placeholder="按文档名" clearable style="width:150px" />
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-input v-model="searchForm.d_docname" placeholder="按文档后缀" clearable style="width:150px" />
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-select v-model="searchForm.d_grade" placeholder="按文档密级" clearable style="width:150px">
-                                                <el-option v-for="item in gradeArr" :key="item.value" :label="item.label" :value="item.value" />
-                                            </el-select>
-                                        </el-form-item>
-                                        <el-form-item>
-                                            <el-button type="success" @click="onSubmitSearch">查询</el-button>
-                                        </el-form-item>
-                                    </el-form>
-                                </div>
                             </div>
                             <div>
-                                <el-button v-if="checkRoles(2)" size="small" icon="el-icon-folder-opened" @click="addDir(currNode)">新增目录</el-button>
-                                <el-button v-if="checkRoles(2)" type="primary" size="small" icon="el-icon-document" @click="startUpload">上传文档</el-button>
-                                <el-button v-if="checkRoles(5)" type="warning" size="small" icon="el-icon-delete" @click="handleBatchCommand('remove')">批量删除</el-button>
-                                <!-- <el-dropdown @command="handleBatchCommand">
-                                    <el-button size="mini" type="warning">
+                                <el-button v-if="checkRoles(2, true)" size="mini" icon="el-icon-folder-opened" @click="addDir(currNode)">新增目录</el-button>
+                                <el-button v-if="checkRoles(2, true)" type="primary" size="mini" icon="el-icon-document" @click="startUpload">上传文档</el-button>
+                                <el-dropdown v-if="checkRoles(5, true)" @command="handleBatchCommand">
+                                    <el-button type="warning" size="mini">
                                         批量处理<i class="el-icon-arrow-down el-icon--right"></i>
                                     </el-button>
                                     <el-dropdown-menu slot="dropdown">
-                                        <el-dropdown-item command="share">批量共享</el-dropdown-item>
-                                        <el-dropdown-item command="remove">批量删除</el-dropdown-item>
+                                        <el-dropdown-item command="copy">复制文档</el-dropdown-item>
+                                        <el-dropdown-item command="cut">剪切文档</el-dropdown-item>
+                                        <el-dropdown-item command="remove">删除文档</el-dropdown-item>
                                     </el-dropdown-menu>
-                                </el-dropdown> -->
+                                </el-dropdown>
+                                <!-- <el-button v-if="checkRoles(5, true)" type="warning" size="mini" icon="el-icon-delete" @click="handleBatchCommand('remove')">批量删除</el-button> -->
+                                <el-button v-if="checkCopy&&checkRoles(2, true)" size="mini" type="success" icon="el-icon-document-copy" @click="putFun">粘贴文档</el-button>
                             </div>
+                        </div>
+                        <div class="search-form" v-if="docList.length">
+                            <el-form size="mini" :inline="true" :model="searchForm">
+                                <el-form-item>
+                                    <el-input v-model="searchForm.d_title" placeholder="按文档名" clearable style="width:150px" />
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-input v-model="searchForm.d_docname" placeholder="按文档后缀" clearable style="width:150px" />
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-select v-model="searchForm.d_grade" placeholder="按文档密级" multiple clearable style="width:250px">
+                                        <el-option v-for="item in gradeArr" :key="item.value" :label="item.label" :value="item.value" />
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="success" @click="onSubmitSearch">查询</el-button>
+                                </el-form-item>
+                            </el-form>
                         </div>
                         <div class="file-content">
                             <!-- <el-scrollbar class="scrollbar"> -->
@@ -98,7 +99,7 @@
                                     </div>
                                 </li>
                                 <!--文档列表 v-contextmenu="menu" -->
-                                <li v-for="file in docList" :key="file.id" @click="setCurrDoc(file, $event)">
+                                <li v-for="file in docList" :key="file.id" @click.stop="setCurrDoc(file, $event)" :title="file.d_title" :class="{'active':currDoc&&currDoc.id==file.id}">
                                     <div class="content">
                                         <div class="icon" :style="{'background-image':`url(/images/icons/${getExt(file.d_docname)}.png)`}">
                                             <span v-if="getExt(file.d_docname)=='common'">{{getExtName(file.d_docname)}}</span>
@@ -107,13 +108,7 @@
                                             <span>{{file.d_title}}</span>
                                         </div>
                                     </div>
-                                    <div class="btns">
-                                        <el-button class="icon-link" icon="el-icon-download" @click.stop="clickBtn(file, 'downloadFn')">下载</el-button>
-                                        <el-button class="icon-link" v-if="checkIsView(file)" icon="el-icon-view" @click.stop="clickBtn(file, 'viewFn')">预览</el-button>
-                                        <el-button v-if="checkRoles(2)" class="icon-link" icon="el-icon-edit" @click.stop="clickBtn(file, 'editFn')">详情</el-button>
-                                        <el-button v-if="checkRoles(2)" class="icon-link" icon="el-icon-delete" @click.stop="clickBtn(file, 'deleteFn')">删除</el-button>
-                                    </div>
-                                    <div class="checkbox">
+                                    <div class="checkbox" v-if="checkRoles(5, true)">
                                         <el-checkbox size="medium" :checked="getCheckedDoc(file.id)" @change="setCheckedDoc(file.id)" />
                                     </div>
                                     <div class="grade" :title="`文档密级:${file.d_grade}`">{{file.d_grade}}</div>
@@ -188,25 +183,24 @@
                 </div>
             </div>
         </el-dialog>
-        <div class="doc-btns" id="doc-btns" :style="btnStyle">
+        <div class="doc-btns" id="doc-btns" :class="{'show':visibleBtn}" :style="btnStyle">
             <el-button-group>
-                <el-button size="mini" type="primary" icon="el-icon-download" title="下载"></el-button>
-                <el-button size="mini" type="primary" icon="el-icon-view" title="预览"></el-button>
-                <el-button size="mini" type="primary" icon="el-icon-edit" title="编辑"></el-button>
-                <el-button size="mini" type="primary" icon="el-icon-document-copy" title="复制"></el-button>
-                <el-button size="mini" type="primary" icon="el-icon-scissors" title="剪切"></el-button>
-                <el-button size="mini" type="primary" icon="el-icon-delete" title="删除"></el-button>
+                <el-button size="mini" type="primary" icon="el-icon-download" title="下载" @click.stop="clickBtn('downloadFn')"></el-button>
+                <el-button size="mini" type="primary" icon="el-icon-view" title="预览" @click.stop="clickBtn('viewFn')"></el-button>
+                <el-button size="mini" v-if="checkRoles(2)" type="primary" icon="el-icon-edit" title="编辑" @click.stop="clickBtn('editFn')"></el-button>
+                <el-button size="mini" type="primary" icon="el-icon-document-copy" title="复制" @click.stop="clickBtn('copyFn')"></el-button>
+                <el-button size="mini" v-if="checkRoles(2)" type="primary" icon="el-icon-scissors" title="剪切" @click.stop="clickBtn('cutFn')"></el-button>
+                <el-button size="mini" v-if="checkRoles(2)" type="primary" icon="el-icon-delete" title="删除" @click.stop="clickBtn('deleteFn')"></el-button>
             </el-button-group>
         </div>
-
         <div class="view-doc" v-show="visiblePdf">
             <pdf-view ref="pdf-view" :visible="visiblePdf" :pdfUrl="pdfParams.pdfUrl" :fullPage="pdfParams.fullPage" type="stream" @close="visiblePdf=false" />
         </div>
-
     </section>
 </template>
 
 <script>
+import sliderPanel from '~/components/sliderPanel';
 import samForm from '~/components/form';
 import dataUtil from '~/util/data_util';
 import axios from 'axios';
@@ -215,7 +209,7 @@ import pdfView from '~/components/pdfview';
 export default {
     name: 'files',
     components: {
-        samForm, pdfView
+        sliderPanel, samForm, pdfView
     },
     props: {
         doctype: {
@@ -224,30 +218,22 @@ export default {
         }
     },
     computed: {
-        // 右键菜单
-        menu() {
-            return [{
-                icon: 'el-icon-download',
-                name: '下载文档',
-                fn: this.downloadFn
-            }, {
-                icon: 'el-icon-edit',
-                name: '文档信息',
-                fn: this.editFn
-            }, {
-                icon: 'el-icon-delete',
-                name: '删除文档',
-                fn: this.deleteFn
-            }]
-        },
-
+        // 校验是否可以粘贴
+        checkCopy() {
+            if (this.clipboardDoc) {
+                return true;
+            }
+            return false;
+        }
     },
     watch: {
         doctype(val) {
             //console.log('watch doctype', val);
             this.currNode = null;
+            this.currDoc = null;
             this.isAddForm = false;
             this.isAddFile = false;
+            this.visibleBtn = false;
             this.uploadList = [];
             this.picList = [];
             this.checkedDocList = [];
@@ -256,6 +242,7 @@ export default {
         }
     },
     data: () => ({
+        catVisible: true,
         loadingMask: null,
         dragging: false,
         leftWidth: 300,
@@ -273,14 +260,18 @@ export default {
         },
         isAddForm: false,
         formTitle: "",
-        catForm: { ...docform.catForm },
-        catValue: { ...docform.catValue },
+        catForm: {
+            name: "",
+        },
+        catRules: {
+            name: [{ required: true, message: '请输入目录名称', trigger: 'blur' }]
+        },
         uploadForm: { ...docform.uploadForm },
         uploadValue: { ...docform.uploadValue },
         searchForm: {
             d_title: "",
             d_docname: "",
-            d_grade: ""
+            d_grade: []
         },
         gradeArr: [...docform.gradeArr],
         currNode: null,
@@ -299,6 +290,7 @@ export default {
         docformValue: {},
         isEdit: false,
         myRoles: [],// 用户权限
+        visibleBtn: false,
         visiblePdf: false,
         pdfParams: {
             pdfUrl: "",
@@ -307,42 +299,47 @@ export default {
         btnStyle: {
             left: '400px',
             top: '400px'
-        }
+        },
+        clipboardDoc: null,
     }),
     methods: {
-        /* getMyRoles() {
-            let roles = _.find(this.$store.state.collectionData.roles, { "id": this.$store.state.user.roles });
-            this.myRoles = roles.content.filter(item => {
-                return item.id == this.$store.state.currpage.id;
-            });
-            console.log('getMyRoles', roles, this.myRoles)
-        }, */
-        // 校验是否可以预览
-        checkIsView(file) {
-            let ext = this.$global.getExt(file.d_docname).toLocaleLowerCase();
-            return ['pdf'].includes(ext);
-        },
-        checkRoles(val) {
-            let roles = _.find(this.$store.state.collectionData.roles, { "id": this.$store.state.user.roles });
-            roles = roles.content.filter(item => {
-                return item.id == this.$store.state.currpage.id;
-            });
-
-            let index = _.findIndex(roles, { "value": val });
-            //console.log('this.myRoles', roles, index);
+        // 校验目录操作权限
+        checkCarRoles(val) {
             if (this.doctype == "user") {
                 return true;
-            } else if (this.doctype == "department") {
-                let dept = this.$storage.session.get("dept");
+            } else {
+                let dept = this.$storage.get("dept");
                 if (dept) {
                     return true;
                 } else {
                     return false;
                 }
+            }
+
+
+        },
+        // 校验文档操作权限
+        checkRoles(val, flag) {
+            //if (!this.currDoc && !flag) return false;
+            let roles = _.find(this.$store.state.collectionData.roles, { "id": this.$store.state.user.roles });
+            //debugger
+            roles = roles.content.filter(item => {
+                return item.id == this.$store.state.currpage.id;
+            });
+            let index = _.findIndex(roles, { "value": val });
+            //console.log('checkRoles', roles, index);
+            if (this.doctype == "company") {
+                let dept = this.$storage.get("dept");
+                if (dept) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else if (this.doctype == "user") {
+                return true;
             } else {
                 return !!~index;
             }
-
         },
         setFolder(item) {
             if (item.children && item.children.length) {
@@ -371,9 +368,16 @@ export default {
                 this.$alert("请勾选需要处理的文档！")
                 return;
             }
-            //console.log('handleBatchCommand', this.checkedDocList, cmd)
-            if (cmd == "remove") {
-                this.deleteFn(null, this.checkedDocList)
+            switch (cmd) {
+                case "remove":
+                    this.deleteFn(null, this.checkedDocList);
+                    break;
+                case "copy":
+                    this.copyFn(this.checkedDocList);
+                    break;
+                case "cut":
+                    this.cutFn(this.checkedDocList);
+                    break;
             }
         },
 
@@ -410,7 +414,7 @@ export default {
                     this.docData = [data];
                     let index = _.findIndex(this.docList, { "id": this.currDoc.id });
                     this.$set(this.docList, index, this.currDoc);
-                    console.log('docList', this.docList)
+                    //console.log('docList', this.docList)
                     this.isEdit = false;
                 } else {
                     this.$alert("数据保存失败！")
@@ -460,19 +464,134 @@ export default {
             return str;
         },
         // 按钮点击
-        clickBtn(doc, fn) {
-            this.currDoc = doc;
+        clickBtn(fn) {
             this[fn].call();
         },
+        // 复制文档到剪贴板
+        copyFn(ids) {
+            this.clipboardDoc = {
+                act: 'copy',
+                type: this.doctype,
+                list: this.currDoc ? [{ ...this.currDoc }] : []
+            }
+            if (ids) {
+                this.clipboardDoc.list = ids.map(id => {
+                    let obj = _.find(this.docList, { "id": id });
+                    if (obj) {
+                        return obj;
+                    }
+                })
+            }
+            if (this.clipboardDoc.list.length) {
+                this.$message.success("已复制到系统剪贴板");
+            } else {
+                this.clipboardDoc = null;
+            }
+        },
+        // 剪切到系统剪贴板
+        cutFn(ids) {
+            this.clipboardDoc = {
+                act: 'cut',
+                type: this.doctype,
+                list: this.currDoc ? [{ ...this.currDoc }] : []
+            }
+            if (ids) {
+                this.clipboardDoc.list = ids.map(id => {
+                    let obj = _.find(this.docList, { "id": id });
+                    if (obj) {
+                        return obj;
+                    }
+                })
+            }
+            if (this.clipboardDoc.list.length) {
+                this.$message.success("已剪切到系统剪贴板");
+            } else {
+                this.clipboardDoc = null;
+            }
+        },
+        getDocType() {
+            switch (this.doctype) {
+                case "department":
+                    return 1;
+                case "company":
+                    return 2;
+                case "user":
+                    return 3;
+            }
+        },
+        // 从剪贴板粘贴
+        putFun() {
+            if (!this.clipboardDoc || !this.checkRoles(2, true)) return;
+            if (!this.currNode) {
+                this.$alert("请选择需要粘贴文档的目录！");
+                return;
+            }
+            axios.post("/download", { type: 'cp', act: this.clipboardDoc.act, fileList: this.clipboardDoc.list, topath: this.doctype }).then(res => {
+                //console.log('putFun', res);
+                if (res.data.success) {
+                    let dataList = res.data.response.map(item => {
+                        item.d_uid = this.$store.state.user.id;
+                        item.filecata_id = this.currNode.id;
+                        item.d_doctype = this.getDocType();
+                        item.d_docname = item.to;
+                        item.d_title = item.d_title + " 复制";
+                        delete item.id, delete item._id, delete item.to;
+                        return item;
+                    })
+                    let condition = {
+                        type: 'addPatch',
+                        collectionName: "docinfo",
+                        data: dataList
+                    };
+                    this.$axios.$post('mock/db', { data: condition }).then(list => {
+                        //console.log('putFun add', list);
+                        if (list) {
+                            this.docList = this.docList.concat(list);
+                            if (this.clipboardDoc.act == "cut") {
+                                const docIds = this.clipboardDoc.list.map(item => {
+                                    return item.id;
+                                });
+                                let cn = {
+                                    type: 'removePatch',
+                                    collectionName: "docinfo",
+                                    data: { id: { $in: docIds } }
+                                };
+                                this.$axios.$post('mock/db', { data: cn }).then(rsp => {
+                                    if (rsp) {
+                                        for (let i = 0; i < docIds.length; i++) {
+                                            let index = _.findIndex(this.docList, { "id": docIds[i] });
+                                            if (!!~index) {
+                                                this.docList.splice(index, 1);
+                                            }
+                                        }
+                                        this.clipboardDoc = null;
+                                    }
+                                });
+                            } else {
+                                this.clipboardDoc = null;
+                            }
+                            this.currDoc = null;
+                            this.checkedDocList = [];
+                        }
+                    });
+                }
+            })
+        },
+
         // 下载文档
         downloadFn(event) {
-            //console.log('downloadFn', this.currDoc);
             let title = this.currDoc.d_title.split(".");
             title.splice(title.length - 1, 1)
             this.$global.downloadFile(this.currDoc.d_docname, title.join("."));
         },
         // 预览
         viewFn(event) {
+            let ext = this.$global.getExt(this.currDoc.d_docname).toLocaleLowerCase();
+            if (!['pdf'].includes(ext)) {
+                this.$alert('抱歉，目前系统仅支持pdf文件的预览！')
+                return;
+            }
+
             axios.get('/download?type=output&filepath=' + this.currDoc.d_docname).then(res => {
                 var PDFData = res.data.replace("data:application/pdf;base64,", "");
                 this.pdfParams.pdfUrl = PDFData;
@@ -490,55 +609,85 @@ export default {
         },
         // 删除文档,同时删除服务器中的文档
         deleteFn(event, ids) {
-            //console.log('deleteFn', this.currDoc);
-            this.$confirm('确定要删除该文档?', '提示', {
+            if (!ids && !this.currDoc) return;
+
+            this.$confirm('确定要删除该文档..?', '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
+                /* console.log('deleteFn', ids);
+                return; */
                 let condition = {
                     type: 'removeData',
                     collectionName: "docinfo",
-                    data: { id: this.currDoc.id }
+                    data: {}
                 };
-                if (ids) {
+
+                let filepath = [];
+                if (!ids) {
+                    condition.data.id = this.currDoc.id;
+                    let index = _.findIndex(this.docList, { "id": this.currDoc.id });
+                    filepath.push(this.currDoc.d_docname);
+                } else {
                     condition.data.id = { $in: ids };
+                    this.docList.forEach(item => {
+                        if (ids.includes(item.id)) {
+                            filepath.push(item.d_docname);
+                        }
+                    })
                 }
-                //console.log('this.currDoc', this.currDoc)
-                this.$axios.$post('mock/db', { data: condition }).then(res => {
-                    let filepath = [];
-                    if (!ids) {
-                        let index = _.findIndex(this.docList, { "id": this.currDoc.id });
-                        this.docList.splice(index, 1);
-                        filepath = [this.currDoc.d_docname];
-                    } else {
-                        this.docList.forEach((item, idx) => {
-                            if (ids.includes(item.id)) {
-                                filepath.push(item.d_docname);
-                                this.docList.splice(idx, 1);
+                // 删除文件
+                this.$axios.$post('mock/files', { data: { type: 'removeFile', filepath: filepath } }).then(res => {
+                    //console.log('removeFile', res);
+                    if (res) {
+                        // 删除数据
+                        this.$axios.$post('mock/db', { data: condition }).then(res => {
+                            if (res) {
+                                if (!ids) {
+                                    let cindex = _.findIndex(this.docList, { "id": this.currDoc.id });
+                                    if (!!~cindex) {
+                                        this.docList.splice(cindex, 1);
+                                    }
+                                } else {
+                                    for (let i = 0; i < ids.length; i++) {
+                                        let dindex = _.findIndex(this.docList, { "id": ids[i] });
+                                        if (!!~dindex) {
+                                            this.docList.splice(dindex, 1);
+                                        }
+                                    }
+                                    this.checkedDocList = [];
+                                }
+                                this.currDoc = null;
                             }
-                        })
+                        });
                     }
-                    this.$axios.$post('mock/files', { data: { type: 'removeFile', filepath: filepath } });
-                })
+                });
             }).catch(() => { });
 
         },
         // 文档DOM鼠标事件 //btnStyle
         setCurrDoc(doc, evt) {
             //debugger
-            let rect = evt.target.getBoundingClientRect();
+            //console.log('evt.target', evt.target)
+            this.visibleBtn = true;
+            this.currDoc = doc;
 
+            if (this.$global.hasClass(evt.target, 'el-checkbox__inner') || this.$global.hasClass(evt.target, 'el-checkbox__original')) {
+                this.visibleBtn = false;
+                this.currDoc = null;
+                return;
+            }
+
+            let rect = evt.target.getBoundingClientRect();
             let btn = document.getElementById("doc-btns");
             let sw = Math.ceil((rect.width - btn.offsetWidth) / 2);
+            //console.log(rect, btn.offsetWidth)
             this.btnStyle = {
                 left: (rect.x + sw) + 'px',
                 top: (rect.y - 40) + 'px'
             }
-
-            this.currDoc = doc;
-
-            console.log('setCurrDoc', doc)
+            //console.log('setCurrDoc', doc)
         },
         getFolder(node) {
             return node.children ? 'folder' : 'empty-folder';
@@ -552,6 +701,10 @@ export default {
             let ext = this.$global.getExt(file).toLocaleLowerCase();
             if (['doc', 'docx', 'xlsx', 'pdf', 'ppt', 'zip', 'rar'].includes(ext)) {
                 return ext;
+            } else if (['jpg', 'png', 'jpeg', 'gif', 'bmp', 'psd'].includes(ext)) {
+                return "pic";
+            } else if (['dxf', 'dwg'].includes(ext)) {
+                return "dwg";
             }
             return "common";
         },
@@ -608,7 +761,7 @@ export default {
                 //console.log('progressEvent', res)
                 if (res && res.status == 200) {
                     if (res.data && res.data.success) {
-                        this.$message.info("上传成功");
+                        this.$message.success("上传成功");
                         this.addFiles(res.data.response);
                     }
                 }
@@ -616,12 +769,7 @@ export default {
         },
         // 添加文档数据到该目录下 1:部门内部文档 2:公司共享文档 3:个人私有文档
         addFiles(lists) {
-            let d_doctype = 3;
-            if (this.doctype == "department") {
-                d_doctype = 1;
-            } else if (this.doctype == "company") {
-                d_doctype = 2;
-            }
+            let d_doctype = this.getDocType();
             let arr = lists.map(item => {
                 let obj = _.merge({
                     "filecata_id": this.currNode ? this.currNode.id : 0,
@@ -665,6 +813,7 @@ export default {
         },
         // 添加目录事件
         addDir(node = null) {
+            this.editNode = null;
             this.currNode = node;
             this.formTitle = "添加一级目录";
             if (node) {
@@ -672,71 +821,74 @@ export default {
             }
             //console.log('addDir', this.currNode);
             this.isAddForm = true;
-            this.catValue.name = "";
+            this.catForm.name = "";
         },
         // 更新文档目录名称
-        updateNode() {
+        /* updateNode() {
             this.submitForm(this.editNode);
-
+        }, */
+        submitCancel() {
+            this.editNode = null;
+            this.isAddForm = false;
         },
-        // 保存目录
-        submitForm(obj) {
-            let data = { ...this.catValue };
-            let isValidate = true, error = '';
-            if (obj) {
-                data = obj;
-            } else {
-                data.pid = this.currNode ? this.currNode.id : 0;
-                let refForm = this.$refs['editform'];
-                isValidate = refForm.checkFormValidate();
-                error = '表单数据的验证有误，请核查！';
-            }
+        // 保存/编辑目录
+        submitForm() {
+            //let data = { ...this.catValue };
+            this.$refs['editform'].validate((valid) => {
+                if (valid) {
+                    let condition = {
+                        type: 'addData',
+                        collectionName: "fileCatalog",
+                        data: { ...this.catForm }
+                    };
+                    // 如果是编辑
+                    if (this.editNode) {
+                        condition.type = "updateData";
+                        condition.data.id = this.editNode.id;
+                    } else {
+                        condition.data.pid = this.currNode ? this.currNode.id : 0;
+                        let nodeIndex = _.findIndex(this.sourceData, { "name": this.catForm.name, "pid": condition.data.pid });
+                        if (!!~nodeIndex) {
+                            this.$message.error("同级文档目录名称已经存在！");
+                            return;
+                        }
+                    }
+                    /* console.log('submitForm', condition);
+                    return; */
+                    this.$axios.$post('mock/db', { data: condition }).then(res => {
+                        console.log('submitForm', res, this.sourceData);
+                        if (res) {
+                            if (this.editNode) { // 做数据更新
+                                let index = _.findIndex(this.sourceData, { "id": this.editNode.id });
+                                this.editNode.name = this.catForm.name;
+                                this.$set(this.sourceData, index, this.editNode);
+                                /* if (this.currNode) {
+                                    this.currNode.name = this.catForm.name;
+                                } */
+                            } else {
+                                this.sourceData.push(res);
+                            }
+                            this.treeData = this.$global.toTree([...this.sourceData], { parentKey: 'pid' });
+                            this.isAddForm = false;
+                            this.editNode = null;
+
+                            this.$message.success("目录保存成功！");
+                        }
+                    });
+                }
+            });
 
             // 检验目录名是否有重复
-            let nodeIndex = _.findIndex(this.sourceData, { "name": data.name, "pid": data.pid });
-            if (!!~nodeIndex) {
-                isValidate = false;
+            /* let nodeIndex = _.findIndex(this.sourceData, { "name": data.name, "pid": data.pid });
+            if (!!~nodeIndex && !this.editNode) {
                 error = "同级文档目录名称已经存在！";
             }
-            if (!isValidate) {
+            if (error) {
                 this.$message.error(error);
                 return;
             }
-            data.type = this.getDocCatType();
-            if (this.doctype == "user" && !obj) {
-                data.uid = this.$store.state.user.id;
-            } else if (this.doctype == "department") {
-                data.department = this.$store.state.user.department;
-            }
-            let condition = {
-                type: 'addData',
-                collectionName: "fileCatalog",
-                data: data
-            };
-            // 更新
-            if (obj) {
-                condition.type = "updateData";
-                //condition.data.id = this.editNode.id;
-            }
-            this.$axios.$post('mock/db', { data: condition }).then(res => {
-                //console.log('submitForm', res, this.sourceData);
-                if (res) {
-                    if (res === true) { // 做数据更新
-                        let index = _.findIndex(this.sourceData, { "id": data.id });
-                        this.$set(this.sourceData, index, data);
-                        if (this.currNode) {
-                            this.currNode.name = data.name;
-                        }
-                    } else {
-                        this.sourceData.push(res);
-                    }
-                    this.treeData = this.$global.toTree([...this.sourceData], { parentKey: 'pid' });
-                    this.isAddForm = false;
-                    this.editNode = null;
-                    this.$message.success("目录保存成功！");
-                }
+            console.log('submitForm', data); */
 
-            });
         },
         // 获取目录类型
         getDocCatType() {
@@ -752,9 +904,12 @@ export default {
         },
         // 展开编辑
         editTree(data) {
-            this.editNode = { ...data };
-            this.catValue.name = data.name;
-            this.isAddForm = false;
+            this.editNode = data;
+
+            this.catForm.name = data.name;
+            this.formTitle = "修改【" + data.name + "】目录";
+
+            this.isAddForm = true;
         },
         getChildNodes(list) {
             const getNodeIds = (arr) => {
@@ -865,6 +1020,8 @@ export default {
             this.isAddFile = false;
             this.uploadList = [];
             this.picList = [];
+            this.editNode = null;
+            this.visibleBtn = false;
 
             this.childrenList = data.children || [];
 
@@ -994,15 +1151,33 @@ export default {
                 this.docformValue[item.key] = "";
             })
         },
+        testKey(evt) {
+            //console.log(evt.keyCode);
+            if (evt.keyCode === 67 && evt.ctrlKey) { // ctrl+C
+                this.copyFn();
+            } else if (evt.keyCode === 88 && evt.ctrlKey) { //ctrl+x
+                this.cutFn();
+            } else if (evt.keyCode === 86 && evt.ctrlKey) { // ctrl+V
+                this.putFun();
+            } else if (evt.keyCode === 46 || evt.keyCode === 110) {  // Delete || Del
+                this.deleteFn();
+            }
+        }
 
     },
-    /* beforeMount() {
-        this.getMyRoles();
-    }, */
     mounted() {
         this.getTreeList();
         this.setDocFiledData();
-    }
+        document.addEventListener("click", () => {
+            this.visibleBtn = false;
+            //this.currDoc = null;
+        });
+        document.addEventListener('keyup', this.testKey);
+    },
+    beforeDestroy() {
+        document.removeEventListener("click", () => { });
+        document.removeEventListener('keyup', this.testKey);
+    },
 }
 </script>
 

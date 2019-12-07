@@ -10,7 +10,7 @@
             <div class="slide-panel__body">
                 <slot></slot>
             </div>
-            <el-button v-if="slideButton" :style="btnStyle" @click="$emit('update:visible', !visible)" type='primary' class="slide-panel-button" :icon="icon"></el-button>
+            <el-button v-if="slideButton" :style="btnStyle" @click="$emit('update:visible', !visible)" type='primary' class="slide-panel-button" :icon="visible?'el-icon-d-arrow-left':'el-icon-d-arrow-right'"></el-button>
         </div>
     </client-only>
 </template>
@@ -79,7 +79,7 @@ export default {
         },
         btnStyle() {
             return {
-                top: "10px",
+                top: "5px",
                 [this.position]: '100%',
                 [`border-top-${this.position}-radius`]: 0,
                 [`border-bottom-${this.position}-radius`]: 0
@@ -175,10 +175,9 @@ export default {
     }
     .slide-panel-button {
         position: absolute;
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         padding: 0;
-        line-height: 40px;
     }
 }
 </style>

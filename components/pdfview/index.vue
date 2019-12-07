@@ -51,11 +51,9 @@ export default {
                         this.padData = val;
                         this.reload();
                     }
-
                 })
             }
         },
-
     },
     data: () => ({
         pdfDoc: {},
@@ -96,7 +94,6 @@ export default {
         deleteCanvas() {
             document.querySelector('#mypdfcanvas').innerHTML = "";
         },
-
         reload() {
             this.deleteCanvas();
             this.pageNum = 1;
@@ -126,6 +123,9 @@ export default {
         },
 
         getPdfPage() {
+            if (!this.pdf) {
+                return;
+            }
             if (isNaN(this.pageNum)) {
                 this.$alert('请输入整数！', '错误');
                 return;

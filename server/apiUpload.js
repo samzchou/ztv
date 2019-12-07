@@ -53,7 +53,7 @@ router.all("*", (req, res, next) => {
                     if (err) {
                         console.log('rename error:' + err);
                     } else {
-                        console.log('rename ok');
+                        //console.log('rename ok');
                         fileObj.filePath = dstPath;
                         delete fileObj.fieldName, delete fileObj.path, delete fileObj.headers;
                         fileArr.push(fileObj);

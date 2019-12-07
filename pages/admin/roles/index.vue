@@ -172,8 +172,8 @@ export default {
                 collectionName: 'roles',
                 data: { ...this.editRow }
             };
-            console.log('saveSubmit', condition.data);
-            return
+            //console.log('saveSubmit', condition.data);
+            //return
             this.$axios.$post('mock/db', { data: condition }).then(res => {
                 if (res) {
                     this.$message.success("保存成功");

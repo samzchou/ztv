@@ -199,7 +199,6 @@ const dbFun = {
         const tn = params.collectionName;
         const data = params.data;
         let id = 0;
-
         let counter = await mongoDB.counters.findOne({ "model": tn });
         if (!counter) {
             await mongoDB.counters.create({ "model": tn, count: 0 });
@@ -217,11 +216,13 @@ const dbFun = {
         await mongoDB.counters.findOneAndUpdate({ 'model': tn }, { $inc: { count: lists.length } });
         let response = {
             success: true,
-            msgDesc: '数据保存成功'
+            response: lists
         }
+		/*
         if (params.notNotice && response.success) {
             delete response.msgDesc;
         }
+		*/
         return response;
     },
     /*--------批量更新数据--------*/
@@ -247,6 +248,7 @@ const dbFun = {
         //console.log('removePatch', result)
         let response = {
             success: true,
+			response:true,
             msgDesc: '数据删除成功'
         }
         if (params.notNotice && response.success) {

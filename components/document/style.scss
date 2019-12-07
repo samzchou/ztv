@@ -11,6 +11,10 @@
         .left {
             height: 100%;
 
+            /deep/ .slide-panel__body {
+                overflow: hidden;
+            }
+
             .root {
                 display: flex;
                 align-items: center;
@@ -22,17 +26,17 @@
 
             .tree-content {
                 height: calc(100% - 40px);
-                overflow: hidden;
+                overflow: auto;
                 box-sizing: border-box;
                 padding: 10px;
 
-                .scrollbar {
+                /* .scrollbar {
                     height: 100%;
 
                     /deep/ .el-scrollbar__wrap {
                         overflow-x: hidden;
                     }
-                }
+                } */
 
                 /deep/ .el-tree-node__content {
                     border-bottom: 1px dashed #DDD;
@@ -57,6 +61,11 @@
 
                         &.active {
                             color: $c-main;
+                            font-weight: bold;
+                        }
+
+                        &.in-edit {
+                            color: #f99630;
                             font-weight: bold;
                         }
                     }
@@ -127,23 +136,21 @@
                 .title {
                     display: flex;
                     height: 40px;
-                    padding: 0 20px;
+                    padding: 0 20px 0 35px;
                     border-bottom: 1px solid #ddd;
                     align-items: center;
                     justify-content: space-between;
+                    box-sizing: border-box;
                 }
 
-                /deep/ .form-container {
-                    padding: 15px 20px 10px;
+                /deep/ .el-form {
+                    padding: 20px;
                 }
 
-                .submit {
-                    padding: 0 20px;
-                }
             }
 
             .files-list {
-                padding: 20px;
+                padding: 10px 20px;
                 box-sizing: border-box;
                 height: 100%;
 
@@ -151,7 +158,8 @@
                     height: 100%;
 
                     .title {
-                        line-height: 40px;
+                        //line-height: 40px;
+                        padding-bottom: 10px;
                         box-sizing: border-box;
                         //padding: 0 15px;
                         border-bottom: 1px solid #ddd;
@@ -161,27 +169,27 @@
                         justify-content: space-between;
 
                         .left {
+                            padding: 0 15px;
+                            box-sizing: border-box;
                             display: flex;
                             align-items: center;
                             flex: 1;
+                        }
+                    }
 
-                            .form {
+                    .search-form {
+                        display: flex;
+                        align-items: center;
+                        padding: 5px 10px;
+                        background-color: #fff;
+                        border: 1px solid #DDD;
 
+                        /deep/ .el-form {
+                            display: flex;
+                            align-items: center;
 
-                                /deep/ .el-form {
-                                    display: flex;
-                                    align-items: center;
-
-                                    .el-form-item {
-                                        margin-bottom: 0;
-                                    }
-                                }
-                            }
-
-
-
-                            >div {
-                                margin-right: 20px;
+                            .el-form-item {
+                                margin-bottom: 0;
                             }
                         }
                     }
@@ -233,12 +241,12 @@
                 }
 
                 .file-content {
-                    height: calc(100% - 40px);
+                    height: calc(100% - 85px);
                     overflow: auto;
                     box-sizing: border-box;
-                    padding: 15px 0;
+                    padding: 5px 0;
 
-                    .scrollbar {
+                    /* .scrollbar {
                         height: 100%;
 
                         /deep/ .el-scrollbar__wrap {
@@ -248,7 +256,7 @@
                         /deep/ .is-horizontal {
                             display: none;
                         }
-                    }
+                    } */
 
                     .float-btns {
                         position: fixed;
@@ -256,33 +264,38 @@
                     }
 
                     ul.lists {
-                        padding-top: 10px;
-                        overflow: hidden;
+                        padding-top: 5px;
                         box-sizing: border-box;
 
                         >li {
                             float: left;
                             width: 12.5%;
-                            height: 200px;
                             position: relative;
-                            margin-bottom: 20px;
+                            //margin-bottom: 15px;
+                            padding: 15px 10px;
+                            box-sizing: border-box;
+                            transition: all .3s;
+
+                            &:hover {
+                                background-color: #c4dcf5;
+                                transform: scale(1.05);
+                            }
+
+                            &.active {
+                                background-color: #c4dcf5;
+                            }
 
                             .content {
                                 padding: 10px;
-                                margin: 0 10px 10px;
-                                border: 1px solid #DDD;
-                                background-color: #FFF;
+                                border: 1px solid #e6e3e3;
+                                background-color: rgba(255, 255, 255, 0.6);
                                 box-sizing: border-box;
                                 cursor: pointer;
                                 user-select: none;
-
-                                &:hover,
-                                &.active {
-                                    background-color: #f0fbff;
-                                }
+                                height: 150px;
 
                                 .icon {
-                                    height: 100px;
+                                    height: calc(100% - 40px);
                                     background-repeat: no-repeat;
                                     background-position: center;
                                     background-size: contain;
@@ -317,16 +330,14 @@
 
                             .checkbox {
                                 position: absolute;
-                                top: 5px;
+                                top: 20px;
                                 left: 15px;
-                                padding: 3px 4px;
-                                background-color: #ffdd8f;
                             }
 
                             .grade {
                                 position: absolute;
-                                top: -5px;
-                                right: -5px;
+                                top: 8px;
+                                right: 0px;
                                 width: 30px;
                                 height: 30px;
                                 background-image: url('~assets/images/sec1.png');
@@ -373,13 +384,26 @@
 
 .doc-btns {
     position: fixed;
-    z-index: 1000;
     //min-width: 150px;
     background-color: #FFF;
     border: 1px solid #DDD;
     box-shadow: 3px 3px 3px 0 rgba(0, 0, 0, 0.1);
-    padding: 10px;
+    padding: 5px;
     border-radius: 3px;
+    transition: all .2s;
+    opacity: 0;
+    z-index: -1;
+
+    &.show {
+        z-index: 1000;
+        opacity: 1;
+    }
+
+    /deep/ .el-button-group {
+        button {
+            padding: 5px 7px;
+        }
+    }
 
     &:before {
         position: absolute;
