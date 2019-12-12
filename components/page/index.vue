@@ -82,7 +82,7 @@ export default {
                         }
                     })
                 }
-                console.log('form_content', form_content)
+                //console.log('form_content', form_content)
                 if (!form_content) {
                     this.$alert("无法获取表单数据，请联系管理员！");
                     this.notFound = true;

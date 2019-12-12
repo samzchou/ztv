@@ -38,6 +38,7 @@ module.exports = {
             "tableHide": true
         }
     },
+	
     workflow_type: {
         "id": {
             "type": Number,
@@ -373,6 +374,52 @@ module.exports = {
             "default": 0
         }
     },
+	work_report:{
+		"id": {
+            "type": Number,
+            "default": 0
+        },
+		"type": {
+            "type": Number,
+            "label": "报告类型(月计划、周报)",
+            "default": 1
+        },
+        "uid": {
+            "type": Number,
+            "label": "用户UID",
+            "default": 0
+        },
+		"startTime": {
+            "type": Number,
+            "label": "用户UID",
+            "default": 0
+        },
+		"endTime": {
+            "type": Number,
+            "label": "用户UID",
+            "default": 0
+        },
+		"content":{
+			"type": Object,
+            "label": "具体内容",
+            "default": {}
+		},
+		"create_date":{
+			"type": Number,
+            "label": "创建时间",
+            "default": new Date().getTime()
+		},
+		"update_date":{
+			"type": Number,
+            "label": "更新时间",
+            "default": new Date().getTime()
+		},
+		"update_uid":{
+			"type": Number,
+            "label": "更新者用户UID",
+            "default": 0
+		}
+	},
     /*----------员工信息表-----------*/
     employee: {
         "id": {
@@ -571,10 +618,20 @@ module.exports = {
             "default": new Date().getTime(),
             "label": "当前周日时间"
         },
-        "plan": {
-            "type": Array,
+		"isRead": {
+            "label": "是否已阅读",
+            "type": "Boolean",
+            "default": false
+        },
+		"checkUid": {
+            "type": Number,
+            "default": 0,
+            "label": "审核人"
+        },
+		"checkDesc": {
+            "type": String,
             "default": "",
-            "label": "计划内容"
+            "label": "审核意见"
         },
         "apply": {
             "type": Array,
@@ -606,7 +663,7 @@ module.exports = {
         "wfType": {
             "type": Number,
             "default": 0,
-            "label": "消息类型"
+            "label": "消息类型(1:时间钟)"
         },
         "fromuserId": {
             "type": Number,

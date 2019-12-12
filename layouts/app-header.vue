@@ -26,8 +26,8 @@
             <div class="lists">
                 <ul v-if="msgList.length">
                     <li v-for="item in msgList" :key="item.id">
-                        <h3>{{getWfType(item.wfType)}}</h3>
-                        <div>申请人：{{item.fromName}}；申请日期：{{formatDate(item.content.date, 'YYYY-MM-DD')}}</div>
+                        <h3>{{getTypeTile(item.wfType,'label')}}</h3>
+                        <div>{{getTypeTile(item.wfType,'title')}}：{{item.fromName}}；{{getTypeTile(item.wfType,'titleDate')}}：{{formatDate(item.content.date, 'YYYY-MM-DD')}}</div>
                         <div class="btns">
                             <el-button size="mini" type="primary" icon="el-icon-document" @click="showMsgInfo(item)">详细信息</el-button>
                         </div>
@@ -42,7 +42,7 @@
             </div>
         </div>
         <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" append-to-body :close-on-click-modal="false" width="600px">
-			<my-msg :data="msgBox" :showList="false" />
+            <my-msg :data="msgBox" :showList="false" @close="dialogVisible=false" />
         </el-dialog>
     </section>
 </template>
@@ -80,13 +80,17 @@ export default {
             }
             return "";
         },
-        getWfType(val) {
+        getTypeTile(val, key) {
             let type = _.find(this.$store.state.wfType, { "value": val });
-            return type.label || "";
+            return type[key] || "";
         },
-
         async showMsgInfo(item) {
-            //console.log('showMsgInfo', item);
+            /* let type = _.find(this.$store.state.wfType, { "value": item.wfType });
+                this.dialogTitle = type.label;
+                this.msgBox = item;
+                this.dialogVisible = true;
+                this.msgVisibled = false;
+            return */
             const condition = {
                 type: "updateData",
                 collectionName: 'inbox',
@@ -152,7 +156,7 @@ export default {
             const condition = {
                 type: id ? "getData" : "listData",
                 collectionName: "inbox",
-                data: id ? { id: id } : {  isRead:false, "touserId": { $in: [this.$store.state.user.id] } }
+                data: id ? { id: id } : { isRead: false, "touserId": { $in: [this.$store.state.user.id] } }
             };
             let res = await this.$axios.$post("mock/db", { data: condition });
             if (id) {

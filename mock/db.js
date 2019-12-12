@@ -168,21 +168,21 @@ const dbFun = {
         const tn = params.collectionName;
         let condition = params.data || {};
         let column = params.column || {};
-        let sortCondition = {};
-        let sortby = params.sortby ? params.sortby : '_id';
-        let ascby = params.ascby ? params.ascby : 1;
+        //let sortCondition = {};
+        let sortby = params.sortby ? params.sortby : {'_id':1};
+        //let ascby = params.ascby ? params.ascby : 1;
         var page = params.page ? parseInt(params.page) - 1 : 0;
         var pagesize = params.pagesize ? parseInt(params.pagesize) : 0;
         var skips = page * pagesize;
-        sortCondition[sortby] = ascby;
+        //sortCondition[sortby] = ascby;
 
         let total = await mongoDB[tn].find(condition).countDocuments();
 
         let list = [];
         if (pagesize) {
-            list = await mongoDB[tn].find(condition, column).sort(sortCondition).skip(skips).limit(pagesize);
+            list = await mongoDB[tn].find(condition, column).sort(sortby).skip(skips).limit(pagesize);
         } else {
-            list = await mongoDB[tn].find(condition, column).sort(sortCondition);
+            list = await mongoDB[tn].find(condition, column).sort(sortby);
             //console.log('listData', condition, list);
         }
         return {
@@ -456,13 +456,6 @@ const dbFun = {
         let result = await mongoDB[tn].findOne(data);
         if (result) {
             result.token = token;
-            // 判断用户是否未主管领导
-            /* let deptId = result.department[result.department.length - 1];
-            let dept = await mongoDB['department'].findOne({ id: deptId, leaderId: result.id });
-            if (dept) {
-                result.dept = dept;
-                console.log('login', result)
-            } */
 
             this.updateData({
                 collectionName: tn,

@@ -18,12 +18,8 @@ $li-height: 20;
             display: flex;
             align-items: center;
 
-            .text {
-                color: #409eff;
-            }
-
             .all-times {
-                color: #CCC;
+                font-weight: bold;
                 margin: 0 15px;
             }
 
@@ -87,6 +83,7 @@ $li-height: 20;
             border-right: 1px solid #eee;
             box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            padding-bottom: 30px;
 
             >ul {
                 padding-top: 45px;
@@ -106,19 +103,24 @@ $li-height: 20;
 
             .header {
                 height: 50px;
+                overflow: hidden;
+                //padding-right: 30px;
 
                 .week-list {
                     height: 50px;
+                    padding-right: 30px;
                 }
             }
 
             .week-list {
                 border-bottom: 1px solid #eee;
+                display: inline-flex;
 
                 >li {
-                    width: 14.28%;
+                    width: 350px; //14.28%;
                     height: 100%;
-                    float: left;
+                    //display: inline-block;
+                    //float: left;
                     box-sizing: border-box;
                     border-right: 1px solid #d6e3e8;
                     position: relative;
@@ -259,13 +261,14 @@ $li-height: 20;
 
             .tables {
                 height: calc(100% - 50px);
-                overflow: hidden;
+                overflow: auto;
                 position: relative;
 
                 .scrollbar {
                     height: 100%;
+                    width: 100%;
 
-                    /deep/ .el-scrollbar__wrap {
+                    /* /deep/ .el-scrollbar__wrap {
                         overflow-x: hidden;
                         position: relative;
 
@@ -276,7 +279,7 @@ $li-height: 20;
 
                     /deep/ .is-horizontal {
                         display: none;
-                    }
+                    } */
                 }
 
                 .week-list {

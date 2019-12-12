@@ -1,0 +1,359 @@
+{
+    "formMonth": {
+        "gutter": 20,
+        "colspan": 2,
+        "size": "small",
+        "position": "top",
+        "itemList": [{
+                "name": "desc",
+                "label": "工作内容",
+                "type": "String",
+                "required": true,
+                "component": "sam-input",
+                "cptype": "textarea",
+                "colspan": 1,
+                "default": "",
+                "rules": [{
+                    "required": true,
+                    "message": "工作内容",
+                    "trigger": "blur"
+                }],
+                "value": "",
+                "key": "desc"
+            },
+            {
+                "name": "startTime",
+                "label": "开始时间",
+                "type": "Number",
+                "required": true,
+                "component": "sam-date",
+                "default": "",
+                "rules": [{
+                    "required": true,
+                    "message": "请选择开始时间",
+                    "trigger": "change"
+                }],
+                "value": "",
+                "key": "startTime"
+            },
+            {
+                "name": "endTime",
+                "label": "结束时间",
+                "type": "Number",
+                "required": true,
+                "component": "sam-date",
+                "default": "",
+                "rules": [{
+                    "required": true,
+                    "message": "请选择开始时间",
+                    "trigger": "change"
+                }],
+                "value": "",
+                "key": "endTime"
+            },
+            {
+                "name": "leaderId",
+                "label": "主管领导",
+                "type": "Number",
+                "component": "sam-select",
+                "required": true,
+                "optionsUrl": {
+                    "table": "employee",
+                    "label": "name",
+                    "value": "id"
+                },
+                "default": "",
+                "rules": [{
+                    "required": true,
+                    "message": "请选择主管领导",
+                    "trigger": "change"
+                }],
+                "value": "",
+                "key": "leaderId"
+            }
+
+        ]
+    },
+    "formWeek": {
+        "gutter": 20,
+        "colspan": 2,
+        "size": "small",
+        "position": "top",
+        "itemList": [{
+                "name": "summary",
+                "label": "上周工作总结",
+                "type": "String",
+                "component": "sam-input",
+                "cptype": "textarea",
+                "colspan": 1,
+                "value": "",
+                "key": "summary"
+            },
+            {
+                "name": "question",
+                "label": "存在问题",
+                "type": "String",
+                "component": "sam-input",
+                "cptype": "textarea",
+                "colspan": 1,
+                "value": "",
+                "key": "question"
+            },
+            {
+                "name": "desc",
+                "label": "本周计划",
+                "type": "String",
+                "component": "sam-input",
+                "cptype": "textarea",
+                "colspan": 1,
+                "value": "",
+                "key": "desc"
+            },
+            {
+                "name": "evaluation",
+                "label": "主管评价",
+                "type": "String",
+                "component": "sam-input",
+                "cptype": "textarea",
+                "colspan": 1,
+                "value": "",
+                "key": "evaluation"
+            }
+        ]
+    },
+
+    "headerFields": [
+        [{
+            "label": "月工作计划",
+            "field": [{
+                    "field": "content",
+                    "label": "工作内容",
+                    "width": 350
+                },
+                {
+                    "field": "mtime",
+                    "label": "时间节点",
+                    "width": 200
+                },
+                {
+                    "field": "muid",
+                    "label": "具体责任人",
+                    "width": 100
+                },
+                {
+                    "field": "mleader",
+                    "label": "部门主管",
+                    "width": 100
+                }
+            ]
+        }]
+    ],
+    "tableHeader": [{
+            "type": 3,
+            "label": "(季子禾)2019年11月工作计划",
+            "children": [{
+                    "field": "worktype",
+                    "label": "工作名称",
+                    "width": 120
+                },
+                {
+                    "field": "mcontent",
+                    "label": "工作内容",
+                    "width": 350
+                },
+                {
+                    "field": "mtime",
+                    "label": "时间节点",
+                    "width": 200
+                },
+                {
+                    "field": "muid",
+                    "label": "具体责任人",
+                    "width": 100
+                },
+                {
+                    "field": "mleader",
+                    "label": "部门主管",
+                    "width": 100
+                }
+            ]
+        },
+        {
+            "type": 2,
+            "label": "上周周总结和本周周计划",
+            "children": [{
+                    "field": "summary",
+                    "label": "周总结",
+                    "width": 350
+                },
+                {
+                    "field": "question",
+                    "label": "存在的问题",
+                    "width": 350
+                },
+                {
+                    "field": "desc",
+                    "label": "周计划",
+                    "width": 400
+                },
+                {
+                    "field": "evaluation",
+                    "label": "主管评价",
+                    "width": 350
+                }
+            ]
+        }
+    ],
+    "tableData": [{
+            "worktype": "项目研究",
+            "mcontent": "12月计划工作内容",
+            "mtime": "2019.12-2020.01",
+            "muid": "张三",
+            "mleader": "李四",
+            "summary": "45周总结内容",
+            "question": "45周存在的问题",
+            "wcontent": "46周计划内容",
+            "wleader": "李四",
+            "evaluation": "主管评价",
+            "dconent": "日报内容",
+            "dtime": "日报工时"
+        },
+        {
+            "worktype": "本职工作",
+            "mcontent": "",
+            "mtime": "",
+            "muid": "",
+            "mleader": "",
+            "summary": "45周本职工作总结内容",
+            "question": "45周本职工作存在的问题",
+            "wcontent": "46周本职工作计划内容",
+            "wleader": "李四",
+            "evaluation": "33656",
+            "dconent": "45周本职工作日报内容",
+            "dtime": "日报工时"
+        },
+        {
+            "worktype": "其他工作",
+            "mcontent": "",
+            "mtime": "",
+            "muid": "",
+            "mleader": "",
+            "summary": "45周本职工作总结内容",
+            "question": "45周本职工作存在的问题",
+            "wcontent": "46周本职工作计划内容",
+            "wleader": "李四",
+            "evaluation": "",
+            "dconent": "45周本职工作日报内容",
+            "dtime": "日报工时"
+        },
+        {
+            "worktype": "临时工作",
+            "mcontent": "",
+            "mtime": "",
+            "muid": "",
+            "mleader": "",
+            "summary": "45周本职工作总结内容",
+            "question": "45周本职工作存在的问题",
+            "wcontent": "46周本职工作计划内容",
+            "wleader": "李四",
+            "evaluation": "",
+            "dconent": "45周本职工作日报内容",
+            "dtime": "日报工时"
+        }
+    ],
+    "originData": [{
+            "skuId": "00002",
+            "skuName": "nameSku0002",
+            "warehouseItem": [{
+                    "warehouseId": "w00001",
+                    "warehouseName": "仓库1",
+                    "quantity": 100,
+                    "lockQuantity": 5,
+                    "availableQuantity": 95
+                },
+                {
+                    "warehouseId": "w00002",
+                    "warehouseName": "仓库2",
+                    "quantity": 200,
+                    "lockQuantity": 5,
+                    "availableQuantity": 195
+                },
+                {
+                    "warehouseId": "w00003",
+                    "warehouseName": "仓库3",
+                    "quantity": 5,
+                    "lockQuantity": 5,
+                    "availableQuantity": 0
+                }
+            ],
+            "w00001": {
+                "warehouseId": "w00001",
+                "warehouseName": "仓库1",
+                "quantity": 100,
+                "lockQuantity": 5,
+                "availableQuantity": 95
+            },
+            "w00002": {
+                "warehouseId": "w00002",
+                "warehouseName": "仓库2",
+                "quantity": 200,
+                "lockQuantity": 5,
+                "availableQuantity": 195
+            },
+            "w00003": {
+                "warehouseId": "w00003",
+                "warehouseName": "仓库3",
+                "quantity": 5,
+                "lockQuantity": 5,
+                "availableQuantity": 0
+            }
+        },
+        {
+            "skuId": "00003",
+            "skuName": "nameSku0003",
+            "warehouseItem": [{
+                    "warehouseId": "w00001",
+                    "warehouseName": "仓库2",
+                    "quantity": 100,
+                    "lockQuantity": 5,
+                    "availableQuantity": 95
+                },
+                {
+                    "warehouseId": "w00002",
+                    "warehouseName": "仓库2",
+                    "quantity": 200,
+                    "lockQuantity": 5,
+                    "availableQuantity": 195
+                },
+                {
+                    "warehouseId": "w00003",
+                    "warehouseName": "仓库3",
+                    "quantity": 50,
+                    "lockQuantity": 5,
+                    "availableQuantity": 45
+                }
+            ],
+            "w00001": {
+                "warehouseId": "w00001",
+                "warehouseName": "仓库2",
+                "quantity": 100,
+                "lockQuantity": 5,
+                "availableQuantity": 95
+            },
+            "w00002": {
+                "warehouseId": "w00002",
+                "warehouseName": "仓库2",
+                "quantity": 200,
+                "lockQuantity": 5,
+                "availableQuantity": 195
+            },
+            "w00003": {
+                "warehouseId": "w00003",
+                "warehouseName": "仓库3",
+                "quantity": 50,
+                "lockQuantity": 5,
+                "availableQuantity": 45
+            }
+        }
+    ]
+}

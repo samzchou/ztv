@@ -7,12 +7,16 @@ export const state = () => ({
 	rangeTime:null,
 	holiday:[],
     weekArray: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"],
-    timeutilHeight: 20,
+	workTime:{startHour:7,endHour:22,allHour:15},
+    timeutilWidth: 350,
+	timeutilHeight: 40,
     locakMinutes: 15,
     isEditTime: false,
     editBlock: null,
     editIndex: '',
     userTimeBlocks: [],
+	workState:[{id:1,label:'进行中'},{id:2,label:'已完成'},{id:3,label:'已搁置'}],
+	nextWeekPlan:null, // 下周工作计划
 })
 
 export const mutations = {
@@ -39,7 +43,10 @@ export const mutations = {
 	},
 	UPDATE_HOLIDAY(state, data) {
 		state.holiday = data;
-	}
+	},
+	UPDATE_WEEKPLAN(state, data) {
+        state.nextWeekPlan = data;
+    },
 }
 
 export const actions = {

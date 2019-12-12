@@ -122,7 +122,7 @@
                         <div class="title">
                             <sam-form ref="uploadform" :data="uploadForm" :isEdit="false" v-model="uploadValue" />
                             <div>
-                                <el-button v-if="uploadList.length" size="mini" type="primary" @click="submitUpload">提交上传</el-button>
+                                <el-button v-if="uploadList.length" size="mini" type="primary" @click="submitUpload" icon="el-icon-upload2" :loading="uploadLoading">{{!uploadLoading?'提交上传':'正在上传中，请稍候'}}</el-button>
                                 <el-button v-if="uploadList.length" size="mini" @click="resetUpload">{{uploadList.length?'重新上传':'上传文档'}}</el-button>
                                 <el-button size="mini" type="info" @click="isAddFile=false">取消返回</el-button>
                             </div>
@@ -242,6 +242,7 @@ export default {
         }
     },
     data: () => ({
+        uploadLoading: false,
         catVisible: true,
         loadingMask: null,
         dragging: false,
@@ -321,12 +322,11 @@ export default {
         // 校验文档操作权限
         checkRoles(val, flag) {
             //if (!this.currDoc && !flag) return false;
-            let roles = _.find(this.$store.state.collectionData.roles, { "id": this.$store.state.user.roles });
-            //debugger
+            /* let roles = _.find(this.$store.state.collectionData.roles, { "id": this.$store.state.user.roles });
             roles = roles.content.filter(item => {
                 return item.id == this.$store.state.currpage.id;
             });
-            let index = _.findIndex(roles, { "value": val });
+            let index = _.findIndex(roles, { "value": val }); */
             //console.log('checkRoles', roles, index);
             if (this.doctype == "company") {
                 let dept = this.$storage.get("dept");
@@ -335,10 +335,8 @@ export default {
                 } else {
                     return false;
                 }
-            } else if (this.doctype == "user") {
-                return true;
             } else {
-                return !!~index;
+                return true;
             }
         },
         setFolder(item) {
@@ -534,7 +532,8 @@ export default {
                         item.filecata_id = this.currNode.id;
                         item.d_doctype = this.getDocType();
                         item.d_docname = item.to;
-                        item.d_title = item.d_title + " 复制";
+
+                        item.d_title = " 复制 " + item.d_title;
                         delete item.id, delete item._id, delete item.to;
                         return item;
                     })
@@ -733,12 +732,14 @@ export default {
         },
         // 提交上传，不适用封装的axios
         submitUpload() {
+            this.uploadLoading = true;
             //let data = { ...this.uploadValue };
             let isValidate = true, error = '';
             let refForm = this.$refs['uploadform'];
             isValidate = refForm.checkFormValidate();
             if (!isValidate) {
                 this.$message.error('上传表单数据的验证有误，请核查！');
+				this.uploadLoading = false;
                 return;
             }
 
@@ -764,6 +765,8 @@ export default {
                         this.$message.success("上传成功");
                         this.addFiles(res.data.response);
                     }
+                } else {
+                    this.uploadLoading = false;
                 }
             });
         },
@@ -792,6 +795,7 @@ export default {
                 //console.log('addFiles', res);
                 this.getFileList();
                 this.isAddFile = false;
+                this.uploadLoading = false;
                 //this.setCurrNode(this.currNode, true);
             });
         },

@@ -2,8 +2,8 @@
     <section class="sam-page">
         <div class="header">
             <div class="title"><i class="el-icon-price-tag" />{{formData.title}}</div>
-            <div v-show="!isAdd && viewAll">
-                <el-button class="icon-link" icon="el-icon-plus" @click="addNewList">新增数据</el-button>
+            <div>
+                <el-button class="icon-link" icon="el-icon-plus" @click="addNewList" v-show="!isAdd && viewAll">新增数据</el-button>
                 <el-button class="icon-link" icon="el-icon-finished" @click="filterVisible=!filterVisible" v-if="formData.filter">筛选</el-button>
             </div>
             <div v-show="isAdd">
@@ -112,7 +112,7 @@ export default {
         data: {
             // 数据发生更新
             handler(obj) {
-                //console.log('watch data handler=>', obj);
+                console.log('watch data handler=>', obj);
                 if (obj.content && obj.content.itemList) {
                     this.filedsArr = obj.content.itemList.filter(o => { return !o.tableHide });
                     //console.log('this.filedsArr', this.filedsArr)
@@ -213,29 +213,7 @@ export default {
                 "type": submitType,
                 "data": dff
             };
-            if (this.collectionName == 'employee') {
-                /* let roles = _.find(this.$store.state.collectionData.roles, { "id": data.roles });
-                console.log('submitData', data, roles);
-                if (roles.isLeader) { // 如果是主管
-                    debugger
-                    let dept = _.find(this.$store.state.collectionData.department, { "id": data.department[data.department.length - 1] });
-                    let leaderId = [...dept.leaderId];
-                    if (!leaderId.includes(this.editRow.id)) {
-                        leaderId.push(this.editRow.id);
-                        let cn = {
-                            "collectionName": "department",
-                            "type": "updateData",
-                            "notNotice": true,
-                            "data": {
-                                "id": dept.id,
-                                "leaderId": leaderId
-                            }
-                        };
-                        this.$axios.$post('mock/db', { data: cn });
-                    }
-                    console.log('dept', dept);
-                } */
-            }
+
             this.$axios.$post('mock/db', { data: condition }).then(result => {
                 this.$message("数据已提交保存");
                 if (submitType == 'updateData') {
@@ -252,7 +230,7 @@ export default {
             this.filterValue = {};
             this.collectionName = undefined;
             let valueObj = {}, filterObj = {}, itemList = [];
-            //console.log('this.formData.content', this.formData.content)
+            console.log('this.formData.setData', this.formData.content.itemList)
             //debugger
             if (this.formData.content && this.formData.content.itemList && this.formData.content.itemList.length) {
                 this.formData.content.itemList.forEach(item => {
@@ -274,6 +252,7 @@ export default {
                 // 如果有筛选条件则创建form表单
                 this.filterForm.itemList = [...itemList];
                 this.filterValue = { ...filterObj };
+                //console.log('this.formData', this.formData.content.itemList)
                 this.getList();
             }
         },
@@ -291,8 +270,7 @@ export default {
                     }
                 });
             }
-            console.log('this.filterParams', this.filterParams)
-
+            //console.log('this.filterParams', this.filterParams)
             this.getList();
         },
         // 重置搜索表单
@@ -344,7 +322,6 @@ export default {
             //return str;
             let item = _.find(this.formData.content.itemList, { "name": field });
             if (item.options || item.optionsUrl) {
-
                 if (item.optionsUrl) { // 有后台接口数据
                     let collData = this.fieldItemData[field];
                     if (collData && collData.length) {
@@ -397,7 +374,6 @@ export default {
         async getList(match = {}) {
             this.loading = true;
             match = Object.assign({}, match, this.listParam, this.filterParams);
-
             // 通用列表查询
             let condition = {
                 type: 'listData',
@@ -406,9 +382,11 @@ export default {
                 page: this.query.page,
                 pagesize: this.query.size
             };
+
             let result = await this.$axios.$post('mock/db', { data: condition });
             //console.log('getList', result.list);
             this.query.total = result.total;
+            //this.tableData = result.list;
             this.tableData = result.list.map(item => {
                 delete item.employee, delete item.__v, delete item._id;
                 return item;

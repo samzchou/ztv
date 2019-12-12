@@ -33,7 +33,7 @@
                     -webkit-linear-gradient(left, transparent 10px, transparent 11px);
                 background-size: 11px 11px;
                 text-align: center;
-                font-size: 9px;
+                font-size: 16px;
                 line-height: $timeutil-height;
 
                 >span {
@@ -50,6 +50,7 @@
     .time-block {
         //display: none;
         position: absolute;
+        z-index: 10;
         left: 10px;
         right: 10px;
         box-sizing: border-box;
@@ -59,38 +60,65 @@
         transition: all 0.25s;
         user-select: none;
 
+        &.disabled {
+            pointer-events: none;
+        }
+
         &.active {
             background-color: #f5faff;
             border-color: #b1ccff;
         }
 
+        &.drag {
+            z-index: 100;
+        }
+
         .title {
-            font-size: 12px;
-            line-height: 20px;
-            padding: 0 5px;
+            //font-size: 12px;
+            //line-height: 20px;
+            padding: 5px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid #d4e1ef;
             background-color: #ddeaf7;
 
+            cursor: move;
+
             >span {
-                transform: scale(0.9);
+                pointer-events: none;
 
                 &.all-times {
-                    font-size: 9px;
                     color: #658cff;
                     bottom: 0;
                     right: 0;
                     font-family: inherit;
-                    transform: scale(0.8);
+                }
+
+                &.icons {
+                    >i {
+                        cursor: pointer;
+                        pointer-events: auto;
+                        color: #888;
+                        margin-left: 5px;
+
+                        &:hover {
+                            color: $c-main;
+                        }
+                    }
+
+                    &.disabled {
+                        >i {
+                            cursor: not-allowed;
+                        }
+                    }
                 }
             }
         }
 
         .desc {
             padding: 5px 0;
-            font-size: 12px;
+            //font-size: 12px;
             box-sizing: border-box;
             height: calc(100% - 25px);
             overflow: hidden;
@@ -99,18 +127,58 @@
                 transform: scale(0.9);
                 line-height: 22px;
                 word-break: break-all;
+
+                &.state {
+                    border-top: 1px solid #DDD;
+                    padding: 5px 0;
+                    font-weight: bold;
+
+                    &.s-1 {
+                        color: #ff8944;
+                    }
+
+                    &.s-2 {
+                        color: $c-main;
+                    }
+
+                    &.s-3 {
+                        color: #88a7ff;
+                    }
+                }
+            }
+        }
+
+        .btns {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            bottom: 5px;
+            width: 100%;
+
+            &.disabled {
+                pointer-events: none;
+
+                button {
+                    background-color: #CCC;
+                    border-color: #CCC;
+                }
             }
         }
 
         .resize {
             position: absolute;
-            bottom: -4px;
+            bottom: 0;
             width: 30px;
             left: calc(50% - 15px);
             border: 1px solid #d82b07;
             border-width: 1px 0;
             height: 1px;
             cursor: ns-resize;
+
+            &.disabled {
+                display: none;
+            }
         }
 
         .work-desc {

@@ -22,7 +22,7 @@ export const state = () => ({
 		{ label: '查看', value: 1 }, { label: '新增', value: 2 }, { label: '修改', value: 3 }, { label: '删除', value: 4 }, { label: '批量处理', value: 5 }
 	],
 	wfType:[
-		{ label: '时间钟补填审批', value: 1, table:'timeBlock' }, { label: '站内消息', value: 2, table:'message' }, { label: '其他', value: 3 }
+		{ label: '时间钟补填审批', value: 1, table:'timeBlock',title:'申请人',titleDate:'申请日期' }, { label: '时间钟审核指导', value: 2, table:'timeBlock',title:'审核人',titleDate:'审核日期' }, { label: '其他', value: 3 }
 	],
 	stateType:[
 		{ label: '申请中', value: 1 }, { label: '已拒绝', value: 2 }, { label: '处理中', value: 3 }, { label: '已同意', value: 4 }, { label: '已完成', value: 5 }, { label: '已撤回', value: 6 }
@@ -72,9 +72,8 @@ export const actions = {
 				commit('UPDATE_USER', user);
 			}
         }
-		// 系统常用值集
-
-		let obj = {}, names = ['department', 'service', 'roles','workType','workProject'];
+		// 系统常用值集;这里需要直接取字段；待优化
+		let obj = {}, names = ['employee','department', 'service', 'roles','workType'];
 		for(let i=0; i<names.length; i++){
 			let condition = {
 				type: 'listData',

@@ -1,34 +1,43 @@
 <template>
     <section class="msg-container">
         <div class="title">
-			<div>申请人：{{data.fromName}}</div>
-            <div>申请时间：{{formatDate(data.content.date)}}</div>
-            <div>当前状态：<span>已申请</span></div>
+            <div>{{getTypeTile(data.wfType,'title')}}：{{data.fromName}}</div>
+            <div>{{getTypeTile(data.wfType,'titleDate')}}：{{formatDate(data.content.date)}}</div>
+            <div v-if="data.wfType==1">当前状态：<span>已申请</span></div>
         </div>
-        <div class="content" v-if="msgItem">
-            <div v-if="msgItem.state>1">
-                <div>处理意见：{{getState(msgItem.state)}}</div>
-                <div v-if="msgItem.feedBack!=''">
-                    拒绝理由：{{msgItem.feedBack}}
+        <div v-if="msgItem" class="content">
+            <div v-if="data.wfType==1">
+                <div v-if="msgItem.state>1">
+                    <div>处理意见：{{getState(msgItem.state)}}</div>
+                    <div v-if="msgItem.feedBack!=''">
+                        拒绝理由：{{msgItem.feedBack}}
+                    </div>
+                </div>
+                <el-form v-else size="mini" :model="ruleForm" ref="ruleForm" label-width="100px">
+                    <el-form-item label="申请原因：">
+                        <div>{{msgItem.reson}}</div>
+                    </el-form-item>
+                    <el-form-item label="处理意见：" prop="agree">
+                        <el-radio v-model="ruleForm.agree" label="1">同意</el-radio>
+                        <el-radio v-model="ruleForm.agree" label="2">拒绝</el-radio>
+                    </el-form-item>
+                    <el-form-item label="备注说明：" prop="feedBack" :rules="Rules">
+                        <div style="padding:10px 0">
+                            <el-input type="textarea" v-model="ruleForm.feedBack"></el-input>
+                        </div>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button size="small" type="primary" :icon="loading?'el-icon-loading':'el-icon-refresh'" @click="submitForm">提交反馈</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <div v-else-if="data.wfType==2">
+                <!-- <div>审核指导内容：</div> -->
+                <div>{{msgItem}}</div>
+                <div v-if="!checkPath('/work/timeLine')" style="padding:15px 0">
+                    <el-button size="small" type="primary" @click="goTimeLine">进入我的时间钟</el-button>
                 </div>
             </div>
-            <el-form v-else size="mini" :model="ruleForm" ref="ruleForm" label-width="100px">
-                <el-form-item label="申请原因：">
-                    <div>{{msgItem.reson}}</div>
-                </el-form-item>
-                <el-form-item label="处理意见：" prop="agree">
-                    <el-radio v-model="ruleForm.agree" label="1">同意</el-radio>
-                    <el-radio v-model="ruleForm.agree" label="2">拒绝</el-radio>
-                </el-form-item>
-                <el-form-item label="备注说明：" prop="feedBack" :rules="Rules">
-                    <div style="padding:10px 0">
-                        <el-input type="textarea" v-model="ruleForm.feedBack"></el-input>
-                    </div>
-                </el-form-item>
-                <el-form-item>
-                    <el-button size="small" type="primary" :icon="loading?'el-icon-loading':'el-icon-refresh'" @click="submitForm">提交反馈</el-button>
-                </el-form-item>
-            </el-form>
         </div>
     </section>
 </template>
@@ -48,7 +57,7 @@ export default {
         Rules() {
             const R = [];
             const validator = (rule, value, callback) => {
-                console.log('validator', value)
+                //console.log('validator', value)
                 if (this.ruleForm.agree == "2" && !value) {
                     callback(new Error('请输入拒绝的理由'));
                 } else {
@@ -57,7 +66,8 @@ export default {
             };
             R.push({ validator, trigger: 'blur' });
             return R;
-        }
+        },
+
     },
 
     watch: {
@@ -79,6 +89,21 @@ export default {
         loading: false
     }),
     methods: {
+        checkPath(path) {
+            return this.$route.path == path;
+        },
+        // 跳转到时间钟
+        goTimeLine() {
+            //console.log(this.$route.path)
+            let obj = { id: this.data.fid, userId: this.data.touserId[0] };
+            this.$storage.session.set("timework", obj);
+            this.$emit("close");
+            this.$router.push('/work/timeLine');
+        },
+        getTypeTile(val, key) {
+            let type = _.find(this.$store.state.wfType, { "value": val });
+            return type[key] || "";
+        },
         getState(val) {
             let state = _.find(this.$store.state.stateType, { "value": val });
             return state.label || '未知';
@@ -127,10 +152,15 @@ export default {
                 data: { id: id }
             };
             this.workData = await this.$axios.$post("mock/db", { data: condition });
-            // 匹配那条数据, 是否应该在该条数据上加锁已保证数据不丢失
-            this.msgItem = _.find(this.workData.apply, { "date": this.data.content.date });
+            console.log('this.workData', this.workData);
+            if (this.data.wfType == 1) { // 时间钟补填申请
+                // 匹配那条数据, 是否应该在该条数据上加锁已保证数据不丢失
+                this.msgItem = _.find(this.workData.apply, { "date": this.data.content.date });
+            } else if (this.data.wfType == 2) { // 时间钟主管审核指导
+                this.msgItem = this.workData.checkDesc;
+            }
 
-            console.log('getTodo', this.workData, this.msgItem);
+            //console.log('getTodo', this.workData, this.msgItem);
         }
     },
     mounted() {

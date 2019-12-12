@@ -1,0 +1,89 @@
+.plan-container {
+    height: 100%;
+
+    .header {
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #DDD;
+        box-sizing: border-box;
+        padding: 0 20px;
+
+        >div {
+            display: flex;
+            align-items: center;
+
+            &.btns {
+                button {
+                    margin-left: 15px;
+                }
+            }
+
+            .title {
+                font-size: 16px;
+            }
+
+
+        }
+    }
+
+    .content {
+        height: calc(100% - 40px);
+        overflow: auto;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #FFF;
+
+        .btns {
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            >div {
+                display: flex;
+                align-items: center;
+            }
+
+            .check-list {
+
+                //margin: 0 15px 0;
+                /deep/ .el-checkbox-group {
+                    border: 1px solid #DDD;
+                    padding: 5px 10px;
+                    border-radius: 3px;
+
+                    .el-checkbox {
+                        margin-right: 15px;
+
+                        .el-checkbox__label {
+                            padding-left: 5px;
+                        }
+                    }
+                }
+            }
+
+            .week-select {
+                /* display: flex;
+                align-items: center; */
+            }
+        }
+    }
+}
+
+.edit-window {
+    /deep/ .form-container {
+        padding: 0;
+    }
+
+    .create-report {
+        >div {
+            padding-bottom: 10px;
+        }
+    }
+
+    .edit-btns {
+        padding: 10px 0 20px 0;
+    }
+}

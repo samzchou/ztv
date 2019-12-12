@@ -4,70 +4,42 @@
         <!--顶部工具条-->
         <div class="tools">
             <div>
-                <el-button-group>
+                <div style="font-size:16px">
+                    <el-button type="text" icon="el-icon-back" @click="$router.back()">返回</el-button>
+                </div>
+                <!-- <el-button-group>
                     <el-button size="mini" icon="el-icon-back" :type="isCurrWeek === -1 ? 'primary' : ''" title="上周" @click="setWeek(-7)" />
                     <el-button size="mini" icon="el-icon-right" :type="isCurrWeek === 1 ? 'primary' : ''" title="下周" @click="setWeek(7)" />
                 </el-button-group>
-                <el-button size="mini" :type="isCurrWeek === 0 ? 'primary' : ''" icon="el-icon-news" title="本周" style="margin-left:10px" @click="setWeek(0, true)">本周</el-button>
+                <el-button size="mini" :type="isCurrWeek === 0 ? 'primary' : ''" icon="el-icon-news" title="本周" style="margin-left:10px" @click="setWeek(0, true)">本周</el-button> -->
                 <div class="canlan">
                     <el-date-picker v-model="weekToDay" size="mini" type="week" :clearable="false" :picker-options="{ firstDayOfWeek: 1 }" format="yyyy年 第 WW 周" placeholder="选择周" @change="setDay" />
                 </div>
                 <div v-if="weekList.length" class="text">{{ setWeekTitle }}</div>
-                <div class="all-times">allTimes</div>
+                <div class="all-times" v-if="isInit">{{getEmpWorkTitle}}</div>
             </div>
             <div>
-                <el-button size="mini" icon="el-icon-box" type="primary" @click="showPlan=!showPlan">编辑我的周计划</el-button>
-                <el-button size="mini" icon="el-icon-time" type="success" @click="saveData(null)">保存我的时间钟</el-button>
-                <!-- <el-button-group>
-                    <el-button size="mini" icon="el-icon-time" :type="viewType === 0 ? 'primary' : ''" title="时钟模式" @click="setType(1)" />
-                    <el-button size="mini" icon="el-icon-date" :type="viewType == 1 ? 'primary' : ''" title="列表模式" @click="setType(0)" />
-                    <el-button size="mini" icon="el-icon-box" title="数据统计" @click="showStatistical" />
-                </el-button-group> -->
+                <el-tooltip class="item" effect="dark" :content="timeData.checkDesc" placement="bottom-end" v-if="timeData&&timeData.checkDesc">
+                    <el-button type="text" icon="el-icon-s-comment">主管审核指导意见</el-button>
+                </el-tooltip>
+                <el-button v-if="!onlyView" size="mini" icon="el-icon-time" type="success" @click="$router.push('/work/plan')">制定我的周计划</el-button>
             </div>
         </div>
-        <!--周工作计划;浮动层-->
-        <div class="my-plan" v-show="showPlan">
-            <div class="title">本周工作计划</div>
-            <el-table v-if="planData.length" :data="planData" size="small" border stripe fit style="width:100%">
-                <el-table-column type="index" label="序号" align="center" width="50" />
-                <el-table-column label="工作分类" prop="workType" width="100">
-                    <template slot-scope="scope">
-                        {{parseWorkPlan('workType', scope.row)}}
-                    </template>
-                </el-table-column>
-                <el-table-column label="工作项目" prop="workProject" width="100">
-                    <template slot-scope="scope">
-                        {{parseWorkPlan('workProject', scope.row)}}
-                    </template>
-                </el-table-column>
-                <el-table-column label="计划内容描述" prop="desc" />
-                <el-table-column label="操作" width="150">
-                    <template slot-scope="scope">
-                        <el-button type="text" size="mini" icon="el-icon-edit" @click="needAddPlan(scope.row)">编辑</el-button>
-                        <el-button type="text" size="mini" icon="el-icon-delete" @click="removePlan(scope.row)">删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-            <div v-else style="padding:0 20px;font-size:16px;">{{checkIsPaln?'暂无本周工作计划，请添加！':'已过期，无法添加周工作计划'}}</div>
-            <div class="btns">
-                <el-button size="small" type="primary" @click="needAddPlan(null)" :disabled="!checkIsPaln">添加周工作计划</el-button>
-                <el-button size="small" @click="showPlan=false">隐藏/关闭</el-button>
-            </div>
-        </div>
+
         <!--内容区-->
         <div class="list-content">
             <div id="times-list" class="times">
                 <ul>
-                    <li v-for="n in 24" :key="n">
-                        <div>{{ n - 1 < 10 ? "0" + (n - 1) : n - 1 }}:00</div>
+                    <li v-for="n in workTime.allHour" :key="n" :style="{'height':`${timeutilHeight*4}px`}">
+                        <div>{{ getWorkHour(n) }}</div>
                     </li>
                 </ul>
             </div>
             <div v-if="weekList.length" class="lists">
                 <!--表格grid头部-->
-                <div class="header">
+                <div class="header" id="week-header">
                     <ul class="week-list">
-                        <li v-for="(week, idx) in weekList" :key="idx">
+                        <li v-for="(week, idx) in weekList" :key="idx" :style="{'width':`${timeutilWidth}px`}">
                             <div class="day" :class="{ active: checkAtive(idx) }">
                                 <div>
                                     <span>{{ week.wday }} {{ getToday(week.date) }}</span>
@@ -75,7 +47,7 @@
                                 </div>
                                 <div class="total-times">
                                     <!--判断是否已经申请补填-->
-                                    <el-link v-if="checkApply(idx)" type="danger" @click="applyTime(idx)">申请补填</el-link>
+                                    <el-link v-if="checkApply(idx)&&!onlyView" type="danger" @click="applyTime(idx)">申请补填</el-link>
                                     <!--是否未开始-->
                                     <span v-else-if="notUse(idx)">未开始</span>
                                     <!--是否有补填-->
@@ -98,29 +70,27 @@
                 </div>
                 <!--表格内容区-->
                 <div id="table-lists" class="tables">
-                    <el-scrollbar ref="myScrollbar" class="scrollbar">
-                        <ul id="week-list" class="week-list">
-                            <li v-for="n in 7" :key="n" :class="{ active: checkAtive(n - 1) }">
-                                <time-col :col-index="n - 1" :ref="`cols-${n - 1}`" :time="weekList[n - 1]" :dataList="timeBlockList[n - 1]? timeBlockList[n - 1]['list']: []" @addBlock="addBlock" @removeBlock="removeBlock" @updateList="updateList" />
-                                <!--如果今天之前就冻结，加上遮罩，除非申请了补填并审核同意-->
-                                <div v-if="disabledWork(n - 1)" class="mask"></div>
-                            </li>
-                        </ul>
-                        <div class="data-window" :class="{ show: showWindow }" :style="setWindowPos">
-                            <div class="title">
-                                <span>个人时钟管理数据录入</span>
-                                <i class="el-icon-close" @click="closeEdit" />
-                            </div>
-                            <!--数据浮动窗编辑-->
-                            <time-work @close="closeEdit" />
+                    <ul id="week-list" class="week-list">
+                        <li v-for="n in 7" :key="n" :class="{ active: checkAtive(n - 1) }" :style="{'width':`${timeutilWidth}px`}">
+                            <time-col :col-index="n - 1" :ref="`cols-${n - 1}`" :time="weekList[n - 1]" :dataList="timeBlockList[n - 1]? timeBlockList[n - 1]['list']: []" />
+                            <!--如果今天之前就冻结，加上遮罩，除非申请了补填并审核同意 :disabled="disabledWork(n - 1) || onlyView" -->
+                            <!-- <div v-if="disabledWork(n - 1) || onlyView" class="mask"></div> -->
+                        </li>
+                    </ul>
+                    <div class="data-window" :class="{ show: showWindow }" :style="setWindowPos">
+                        <div class="title">
+                            <span>个人时钟管理数据录入</span>
+                            <i class="el-icon-close" @click="closeEdit" />
                         </div>
-                    </el-scrollbar>
+                        <!--数据浮动窗编辑-->
+                        <time-work @close="closeEdit" @save="saveData(null)" />
+                    </div>
                 </div>
             </div>
         </div>
         <!--申请补填弹窗-->
         <el-dialog class="apply-dialog" :title="isAddPlan?'制定本周工作计划':'申请补填'" :visible.sync="showDialog" append-to-body :close-on-click-modal="false" width="500px">
-            <div v-if="!isAddPlan">
+            <div>
                 <div class="apply-title">
                     申请日期：{{ formatDate(ruleForm.date) }}
                 </div>
@@ -139,14 +109,6 @@
                         <el-button type="primary" size="small" @click="submitApply">提交申请</el-button>
                     </el-form-item>
                 </el-form>
-            </div>
-            <!--制定本周计划-->
-            <div v-else class="add-plan">
-                <sam-form ref="editform" :data="formData" :disabled="!checkIsPaln" v-model="formValue" />
-                <div style="padding: 10px 20px">
-                    <el-button size="small" type="primary" @click="submitPlan">提交保存</el-button>
-                    <el-button size="small" @click="showDialog=false">取消关闭</el-button>
-                </div>
             </div>
         </el-dialog>
     </section>
@@ -168,6 +130,9 @@ export default {
         timeCol, timeWork, samForm
     },
     data: () => ({
+        onlyView: false,
+        empuid: 0,
+        workid: 0,
         isSaved: false, // 数据是否已保存
         isInit: false,
         loading: true,
@@ -179,7 +144,7 @@ export default {
         startDate: 0, //当前周第一天
         endDate: 0,      // 当前周最后一天
         timeData: null,
-        timeBlockList: [],
+        timeBlockList: [], // 时间钟列表
         currBlock: {},
         showWindow: false,
         startRect: {},
@@ -189,9 +154,7 @@ export default {
         },
         showDialog: false,
         isAddPlan: false, // 是否制定周计划
-        planData: [], // 计划列表
-        showPlan: true,
-        eidtPlan: null,
+        showCheck: false,
         formData: timeLineForm,
         formValue: {
             workType: "",
@@ -209,11 +172,17 @@ export default {
             touserId: [{ type: 'array', required: true, message: "请至少选择一个审核人", trigger: "change" }],
         },
         socketIO: null,
+        myDayReport: null,
+        myWeekPlan: null,
 
     }),
     computed: {
         ...mapState(["collectionData"]),
-        ...mapState("timeWork", ["holiday", "weekArray", "timeutilHeight", "locakMinutes", "editIndex", "editBlock", "isEditTime", "rangeTime"]),
+        ...mapState("timeWork", ["workTime", "holiday", "weekArray", "timeutilWidth", "timeutilHeight", "locakMinutes", "editIndex", "editBlock", "isEditTime", "rangeTime"]),
+        getEmpWorkTitle() {
+            let emp = _.find(this.$store.state.collectionData.employee, { id: this.empuid });
+            return emp.name + "的时间钟"
+        },
         setWindowPos() {
             return {
                 left: this.windowPostion.left + "px",
@@ -254,118 +223,36 @@ export default {
             handler(obj) {
                 if (!_.isEmpty(obj)) {
                     this.weekToDay = obj.startTime;
-                    this.setWeekList();
+                    let weekList = this.$storage.session.get("weekList");
+                    if (weekList) {
+                        this.weekToDay = weekList[0]['date'];
+                    }
+                    this.setWeekList(weekList);
                 }
             },
             immediate: true
         }
     },
     methods: {
-        ...mapMutations("timeWork", ["UPDATE_EDITINGTIME"]),
+        ...mapMutations("timeWork", ["UPDATE_EDITINGTIME", "UPDATE_WEEKPLAN"]),
         ...mapActions("timeWork", ["ASYNC_GTETIME_RANGE", "ASYNC_GTE_HOLIDAY"]),
+        getWorkHour(i) {
+            let hour = this.workTime.startHour + i - 1;
+            return (hour < 10 ? '0' + hour : hour) + ':00';
+        },
         closeDialog() {
             this.isAddPlan = false;
         },
-        parseWorkPlan(key, row) {
-            if (!row) return "";
-            let obj = _.find(this.collectionData[key], { "id": row[key] });
-            return obj.name || "";
-        },
-        removePlan(item) {
-            this.eidtPlan = item;
-            this.$confirm('确定要移除该计划吗?', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-            }).then(() => {
-                let planList = [...this.planData];
-                let index = _.findIndex(planList, { key: item.key });
-                planList.splice(index, 1);
-                let condition = {
-                    type: 'updateData',
-                    collectionName: "timeBlock",
-                    data: {
-                        "id": this.timeData.id,
-                        "plan": planList
-                    }
-                };
-                this.$axios.$post('mock/db', { data: condition }).then(res => {
-                    if (res) {
-                        this.planData = [...planList];
-                    }
-                });
-            }).catch(() => { });
-        },
-        // 添加或编辑周工作计划
-        needAddPlan(item) {
-            this.formValue = {
-                workType: "",
-                workProject: "",
-                desc: ""
-            };
-            //debugger
-            if (this.timeData && this.timeData.plan && item) {
-                this.eidtPlan = item;
-                this.formValue = { ...item };
-            }
-            this.isAddPlan = true;
-            this.showDialog = true;
-        },
-        // 提交本周工作计划
-        submitPlan() {
-            let data = { ...this.formValue };
-            let refForm = this.$refs['editform'];
-            let isValidate = refForm.checkFormValidate();
-            if (!isValidate) {
-                this.$message.error('表单数据的验证有误，请核查！');
-                return;
-            }
-            if (this.eidtPlan) {
-                let index = _.findIndex(this.planData, { key: this.eidtPlan.key });
-                this.$set(this.planData, index, data);
-            } else {
-                data.key = new Date().getTime();
-                this.planData.push(data);
-            }
-            let condition = {
-                type: 'addData',
-                collectionName: "timeBlock",
-                data: {
-                    "userId": this.$store.state.user.id,
-                    startdate: this.weekList[0].date,
-                    enddate: this.weekList[6].date + 24 * 3600 * 1000 - 1,
-                    "plan": this.planData
-                }
-            };
-            if (this.timeData) {
-                condition.type = "updateData";
-                condition.data.id = this.timeData.id;
-            }
-            //console.log('condition', condition);
 
-            this.$axios.$post('mock/db', { data: condition }).then(res => {
-                //console.log('res', res);
-                if (res) {
-                    if (!this.timeData) {
-                        this.timeData = { ...res };
-                    } else {
-                        this.$set(this.timeData, 'plan', data);
-                    }
-                    //console.log('this.timeData', this.timeData);
-                }
-                this.eidtPlan = null;
-                this.showPlan = true;
-                this.isAddPlan = false;
-                this.showDialog = false;
-            });
-        },
         getHoliday(week) {
             if (!this.holiday.length) return "";
             let year = new Date(week.date).getFullYear();
             let month = new Date(week.date).getMonth();
             let day = new Date(week.date).getDate();
             day = day < 10 ? '0' + day : String(day);
+            //console.log('getHoliday', year)
             let hh = _.find(this.holiday, { 'year': String(year) });
+            if (!hh) return;
             let type = hh.lists[month][day];
             if (type) {
                 let tt = _.find(this.$store.state.holidayType, { "value": String(type) });
@@ -375,9 +262,6 @@ export default {
         },
         formatDate(date) {
             return moment(date).format("YYYY-MM-DD");
-        },
-        updateList(list, colIndex) {
-            this.$set(this.timeBlockList, colIndex, list);
         },
         // 提交补填申请
         submitApply() {
@@ -475,11 +359,6 @@ export default {
                         return true;
                     }
                 }
-                /* if (!item.list.length && ~index) {
-                    return false;
-                } else if (this.weekList[i].date < this.rangeTime.startTime) {
-                    return true;
-                } */
             } else if (this.weekList[i].date < this.rangeTime.startTime || this.weekList[i].date > this.endDate) { //小于当前时间或大于当前周最后一天
                 return true;
             }
@@ -516,28 +395,25 @@ export default {
             this.$router.push("/work/time");
         },
         // 新增时间钟数据
-        addBlock(colIndex, blockObj) {
+        addBlock(colIndex, index, blockObj) {
             if (!this.timeBlockList[colIndex]) {
                 this.timeBlockList[colIndex] = {
                     list: []
                 };
             }
-            this.isSaved = false;
+            //this.isSaved = false;
             this.timeBlockList[colIndex].list.push(blockObj);
+            //console.log('addBlock', this.timeBlockList);
         },
         removeBlock(colIndex, rowIndex) {
             let blockList = [...this.timeBlockList][colIndex];
-            debugger
             if (blockList.list && blockList.list.length) {
-
                 let list = blockList.list;
-                debugger
                 list.splice(rowIndex, 1);
                 this.$set(blockList, 'list', list);
-
                 this.$set(this.timeBlockList, colIndex, blockList);
-                this.isSaved = false;
-                //this.timeBlockList[colIndex].list.splice(rowIndex, 1);
+                //this.isSaved = false;
+                this.saveData();
             }
         },
         // 编辑时间块信息
@@ -546,8 +422,13 @@ export default {
             const colIndex = this.editBlock.colIndex;
             const colLi = document.getElementById("week-list").childNodes[colIndex];
             if (colLi) {
+                const startTime = this.workTime.startHour * 3600 * 1000;
+                let top = (this.editBlock.startTime - startTime) / 1000 / 60;
+                top = (top / this.locakMinutes) * this.timeutilHeight;
+
                 this.windowPostion.left = colLi.offsetLeft + colLi.offsetWidth;
-                this.windowPostion.top = (this.editBlock.startTime / 1000 / 60 / this.locakMinutes) * this.timeutilHeight; //this.editBlock.rowIndex * this.timeutilHeight;
+                this.windowPostion.top = top; //(this.editBlock.startTime / 1000 / 60 / this.locakMinutes) * this.timeutilHeight; //this.editBlock.rowIndex * this.timeutilHeight;
+
                 const containerWidth = document.getElementById("table-lists").offsetWidth;
                 if (this.windowPostion.left + 350 > containerWidth) {
                     this.windowPostion.left = colLi.offsetLeft - 350;
@@ -557,7 +438,10 @@ export default {
         },
         // 取消关闭个人时钟管理数据录入小窗口
         closeEdit() {
-            //console.log("this.editBlock");
+            //debugger
+            if (!this.editBlock.type) { // 如果没有表单的数据则直接删除
+                this.$refs["cols-" + this.editBlock.colIndex][0].removeBlock(this.editBlock.index);
+            }
             this.UPDATE_EDITINGTIME(false);
             this.showWindow = false;
         },
@@ -571,10 +455,33 @@ export default {
             });
             //console.log("calcAllTimes", this.weekList);
         },
+        // 时间钟数据交叉整理
+        setCrossList(list) {
+            for (let i = 0; i < list.length; i++) {
+                list[i]['index'] = i;
+                if (i > 0) {
+                    let preEndTime = list[i - 1]['endTime']; // 前一个时间块
+                    let allTime = list[i]['allTime'];
+                    if (list[i]['startTime'] < preEndTime) {
+                        //debugger
+                        list[i]['startTime'] = preEndTime;
+                        list[i]['endTime'] = list[i]['startTime'] + list[i]['allTimes'];
+                    }
+                }
+            }
+            return list;
+        },
+        // 获取所有时间钟数据
         getAlltimeBlockList() {
             const dataArr = [];
             for (let i = 0; i < 7; i++) {
-                const blockList = this.$refs["cols-" + i][0].blockList;
+                let blockList = this.$refs["cols-" + i][0].blockList;
+                // 需要做时间交叉整理
+                if (blockList.length) {
+                    //debugger
+                    blockList = _.sortBy(blockList, ['startTime']);
+                    blockList = this.setCrossList(blockList);
+                }
                 dataArr.push({
                     date: this.weekList[i].date,
                     list: blockList
@@ -584,6 +491,8 @@ export default {
         },
         // 保存数据(如果有之前申请补填的数据传过来则合并)
         saveData(timeObj = {}) {
+            //debugger
+            this.showWindow = false;
             const dataArr = this.getAlltimeBlockList();
             let data = {
                 userId: this.$store.state.user.id,
@@ -624,12 +533,145 @@ export default {
                 this.isSaved = true;
                 this.$message.success("保存成功！");
                 this.showWindow = false;
-
                 // 如果提请了补填
                 if (!_.isEmpty(timeObj)) {
                     this.submitInbox(timeObj, this.timeData.id);
                 }
+                this.calcAllTimes();
+
             });
+        },
+        // 从时间钟提取内容到下周计划
+        async pickerWeekPlan(data) {
+            console.log('pickerWeekPlan', this.myWeekPlan, data);
+            console.log('endTime', this.weekList[6])
+            let startTime = this.weekList[6]['date'] + 24 * 3600 * 1000; // 下周起始
+            let endTime = startTime + 7 * 24 * 3600 * 1000 - 1;
+            console.log(startTime, endTime);
+
+            //if (!this.myWeekPlan) return;
+            let condition = {
+                type: "getData",
+                collectionName: "work_report",
+                notNotice: true,
+                data: {
+                    uid: this.$store.state.user.id,
+                    type: 2,
+                    startTime: startTime,
+                    endTime: endTime
+                }
+            };
+            let res = await this.$axios.$post("mock/db", { data: condition })
+            console.log('pickerWeekPlan', res);
+            let objData = {
+                worktype: data.type,
+                desc: data.desc
+            };
+            if (!res) {
+                condition.type = "addData";
+                condition.content = { list: [] };
+                condition.content.list.push(objData);
+            } else {
+                //debugger
+                condition.data = res;
+                condition.type = "updateData";
+                let content = res.content;
+                if (!content) {
+                    content = { list: [] };
+                    content.list.push(objData);
+                } else {
+                    //debugger
+                    let objIndex = _.findIndex(content.list, { worktype: data.type });
+                    let obj = _.find(content.list, { worktype: data.type });
+                    if (obj) {
+                        objData.desc = obj.desc + '；' + objData.desc;
+                        content.list[objIndex] = _.merge(content.list[objIndex], objData);
+                    } else {
+                        content.list.push(objData);
+                    }
+                }
+                condition.data.content = content;
+
+            }
+            let result = await this.$axios.$post("mock/db", { data: condition });
+            if (result) {
+                this.$message.success("已成功提取到下周计划中");
+            }
+        },
+        // 创建下周工作计划数据
+        updateWeekReport() {
+            //console.log('timeData', this.timeData, this.weekList);
+            if (!this.timeData.id) return;
+            // 定义下周的起始时间
+            const date = new Date(this.weekToDay);
+            const startTime = this.weekList[0]['date'];
+            const endTime = this.weekList[6]['date'] + 24 * 3600 * 1000 - 1;
+            let data = {
+                type: 2,
+                worktime_id: this.timeData.id,
+                uid: this.$store.state.user.id,
+                startTime: startTime,
+                endTime: endTime,
+                update_uid: this.$store.state.user.id
+            }
+            let condition = {
+                type: "addData",
+                collectionName: "work_report",
+                notNotice: true,
+                data: data
+            };
+            this.$axios.$post("mock/db", { data: condition }).then(res => {
+                console.log('updateWeekReport', res);
+                this.myWeekPlan = res;
+            })
+        },
+        // 获取日报数据
+        /* async getMyReport(type = 1) {
+            this.myDayReport = null;
+            // this.myWeekPlan = null;
+            if (!this.timeData.id) return;
+            const condition = {
+                type: "getData",
+                collectionName: "work_report",
+                notNotice: true,
+                data: {
+                    "uid": this.$store.state.user.id,
+                    "worktime_id": this.timeData.id,
+                    "type": 1
+                }
+            };
+            let res = await this.$axios.$post("mock/db", { data: condition });
+            if (res) {
+                console.log('getMyReport', res);
+                this.myDayReport = res;
+            }
+        }, */
+        // 获取下周计划数据
+        async getWeekPlan(type = 2) {
+            // 定义下周的起始时间
+            const date = new Date(this.weekToDay);
+            const startTime = this.weekList[0]['date'];//date.setDate(date.getDate() + 7);
+            const endTime = this.weekList[6]['date'] + 7 * 24 * 3600 * 1000 - 1;//startTime + 7 * 24 * 3600 * 1000 - 1;
+            //console.log('this.weekToDay', this.weekToDay, startTime, endTime);
+
+            this.myWeekPlan = null;
+            if (!this.timeData.id) return;
+            const condition = {
+                type: "getData",
+                collectionName: "work_report",
+                notNotice: true,
+                data: {
+                    "uid": this.empuid,
+                    "startTime": startTime,
+                    "endTime": endTime,
+                    "type": 2
+                }
+            };
+            let res = await this.$axios.$post("mock/db", { data: condition });
+            if (res) {
+                this.myWeekPlan = res;
+                this.UPDATE_WEEKPLAN(_.cloneDeep(res));
+            }
         },
         // 发送消息
         async submitInbox(obj, wtid) {
@@ -664,25 +706,14 @@ export default {
         // 滚动条事件
         handleScroll() {
             this.$nextTick(() => {
-                if (!this.isInit) {
-                    this.isInit = true;
-                    window.onresize = () => {
-                        this.$refs.myScrollbar.update();
-                    };
-                    setTimeout(() => {
-                        this.$refs.myScrollbar.update();
-                        this.startRect = this.$refs.myScrollbar.wrap.getBoundingClientRect();
-                        const hours = new Date().getHours();
-                        this.$refs.myScrollbar.wrap.scrollTop =
-                            hours * this.timeutilHeight * 4;
-                        this.loading = false;
-                    }, 1000);
+                const tableContainer = document.getElementById("table-lists");
+                const headerContainer = document.getElementById("week-header");
+                const timeListContainer = document.getElementById("times-list");
+                tableContainer.removeEventListener('scroll', () => { return false });
+                tableContainer.onscroll = (evt) => {
+                    headerContainer.scrollLeft = evt.target.scrollLeft;
+                    timeListContainer.scrollTop = evt.target.scrollTop;
                 }
-                const scrollbarEl = this.$refs.myScrollbar.wrap;
-                const timesList = document.getElementById("times-list");
-                scrollbarEl.onscroll = () => {
-                    timesList.scrollTop = scrollbarEl.scrollTop;
-                };
             });
         },
         getNowDay(val) {
@@ -691,74 +722,88 @@ export default {
             return date;
         },
         // 设置一周的起始和终止时间
-        setWeekList() {
+        setWeekList(weekList) {
             this.timeBlockList = [];
-            this.weekList = [];
             const currenDay = new Date(this.weekToDay).getDay();
-            this.weekArray.forEach((w, i) => {
-                const day = this.weekToDay + 24 * 60 * 60 * 1000 * (i - ((currenDay + 6) % 7));
-                const st = new Date(day).getTime();
-                const obj = {
-                    wday: w,
-                    date: st,
-                    allTimes: 0
-                };
-                this.weekList.push(obj);
-            });
-            debugger
+            if (!weekList) {
+                this.weekList = [];
+                this.weekArray.forEach((w, i) => {
+                    const day = this.weekToDay + 24 * 60 * 60 * 1000 * (i - ((currenDay + 6) % 7));
+                    const st = new Date(day).getTime();
+                    const obj = {
+                        wday: w,
+                        date: st
+                    };
+                    this.weekList.push(obj);
+                });
+            } else {
+                this.weekList = weekList;
+            }
             if (!this.startDate && !this.endDate) {
                 this.startDate = this.weekList[0]['date'];
                 this.endDate = this.weekList[6]['date'];
             }
             // 获取数据
-            this.getList();
+            this.getTimeData();
         },
         // 获取已有的数据
-        async getList() {
+        async getTimeData(isMsg = false) {
             this.planData = [];
             this.timeData = null;
+            this.myDayReport = null;
+            this.myWeekPlan = null;
             const condition = {
                 type: "getData",
                 collectionName: "timeBlock",
                 notNotice: true,
                 data: {
                     startdate: this.weekList[0].date,
-                    userId: this.$store.state.user.id
+                    userId: this.empuid
                 }
             };
-            const result = await this.$axios.$post("mock/db", { data: condition }, { nothold: true });
-            let ndPlan = false; //是否需要制定周工作计划
+            const result = await this.$axios.$post("mock/db", { data: condition });
             if (result) {
+                //console.log('getTimeData', result)
                 this.timeData = result;
                 this.timeBlockList = result.content || [];
-                this.calcAllTimes(this.timeBlockList);
-                ndPlan = !result.plan;
-                //planData
-                if (result.plan) {
-                    //console.log('result.plan', result.plan)
-                    this.planData = result.plan;
-                } else {
-                    ndPlan = false;
+                if (this.timeBlockList.length) {
+                    this.calcAllTimes(this.timeBlockList);
                 }
-            } else {
-                ndPlan = true;
+                // 判断是否有主管审核且未阅读,然后更新为已阅读
+                if (result.checkDesc && !result.isRead) {
+                    this.$alert(result.checkDesc, '时间钟主管审核指导', {
+                        confirmButtonText: '已收到',
+                        showClose: false,
+                        callback: action => {
+                            let cn = {
+                                type: "updateData",
+                                collectionName: "timeBlock",
+                                notNotice: true,
+                                data: {
+                                    id: result.id,
+                                    isRead: true
+                                }
+                            };
+                            this.$axios.$post("mock/db", { data: cn }).then(rs => {
+                                if (rs) {
+                                    this.$message.success("请按主管的审核指导进行修正！");
+                                }
+                            })
+                        }
+                    });
+                }
+                // 取出下周计划数据
+                if (!isMsg) this.getWeekPlan(2);
             }
-            // 判断是否需要制定周工作计划
-            //let st = this.weekList[0].date, et = this.weekList[6].date + 24 * 60 * 60 * 1000 - 1;
-            if (this.checkIsPaln && ndPlan) {
-                this.needAddPlan();
-            }
-
             this.isSaved = true;
+            this.isInit = true;
             this.handleScroll();
         },
         // 获取我的上级主管
         async getMyLeader() {
             const department = this.$store.state.user.department;
-
             let ss = dataUtil.arrConversion(department);
             let did = ss[ss.length - 1];
-
             let dept = await this.$axios.$post('mock/db', {
                 data: {
                     type: 'getData',
@@ -795,22 +840,36 @@ export default {
         initWebSocket() {
             this.socketIO = new WebSocket();
             this.socketIO.onmessage(data => {
-                if (data.obj.touserId.includes(this.$store.state.user.id) && data.event == 'applyFeedBack') {
+                if (data.obj.touserId.includes(this.$store.state.user.id)) {
                     console.log('%c%s', 'color:green;', 'timeLine客户端接收到消息=>：' + JSON.stringify(data));
-                    this.resetApply(data.obj.blockItem);
+                    if (data.event == 'applyFeedBack') { // 通过审核，允许可以补填
+                        this.resetApply(data.obj.blockItem);
+                    } else if (data.event == 'timeCheck') { // 已审核指导，重新获取数据并弹出通知
+                        this.getTimeData(true);
+                    }
                 }
             })
         },
     },
     beforeMount() {
+        this.empuid = this.$store.state.user.id;
+        // 如果非本人进入查看的
+        let timework = this.$storage.session.get('timework');
+        console.log('timework', this.$storage.session.get('timework'));
+        if (timework) {
+            this.empuid = timework.userId;
+            this.onlyView = true;
+        }
         // 获取服务器的时间
         this.ASYNC_GTETIME_RANGE();
         // 获取休假日数据
         this.ASYNC_GTE_HOLIDAY();
     },
     mounted() {
-        this.myleader = this.getMyLeader();
-        this.initWebSocket();
+        if (!this.onlyView) {
+            this.myleader = this.getMyLeader();
+            this.initWebSocket();
+        }
     },
     beforeDestroy() {
         this.socketIO = null;

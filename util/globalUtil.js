@@ -22,7 +22,6 @@ export default {
         }
         return format;
     },
-
     // 获取本周第一天日期
     calcData(date = newDate()) {
         let weekday = date.getDay() || 7; //获取星期几,getDay()返回值是 0（周日） 到 6（周六） 之间的一个整数。0||7为7，即weekday的值为1-7
@@ -116,6 +115,15 @@ export default {
         });
         return arr;
     },
+	getDateWeek(dt){
+		let d1 = new Date(dt);
+		let d2 = new Date(dt);
+		d2.setMonth(0);
+		d2.setDate(1);
+		let rq = d1-d2;
+		let days = Math.ceil(rq/(24*60*60*1000));
+		return Math.ceil(days/7) + 1;
+	},
     // 获取每月有几周
     getWeeks(year, month) {
         let d = new Date();
@@ -190,6 +198,20 @@ export default {
         var new_date = new Date(new_year, new_month, 1); //取当年当月中的第一天
         return (new Date(new_date.getTime() - 1000 * 60 * 60 * 24)).getDate(); //获取当月最后一天日期
     },
+	// 递归获取数组id
+	getDeptIds(lists, id){
+		const getIds = (arr, pid) => {
+			let ids = [pid];
+			let children = _.filter(lists, { "dept_parentid": pid });
+			if (children && children.length) {
+				children.forEach(c => {
+					ids = ids.concat(getIds(children, c.id));
+				})
+			}
+			return ids;
+		}
+		return getIds(lists, id);
+	},
 
     // 比较两个Object差异,返回一个新的对象，created By sam
     difference(obj1, obj2) {

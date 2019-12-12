@@ -234,8 +234,7 @@ export default {
             let condition = {
                 type: 'listData',
                 collectionName: 'roles',
-                sortby: 'sort',
-                ascby: 1,
+                sortby: {'sort':1},
                 data: {}
             };
             let result = await this.$axios.$post('mock/db', { data: condition });

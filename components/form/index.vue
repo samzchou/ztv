@@ -68,7 +68,7 @@ export default {
     watch: {
         data: {
             handler(obj) {
-                //console.log('watch formdata', obj)
+                console.log('watch formdata', obj)
                 this.setFormData();
             },
             deep: true,

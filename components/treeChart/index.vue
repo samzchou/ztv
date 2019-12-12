@@ -163,7 +163,7 @@ export default {
         },
         toggleExtend(treeData) {
             treeData.extend = !treeData.extend;
-            this.$forceUpdate(); ids
+            this.$forceUpdate();
         },
         // 获取主管
         getLeader(ids) {
@@ -180,6 +180,11 @@ export default {
         addData(val) {
             this.isEdit = val;
             this.dialogVisible = true;
+            this.ruleForm = {
+                dept_name: "",
+                leaderId: [],
+                disabled: false
+            };
             if (val) {
                 this.ruleForm = Object.assign(this.ruleForm, this.treeData);
             }
@@ -242,21 +247,24 @@ export default {
                 collectionName: 'department',
                 data: {}
             }
-            if (this.isEdit) {
+            if (this.isEdit == 1) {
                 condition.type = 'updateData';
                 data.id = this.treeData.id;
             } else {
+                data.id && delete data.id;
                 data.dept_parentid = this.treeData.id;
             }
             condition.data = data;
-            //console.log('condition', this.treeData, condition);
+            console.log('condition', this.treeData, condition);
             //return;
 
             this.$axios.$post('mock/db', { "data": condition }).then(res => {
+                this.loading = false;
+                this.clearDialog();
                 if (res) {
                     //console.log('sendData', res)
-                    if (res === true) { // 做更新
-                        this.treeData = { ...data }; //_.merge(this.treeData, data);
+                    if (this.isEdit == 1) { // 做更新
+                        this.treeData = _.merge(this.treeData, data); //{ ...data }; //_.merge(this.treeData, data);
                     } else { // 新增
                         data.id = res.id;
                         if (this.treeData.children) {
@@ -266,9 +274,9 @@ export default {
                         }
                     }
                     this.$message.success("保存成功");
+                    //this.$parent.getList();
                 }
-                this.loading = false;
-                this.clearDialog();
+
             });
         },
         // 清除表单信息

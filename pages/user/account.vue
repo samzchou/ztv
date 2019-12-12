@@ -19,19 +19,27 @@ export default {
     }),
     methods: {
         async getData() {
-            this.listParam = {
-                department: this.$store.state.user.department
-            }
-            let dept = this.$storage.session.get("dept");
+            this.listParam = {};
+            let dept = this.$storage.get("dept");
+            let deptList = this.$store.state.collectionData.department;
+            let detpIds = [];
             if (dept) {
-                this.viewAll = true;
-                let deptIds = dept.map(item => {
-                    return item.id;
+                dept.forEach(item => {
+                    detpIds = detpIds.concat(this.$global.getDeptIds(deptList, item.id));
                 })
-                this.listParam.department = { $in: deptIds };
+                console.log('listEmployee', detpIds);
+                if (detpIds.length) {
+                    this.listParam.department = { $in: detpIds };
+                }
             } else {
                 this.listParam.id = this.$store.state.user.id;
             }
+            // admin管理员
+            if (this.$store.state.user.username == "admin") {
+                this.listParam = {};
+                this.viewAll = true;
+            }
+            //console.log('account listParam', this.listParam)
             let condition = {
                 type: 'getData',
                 collectionName: 'service',

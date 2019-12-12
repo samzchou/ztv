@@ -40,21 +40,66 @@ export default {
     }
     return format;
   },
+  // 当前日期是第几周
+  weekIndexInMonth(date){
+	let d = date || new Date();
+	var date1 = new Date(d.getFullYear(), 0, 1);
+	let dd = Math.round((date.valueOf() - date1.valueOf()) / 86400000);
+	return Math.ceil((dd + ((date1.getDay() + 1) - 1)) / 7);
+  },
+  // 当前月有几周
+  weekInMonthCount(date){
+	let d = date || new Date();
+	let sdate = new Date(d.setDate(1));
+	let firstWeekDate = 1;
+	if (sdate.getDay() === 1) { // 判断1号是周一
+		firstWeekDatek = 1;
+	} else if (date.getDay() === 0) { // 判断1号是周日
+		firstWeekDate = 8 - 7 + 1;
+	} else { // 判断1号是周二至周六之间
+		firstWeekDate = 8 - date.getDay() + 1;
+	}
+	sdate.setMonth(sdate.getMonth()+1);
+	sdate.setDate(0);
+	let monthHasDays = sdate.getDate();// 本月天数
+	monthHasDays = sdate.getDate() - firstWeekDate + 1;
+	let hasWeek = Math.ceil(monthHasDays/7); // 计算本月有几周
+	return hasWeek;
+	
+  },
+  /**
+   * 获取月第一天日期
+   */
+  getMonthStartDate(date) {
+    let d = date || new Date();
+	d = new Date(d.getFullYear(), d.getMonth(), 0);
+    let startDate = new Date(d.setDate(1));
+    return startDate;
+  },
+  /**
+   * 获取月第一天日期
+   */
+  getMonthEndDate(date) {
+    let d = date || new Date();
+    let endDate = new Date(d.getFullYear(), d.getMonth()+1, 0); //.getDate()
+	
+    return endDate;
+  },
   /**
    * 获取本周第一天日期
    */
-  getWeekStartDate() {
-    let d = new Date();
+  getWeekStartDate(date) {
+    let d = date || new Date();
     let startDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() - d.getDay() + 1);
-    return this.format(startDate);
+    return startDate;
   },
   /**
    * 获取本周最后一天日期
    */
-  getWeekEndDate() {
-    let d = new Date();
+  getWeekEndDate(date) {
+    let d = date || new Date();
     let endDate = new Date(d.getFullYear(), d.getMonth(), d.getDate() + (7 - d.getDay()));
-    return this.format(endDate);
+    return endDate;
   },
   /**
    * 获取上周第一天日期
