@@ -43,7 +43,7 @@
     "vue-echarts": "^4.0.4",
     "vue-socket-io": "^0.3.2",
     "vuedraggable": "^2.23.2",
-    "ws": "^7.2.0",
+    "ws": "^7.4.6",
     "xlsx": "^0.15.1"
   },
   "devDependencies": {
